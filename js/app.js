@@ -254,7 +254,10 @@
     var numericAmount = Number(String(amount).replace(/[^\d.-]/g, ""));
 
     if (Number.isFinite(numericAmount)) {
-      return "RM " + numericAmount.toLocaleString("en-MY");
+      return "RM " + numericAmount.toLocaleString("en-MY", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
     }
 
     return "RM " + amount;
@@ -277,7 +280,7 @@
       "</div>" +
       '<h3 class="course-card-title">' + course.title + "</h3>" +
       '<div class="course-card-stats d-flex justify-content-between align-items-center gap-3">' +
-      '<div><div class="course-price">' + formatRMPrice(course.price) + '</div><small class="text-muted">' + course.level + "</small></div>" +
+      '<div><div class="course-price">' + formatRMPrice(course.price) + '</div>' + "</div>" +
       '<span class="badge-soft">' + course.rating + " rating</span>" +
       "</div>" +
       "</div>" +
@@ -701,55 +704,49 @@
 
         detailMeta = getCourseDetailMeta(course);
 
+        var relatedCourses = courses.filter(function (item) {
+          return item.id !== course.id;
+        }).slice(0, 3);
+
+        var curriculumId = "courseCurriculumAccordion";
+
         detailHero.html(
-          '<div class="row g-5 align-items-center">' +
-            '<div class="col-xl-8">' +
-              '<div class="course-detail-hero-copy">' +
-                '<div class="course-detail-breadcrumbs">' +
-                  '<span>' + course.category + "</span>" +
-                  '<span>' + detailMeta.topic + "</span>" +
-                  '<span>' + detailMeta.subtopic + "</span>" +
-                "</div>" +
-                '<div class="course-detail-flags">' +
-                  '<span class="course-flag">Bestseller</span>' +
-                  '<span class="course-flag muted">Top Rated</span>' +
-                "</div>" +
-                "<h1>" + course.title + "</h1>" +
-                '<p class="course-detail-subtitle">' + course.description + "</p>" +
-                '<div class="course-detail-rating-line">' +
-                  '<span class="course-detail-score">' + course.rating + "</span>" +
-                  '<div class="testimonial-rating course-inline-rating" aria-label="' + course.rating + ' out of 5 stars" data-rating="' + course.rating + '"></div>' +
-                  '<span class="course-rating-meta">(' + detailMeta.ratingCount + " ratings) | " + course.students + " students</span>" +
-                "</div>" +
-                '<div class="course-detail-meta">' +
-                  '<span>Created by <strong>' + detailMeta.instructor + "</strong></span>" +
-                  '<span>Updated ' + detailMeta.updated + "</span>" +
-                  '<span>' + detailMeta.language + "</span>" +
-                  '<span>' + detailMeta.captionLanguages + "</span>" +
-                "</div>" +
-                '<div class="course-detail-hero-actions">' +
-                  '<a class="btn btn-brand btn-lg" href="purchase.html?id=' + course.id + '">Enroll Now</a>' +
-                  '<a class="btn btn-outline-dark btn-lg" href="#course-content">View Curriculum</a>' +
-                "</div>" +
+          '<div class="course-detail-hero-shell">' +
+            '<div class="course-detail-hero-copy">' +
+              '<div class="course-detail-breadcrumbs">' +
+                '<span>Courses</span>' +
+                '<span>' + course.category + "</span>" +
+                '<span>' + detailMeta.subtopic + "</span>" +
+              "</div>" +
+              "<h1>" + course.title + "</h1>" +
+              '<p class="course-detail-subtitle">' + course.description + "</p>" +
+              '<div class="course-detail-hero-media">' +
+                '<img src="' + course.image + '" alt="' + course.title + '">' +
               "</div>" +
             "</div>" +
-            '<div class="col-xl-4">' +
-              '<div class="course-detail-hero-card">' +
-                '<div class="hero-card-pulse"></div>' +
-                '<div class="hero-card-mini">' +
-                  '<span class="hero-card-label">Course snapshot</span>' +
-                  '<strong>' + course.duration + "</strong>" +
-                  '<span>' + detailMeta.sections + " sections</span>" +
+            '<div class="course-detail-hero-card course-purchase-card premium-purchase-card">' +
+              '<div class="course-purchase-body">' +
+                '<div class="course-purchase-trust">' +
+                  '<span class="course-flag">Bestseller</span>' +
+                  '<div class="course-purchase-rating">' +
+                    '<strong>' + course.rating + "</strong>" +
+                    '<div class="testimonial-rating course-inline-rating" aria-label="' + course.rating + ' out of 5 stars" data-rating="' + course.rating + '"></div>' +
+                  "</div>" +
                 "</div>" +
-                '<div class="hero-card-mini">' +
-                  '<span class="hero-card-label">Learners</span>' +
-                  '<strong>' + course.students.toLocaleString() + "</strong>" +
-                  '<span>Active students</span>' +
+                '<div class="course-price-line">' +
+                  '<span class="course-price-note">Enrollment fee</span>' +
+                  '<div class="summary-price mb-0">' + formatRMPrice(course.price) + "</div>" +
                 "</div>" +
-                '<div class="hero-card-mini">' +
-                  '<span class="hero-card-label">Certificate</span>' +
-                  '<strong>Included</strong>' +
-                  '<span>Completion badge</span>' +
+                '<a class="btn btn-brand btn-lg w-100 mb-3" href="purchase.html?id=' + course.id + '">Enroll Now</a>' +
+                '<div class="course-includes">' +
+                  "<h3>This course includes:</h3>" +
+                  '<ul class="course-sidebar-list">' +
+                    '<li><span class="course-include-label"><span class="course-include-icon" aria-hidden="true">D</span>Duration</span><strong>' + detailMeta.totalHours + "</strong></li>" +
+                    '<li><span class="course-include-label"><span class="course-include-icon" aria-hidden="true">N</span>Lessons</span><strong>' + detailMeta.lectures + " Lessons</strong></li>" +
+                    '<li><span class="course-include-label"><span class="course-include-icon" aria-hidden="true">C</span>Certificate</span><strong>Included</strong></li>' +
+                    '<li><span class="course-include-label"><span class="course-include-icon" aria-hidden="true">A</span>Access</span><strong>Lifetime</strong></li>' +
+                    '<li><span class="course-include-label"><span class="course-include-icon" aria-hidden="true">W</span>Devices</span><strong>Mobile & Web</strong></li>' +
+                  "</ul>" +
                 "</div>" +
               "</div>" +
             "</div>" +
@@ -757,93 +754,94 @@
         );
 
         $("#courseDetailContent").html(
-          '<div id="course-content" class="row g-5">' +
-            '<div class="col-xl-8">' +
-              '<section class="course-detail-section learning-box card-surface">' +
-                "<h2>What you'll learn</h2>" +
-                '<div class="row g-3">' +
+          '<div id="course-content" class="course-detail-layout">' +
+            '<div class="course-detail-main">' +
+              '<section class="course-detail-section course-overview-card card-surface">' +
+                '<div class="course-section-heading">' +
+                  '<span class="eyebrow text-brand">Course Overview</span>' +
+                  '<h2>What you will learn</h2>' +
+                "</div>" +
+                '<div class="course-learn-grid">' +
                   course.outcomes.concat(course.skills).slice(0, 8).map(function (item) {
-                    return '<div class="col-md-6"><div class="learn-item">' + item + "</div></div>";
+                    return '<div class="learn-item">' + item + "</div>";
                   }).join("") +
                 "</div>" +
               "</section>" +
               '<section class="course-detail-section card-surface">' +
-                "<h2>Course content</h2>" +
-                '<div class="course-content-meta">' + detailMeta.sections + " sections | " + detailMeta.lectures + " lectures | " + detailMeta.totalHours + " total length</div>" +
-                '<div class="course-curriculum">' +
+                '<div class="course-section-heading">' +
+                  '<span class="eyebrow text-brand">About This Course</span>' +
+                  "<h2>Description</h2>" +
+                "</div>" +
+                "<p>" + course.description + "</p>" +
+                "<p>" + detailMeta.descriptionExtended + "</p>" +
+                '<div class="course-tag-row">' +
+                  course.skills.map(function (skill) {
+                    return '<span class="course-tag">' + skill + "</span>";
+                  }).join("") +
+                "</div>" +
+              "</section>" +
+              '<section id="course-curriculum" class="course-detail-section card-surface">' +
+                '<div class="course-section-heading course-section-heading-inline">' +
+                  '<div><span class="eyebrow text-brand">Curriculum</span><h2>Course content</h2></div>' +
+                  '<span class="course-content-meta">' + detailMeta.sections + " sections | " + detailMeta.lectures + " lessons | " + detailMeta.totalHours + "</span>" +
+                "</div>" +
+                '<div class="accordion course-curriculum-accordion" id="' + curriculumId + '">' +
                   course.modules.map(function (module, index) {
+                    var headingId = "curriculumHeading" + index;
+                    var collapseId = "curriculumCollapse" + index;
+                    var isFirst = index === 0;
                     return (
-                      '<div class="curriculum-item">' +
-                        '<div class="curriculum-top">' +
-                          "<h3>Section " + (index + 1) + ": " + module + "</h3>" +
-                          '<span>' + detailMeta.moduleDurations[index % detailMeta.moduleDurations.length] + "</span>" +
+                      '<div class="accordion-item curriculum-item">' +
+                        '<h3 class="accordion-header" id="' + headingId + '">' +
+                          '<button class="accordion-button ' + (isFirst ? "" : "collapsed") + '" type="button" data-bs-toggle="collapse" data-bs-target="#' + collapseId + '" aria-expanded="' + (isFirst ? "true" : "false") + '" aria-controls="' + collapseId + '">' +
+                            '<span>Section ' + (index + 1) + ": " + module + "</span>" +
+                            '<small>' + detailMeta.moduleDurations[index % detailMeta.moduleDurations.length] + "</small>" +
+                          "</button>" +
+                        "</h3>" +
+                        '<div id="' + collapseId + '" class="accordion-collapse collapse ' + (isFirst ? "show" : "") + '" aria-labelledby="' + headingId + '" data-bs-parent="#' + curriculumId + '">' +
+                          '<div class="accordion-body">' +
+                            '<ul class="course-lesson-list">' +
+                              '<li><span>Lesson 1</span><strong>Concept walkthrough</strong></li>' +
+                              '<li><span>Lesson 2</span><strong>Applied demo</strong></li>' +
+                              '<li><span>Lesson 3</span><strong>Guided practice</strong></li>' +
+                              '<li><span>Project</span><strong>Portfolio-ready exercise</strong></li>' +
+                            "</ul>" +
+                          "</div>" +
                         "</div>" +
-                        '<p>Focused lessons, applied examples, and guided exercises to help you turn the concept into practical skill.</p>' +
                       "</div>"
                     );
                   }).join("") +
                 "</div>" +
               "</section>" +
               '<section class="course-detail-section card-surface">' +
-                "<h2>Requirements</h2>" +
-                '<ul class="detail-list">' +
-                  detailMeta.requirements.map(function (item) {
-                    return "<li>" + item + "</li>";
-                  }).join("") +
-                "</ul>" +
-              "</section>" +
-              '<section class="course-detail-section card-surface">' +
-                "<h2>Description</h2>" +
-                "<p>" + course.description + "</p>" +
-                "<p>" + detailMeta.descriptionExtended + "</p>" +
-              "</section>" +
-              '<section class="course-detail-section card-surface">' +
-                "<h2>Who this course is for</h2>" +
+                '<div class="course-section-heading"><span class="eyebrow text-brand">Learners</span><h2>Who this course is for</h2></div>' +
                 '<ul class="detail-list">' +
                   detailMeta.audience.map(function (item) {
                     return "<li>" + item + "</li>";
                   }).join("") +
                 "</ul>" +
               "</section>" +
-              '<section class="course-detail-section instructor-box card-surface">' +
-                "<h2>Instructor</h2>" +
-                '<div class="instructor-panel">' +
-                  '<img src="' + detailMeta.instructorImage + '" alt="' + detailMeta.instructor + '">' +
-                  '<div>' +
-                    "<h3>" + detailMeta.instructor + "</h3>" +
-                    '<p class="instructor-role">' + detailMeta.instructorRole + "</p>" +
-                    "<p>" + detailMeta.instructorBio + "</p>" +
-                  "</div>" +
+              '<section class="course-detail-section card-surface">' +
+                '<div class="course-section-heading"><span class="eyebrow text-brand">Keep Learning</span><h2>Related courses</h2></div>' +
+                '<div class="related-course-grid">' +
+                  relatedCourses.map(function (relatedCourse) {
+                    return (
+                      '<a class="related-course-card" href="course-details.html?id=' + relatedCourse.id + '">' +
+                        '<img src="' + relatedCourse.image + '" alt="' + relatedCourse.title + '">' +
+                        '<span>' + relatedCourse.category + "</span>" +
+                        '<strong>' + relatedCourse.title + "</strong>" +
+                      "</a>"
+                    );
+                  }).join("") +
                 "</div>" +
               "</section>" +
             "</div>" +
-            '<div class="col-xl-4">' +
-              '<aside class="course-detail-sidepanel">' +
-                '<div class="course-purchase-card premium-purchase-card">' +
-                  '<div class="course-purchase-media">' +
-                    '<img src="' + course.image + '" alt="' + course.title + '">' +
-                  "</div>" +
-                  '<div class="course-purchase-body">' +
-                    '<div class="course-price-line">' +
-                      '<div class="summary-price mb-0">' + formatRMPrice(course.price) + "</div>" +
-                      '<span class="course-price-note">Full lifetime access</span>' +
-                    "</div>" +
-                    '<a class="btn btn-brand btn-lg w-100 mb-3" href="purchase.html?id=' + course.id + '">Buy Now</a>' +
-                    '<a class="btn btn-outline-dark btn-lg w-100 mb-4" href="courses.html">Add to Wishlist</a>' +
-                    '<p class="course-purchase-caption">30-Day Money-Back Guarantee</p>' +
-                    '<ul class="summary-list course-sidebar-list">' +
-                      "<li><strong>" + detailMeta.totalHours + "</strong> on-demand video</li>" +
-                      "<li><strong>" + detailMeta.lectures + "</strong> lessons</li>" +
-                      "<li><strong>" + detailMeta.downloadables + "</strong> downloadable resources</li>" +
-                      "<li><strong>Certificate</strong> of completion</li>" +
-                      "<li><strong>Access</strong> on mobile and desktop</li>" +
-                    "</ul>" +
-                  "</div>" +
-                "</div>" +
-              "</aside>" +
-            "</div>" +
           "</div>"
         );
+
+        detailHero.find(".course-detail-hero-copy").append($("#courseDetailContent .course-detail-main"));
+        $("#courseDetailContent").empty();
+        $(".course-detail-body").addClass("course-detail-body-empty");
 
         renderTestimonialStars();
       })
