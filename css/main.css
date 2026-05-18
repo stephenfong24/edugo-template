@@ -2307,10 +2307,6 @@ body[data-page="contact"] .contact-support-section + .section-space {
 .course-detail-hero {
   position: relative;
   overflow: clip;
-  background:
-    radial-gradient(circle at top right, rgba(5, 150, 105, 0.16), transparent 30%),
-    radial-gradient(circle at 15% 0%, rgba(5, 150, 105, 0.14), transparent 24%),
-    linear-gradient(180deg, #f8fbfd 0%, #eef5f4 100%);
   color: #0f172a;
   padding: 3.25rem 0 2.5rem;
 }
