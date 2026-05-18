@@ -1,0 +1,202 @@
+[
+  {
+    "id": "ux-strategy-immersive",
+    "title": "UX Strategy Immersive",
+    "category": "Design",
+    "level": "Intermediate",
+    "duration": "8 Weeks",
+    "price": 349,
+    "rating": 4.9,
+    "students": 1280,
+    "image": "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1200&q=80",
+    "summary": "Learn how to research, map, and design digital experiences that align user needs with business goals.",
+    "description": "This immersive course helps learners build a strategic UX mindset through user research, journey mapping, prioritization, and polished concept presentation.",
+    "skills": ["User Research", "Information Architecture", "Journey Mapping", "Figma"],
+    "outcomes": [
+      "Create a full UX strategy deck for a digital product",
+      "Run lightweight research and synthesize insights",
+      "Translate findings into product and design priorities"
+    ],
+    "modules": [
+      "Research planning and stakeholder alignment",
+      "Audience insights and problem framing",
+      "Experience mapping and service blueprints",
+      "Prioritization, prototyping, and presentation"
+    ]
+  },
+  {
+    "id": "data-analytics-pro",
+    "title": "Data Analytics Pro",
+    "category": "Data",
+    "level": "Beginner to Intermediate",
+    "duration": "10 Weeks",
+    "price": 399,
+    "rating": 4.8,
+    "students": 1765,
+    "image": "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80",
+    "summary": "Build confidence with spreadsheets, SQL, dashboards, and storytelling techniques used by modern analytics teams.",
+    "description": "A practical analytics program focused on turning raw information into clear business recommendations through hands-on practice and guided projects.",
+    "skills": ["Excel", "SQL", "Dashboards", "Data Storytelling"],
+    "outcomes": [
+      "Clean and analyze structured datasets",
+      "Build executive-ready dashboards",
+      "Present insights with confidence and context"
+    ],
+    "modules": [
+      "Foundations of metrics and spreadsheets",
+      "SQL for analysts",
+      "Dashboard design and KPI monitoring",
+      "Insight communication and stakeholder storytelling"
+    ]
+  },
+  {
+    "id": "growth-marketing-lab",
+    "title": "Growth Marketing Lab",
+    "category": "Marketing",
+    "level": "Intermediate",
+    "duration": "6 Weeks",
+    "price": 289,
+    "rating": 4.7,
+    "students": 940,
+    "image": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80",
+    "summary": "Design smarter campaigns using acquisition, retention, experimentation, and performance measurement frameworks.",
+    "description": "This lab-style course walks through channel planning, content funnels, campaign optimization, and practical experimentation methods.",
+    "skills": ["Campaign Strategy", "Analytics", "Conversion Funnels", "Testing"],
+    "outcomes": [
+      "Create a measurable growth plan",
+      "Audit and improve funnel performance",
+      "Run campaign experiments with confidence"
+    ],
+    "modules": [
+      "Audience and offer design",
+      "Channel selection and campaign architecture",
+      "Experimentation and performance analysis",
+      "Retention strategy and reporting"
+    ]
+  },
+  {
+    "id": "product-management-sprint",
+    "title": "Product Management Sprint",
+    "category": "Product",
+    "level": "Intermediate to Advanced",
+    "duration": "7 Weeks",
+    "price": 369,
+    "rating": 4.9,
+    "students": 1115,
+    "image": "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1200&q=80",
+    "summary": "Sharpen your product thinking with frameworks for discovery, prioritization, roadmapping, and stakeholder communication.",
+    "description": "A high-clarity program for aspiring and early-career product managers who want to lead product conversations and build better decisions.",
+    "skills": ["Product Discovery", "Roadmapping", "Prioritization", "Stakeholder Management"],
+    "outcomes": [
+      "Write stronger product briefs",
+      "Prioritize initiatives using evidence and tradeoffs",
+      "Lead roadmap conversations with clarity"
+    ],
+    "modules": [
+      "Product thinking and opportunity framing",
+      "Discovery interviews and insight synthesis",
+      "Prioritization and roadmap planning",
+      "Launch planning and stakeholder communication"
+    ]
+  },
+  {
+    "id": "ai-product-playbook",
+    "title": "AI Product Playbook",
+    "category": "Product",
+    "level": "Intermediate",
+    "duration": "5 Weeks",
+    "price": 329,
+    "rating": 4.8,
+    "students": 865,
+    "image": "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=80",
+    "summary": "Learn how to ship AI-assisted features, evaluate tradeoffs, and align teams around practical product decisions.",
+    "description": "A modern product course focused on translating AI capability into customer value through strategy, experimentation, and execution.",
+    "skills": ["AI Strategy", "Product Discovery", "Experimentation", "Prioritization"],
+    "outcomes": [
+      "Identify useful AI opportunities for a product",
+      "Frame experiments around customer value",
+      "Communicate AI tradeoffs with stakeholders"
+    ],
+    "modules": [
+      "AI opportunity mapping",
+      "Feature scoping and validation",
+      "Experiment design and measurement",
+      "Product launch and stakeholder alignment"
+    ]
+  },
+  {
+    "id": "data-storytelling-essentials",
+    "title": "Data Storytelling Essentials",
+    "category": "Data",
+    "level": "Beginner",
+    "duration": "4 Weeks",
+    "price": 249,
+    "rating": 4.6,
+    "students": 720,
+    "image": "https://images.unsplash.com/photo-1516321497487-e288fb19713f?auto=format&fit=crop&w=1200&q=80",
+    "summary": "Turn metrics into narratives that help teams understand performance and make stronger decisions.",
+    "description": "Learn how to structure data stories, choose useful visuals, and communicate insight clearly to non-technical audiences.",
+    "skills": ["Data Visualization", "Narrative Design", "Reporting", "Insight Communication"],
+    "outcomes": [
+      "Build a story around a dashboard or report",
+      "Choose the right visual for each metric",
+      "Present data with confidence and clarity"
+    ],
+    "modules": [
+      "Story structure for data",
+      "Choosing charts and visuals",
+      "Designing executive summaries",
+      "Communicating recommendations"
+    ]
+  },
+  {
+    "id": "design-systems-foundation",
+    "title": "Design Systems Foundation",
+    "category": "Design",
+    "level": "Intermediate",
+    "duration": "6 Weeks",
+    "price": 319,
+    "rating": 4.8,
+    "students": 980,
+    "image": "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=1200&q=80",
+    "summary": "Create scalable components, tokens, and documentation that keep product design consistent.",
+    "description": "A practical course for designers who want to build and maintain modern design systems used across product teams.",
+    "skills": ["UI Systems", "Component Design", "Tokens", "Documentation"],
+    "outcomes": [
+      "Define reusable design patterns",
+      "Document components for handoff",
+      "Improve consistency across product surfaces"
+    ],
+    "modules": [
+      "Design system principles",
+      "Component libraries and tokens",
+      "Governance and documentation",
+      "Scaling design across teams"
+    ]
+  },
+  {
+    "id": "digital-campaign-essentials",
+    "title": "Digital Campaign Essentials",
+    "category": "Marketing",
+    "level": "Beginner to Intermediate",
+    "duration": "5 Weeks",
+    "price": 279,
+    "rating": 4.7,
+    "students": 1040,
+    "image": "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1200&q=80",
+    "summary": "Plan, launch, and optimize digital campaigns across channels with a practical, performance-first approach.",
+    "description": "A compact marketing program covering campaign setup, audience targeting, creative testing, and reporting.",
+    "skills": ["Campaign Setup", "Audience Targeting", "Optimization", "Reporting"],
+    "outcomes": [
+      "Build a campaign plan from scratch",
+      "Test creative and messaging variations",
+      "Track performance and improve results"
+    ],
+    "modules": [
+      "Campaign planning and goal setting",
+      "Creative brief and channel setup",
+      "Testing and optimization",
+      "Campaign reporting and iteration"
+    ]
+  }
+]

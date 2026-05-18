@@ -1,0 +1,97 @@
+<header class="site-header">
+  <nav class="navbar navbar-expand-lg">
+    <div class="container">
+      <a class="navbar-brand" href="index.html">
+        <span class="brand-mark">EA</span>
+        <span>Elevate Academy</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#siteNavbar" aria-controls="siteNavbar" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="edugo-mobile-nav-backdrop" data-edugo-nav-close aria-hidden="true"></div>
+      <div class="collapse navbar-collapse edugo-mobile-nav" id="siteNavbar">
+        <div class="edugo-mobile-nav-header d-lg-none">
+          <a class="navbar-brand" href="index.html">
+            <span class="brand-mark">EA</span>
+            <span>Elevate Academy</span>
+          </a>
+          <button class="edugo-mobile-nav-close" type="button" data-bs-toggle="collapse" data-bs-target="#siteNavbar" aria-controls="siteNavbar" aria-label="Close navigation">
+            <span aria-hidden="true"></span>
+          </button>
+        </div>
+        <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link" data-page-link="home" href="index.html">Home</a></li>
+          <li class="nav-item"><a class="nav-link" data-page-link="about" href="about.html">About Us</a></li>
+          <li class="nav-item"><a class="nav-link" data-page-link="courses" href="courses.html">Courses</a></li>
+          <li class="nav-item"><a class="nav-link" data-page-link="contact" href="contact.html">Contact Us</a></li>
+        </ul>
+        <div class="header-actions d-flex align-items-center gap-2">
+          <div class="language-picker">
+            <button
+              type="button"
+              class="language-picker-trigger"
+              aria-haspopup="dialog"
+              aria-expanded="false"
+              aria-controls="languagePickerPanel">
+              <span class="language-picker-trigger-icon" aria-hidden="true">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  aria-label="Choose a language"
+                  role="img"
+                  focusable="false"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  style="color:#000000;">
+                  <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"></circle>
+                  <path d="M3 12H21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+                  <path d="M12 3C14.8 5.7 16.5 8.7 16.5 12C16.5 15.3 14.8 18.3 12 21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+                  <path d="M12 3C9.2 5.7 7.5 8.7 7.5 12C7.5 15.3 9.2 18.3 12 21" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
+                </svg>
+              </span>
+              <span class="language-picker-trigger-label d-none">EN</span>
+            </button>
+            <div class="language-picker-backdrop" hidden></div>
+            <div class="language-picker-panel" id="languagePickerPanel" role="dialog" aria-modal="true" aria-label="Select language" aria-hidden="true">
+              <div class="language-picker-panel-header">
+                <p class="language-picker-eyebrow">Select Language</p>
+                <h3>Choose your preferred display language</h3>
+              </div>
+              <div class="language-picker-options" role="listbox" aria-label="Language options">
+                <button type="button" class="language-picker-option" data-language="en" aria-selected="false">
+                  <span class="language-picker-option-badge">EN</span>
+                  <span class="language-picker-option-copy">
+                    <span class="language-picker-option-title">English</span>
+                    <span class="language-picker-option-subtitle">Default site language</span>
+                  </span>
+                  <span class="language-picker-option-check" aria-hidden="true">
+                    <span class="language-picker-option-check">✓</span>
+                  </span>
+                </button>
+                <button type="button" class="language-picker-option" data-language="bm" aria-selected="false">
+                  <span class="language-picker-option-badge">BM</span>
+                  <span class="language-picker-option-copy">
+                    <span class="language-picker-option-title">Bahasa Malaysia</span>
+                    <span class="language-picker-option-subtitle">Malay display language</span>
+                  </span>
+                  <span class="language-picker-option-check" aria-hidden="true">
+                    <span class="language-picker-option-check">✓</span>
+                  </span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="header-auth-links d-lg-none d-flex align-items-center gap-2">
+            <a class="btn btn-outline-dark header-auth-button" data-page-link="login" href="login.html">Sign In</a>
+            <a class="btn btn-brand header-auth-button" data-page-link="register" href="register.html">Join for Free</a>
+          </div>
+        </div>
+      </div>
+      <div class="header-auth-links-desktop d-none d-lg-flex align-items-center gap-2">
+        <a class="btn btn-outline-dark header-auth-button" data-page-link="login" href="login.html">Sign In</a>
+        <a class="btn btn-brand header-auth-button" data-page-link="register" href="register.html">Join for Free</a>
+      </div>
+    </div>
+  </nav>
+</header>
