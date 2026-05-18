@@ -288,9 +288,12 @@ img {
 
 .language-picker-backdrop {
   position: fixed;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.24);
-  backdrop-filter: blur(2px);
+  top: var(--edugo-header-offset, 74px);
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: transparent;
+  backdrop-filter: none;
   z-index: 1040;
   opacity: 0;
   transition: opacity 0.22s ease;
@@ -4144,6 +4147,9 @@ body[data-page="forgot-password"] .forgot-auth-form-wrap {
     order: 1;
     justify-content: stretch;
     margin-right: 0;
+    position: relative;
+    display: block;
+    width: 100%;
   }
 
   .edugo-mobile-nav .header-actions .header-auth-links {
@@ -4174,10 +4180,12 @@ body[data-page="forgot-password"] .forgot-auth-form-wrap {
   .edugo-mobile-nav .header-actions .language-picker-trigger::after {
     content: "Change Language";
     order: 2;
+    flex: 0 1 auto;
     color: var(--ink);
     font-size: 0.92rem;
     font-weight: 800;
     letter-spacing: 0;
+    white-space: nowrap;
   }
 
   .edugo-mobile-nav .header-actions .language-picker-trigger-icon {
@@ -4292,14 +4300,47 @@ body[data-page="forgot-password"] .forgot-auth-form-wrap {
   }
 
   .edugo-mobile-nav .language-picker-panel {
-    position: fixed;
+    position: absolute;
     top: auto;
-    right: 1rem;
-    bottom: 1rem;
-    left: 1rem;
-    width: auto;
-    max-width: 388px;
-    margin-left: auto;
+    right: 0;
+    bottom: calc(100% + 0.75rem);
+    left: 0;
+    z-index: 4;
+    width: min(100%, 360px);
+    max-width: none;
+    max-height: min(46dvh, 330px);
+    margin: 0 auto;
+    padding: 0.78rem;
+    border-radius: 16px;
+    overflow-y: auto;
+    transform: translateY(8px) scale(0.98);
+    transform-origin: bottom center;
+    box-shadow:
+      0 14px 30px rgba(15, 23, 42, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.78);
+    order: 2;
+  }
+
+  .edugo-mobile-nav .language-picker.is-open {
+    display: block;
+    z-index: 5;
+  }
+
+  .edugo-mobile-nav .language-picker.is-open .language-picker-panel {
+    transform: translateY(0) scale(1);
+  }
+
+  .edugo-mobile-nav .language-picker .language-picker-backdrop {
+    display: none;
+  }
+
+  .edugo-mobile-nav .language-picker-options {
+    gap: 0.55rem;
+  }
+
+  .edugo-mobile-nav .language-picker-option {
+    border-radius: 13px;
+    padding: 0.75rem;
   }
 
   .carousel-media {
@@ -4694,10 +4735,6 @@ body[data-page="forgot-password"] .forgot-auth-form-wrap {
   .course-detail-hero-shell,
   .course-detail-layout {
     gap: 1rem;
-  }
-
-  .course-detail-hero-card {
-    grid-template-columns: 1fr 1fr;
   }
 
   .course-detail-hero-media {
