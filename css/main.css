@@ -1954,7 +1954,6 @@ body[data-page="contact"] .contact-support-section + .section-space {
   color: var(--muted);
   line-height: 1.62;
   margin-bottom: 1rem;
-  max-width: 34ch;
 }
 
 .contact-option-meta {
