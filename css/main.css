@@ -4883,7 +4883,10 @@ body[data-page="forgot-password"] .forgot-auth-form-wrap {
     padding: 1rem;
   }
 
-  .contact-info-panel,
+  .contact-info-panel {
+    padding: 0rem;
+  }
+
   .contact-form-panel {
     padding: 1.15rem;
   }
