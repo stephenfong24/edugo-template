@@ -1080,6 +1080,38 @@
     });
   }
 
+  function initScrollToTop() {
+    if (document.querySelector(".scroll-to-top")) {
+      return;
+    }
+
+    var button = document.createElement("button");
+    button.type = "button";
+    button.className = "scroll-to-top";
+    button.setAttribute("aria-label", "Scroll to top");
+    button.innerHTML =
+      '<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">' +
+      '<path d="M12 19V5"></path>' +
+      '<path d="M5 12l7-7 7 7"></path>' +
+      "</svg>";
+
+    document.body.appendChild(button);
+
+    function updateButton() {
+      button.classList.toggle("is-visible", window.scrollY > 360);
+    }
+
+    button.addEventListener("click", function () {
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+      });
+    });
+
+    window.addEventListener("scroll", updateButton, { passive: true });
+    updateButton();
+  }
+
   $(function () {
     loadSharedComponents();
     initHomeCourses();
@@ -1094,5 +1126,6 @@
     renderTestimonialStars();
     initTitleAnimations();
     initContactSupportCards();
+    initScrollToTop();
   });
 })(jQuery);
