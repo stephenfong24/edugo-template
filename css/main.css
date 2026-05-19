@@ -3816,11 +3816,9 @@ body[data-page="forgot-password"] .forgot-auth-form-wrap {
     position: fixed;
     inset: 0;
     display: block;
-    background:
-      radial-gradient(circle at 85% 18%, rgba(5, 150, 105, 0.2), transparent 30%),
-      rgba(15, 23, 42, 0.46);
-    backdrop-filter: blur(9px);
-    -webkit-backdrop-filter: blur(9px);
+    background: rgba(15, 23, 42, 0.44);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
@@ -3841,25 +3839,26 @@ body[data-page="forgot-password"] .forgot-auth-form-wrap {
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    width: min(85dvw, 420px);
+    width: min(86dvw, 408px);
     max-width: 100dvw;
     height: 100vh !important;
     height: 100dvh !important;
+    height: 100svh !important;
     max-height: 100vh;
     max-height: 100dvh;
+    max-height: 100svh;
     margin: 0;
     padding: 0;
     overflow-y: hidden;
     overflow-x: hidden;
     overscroll-behavior: contain;
-    border-left: 1px solid rgba(5, 150, 105, 0.2);
+    border-left: 1px solid rgba(5, 150, 105, 0.16);
     background:
-      radial-gradient(circle at 20% 0%, rgba(34, 197, 94, 0.16), transparent 28%),
-      linear-gradient(158deg, rgba(255, 255, 255, 0.95), rgba(236, 253, 245, 0.9) 48%, rgba(255, 255, 255, 0.88)),
-      rgba(255, 255, 255, 0.92);
+      linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(239, 253, 246, 0.92) 48%, rgba(255, 255, 255, 0.94)),
+      rgba(255, 255, 255, 0.94);
     box-shadow:
-      -34px 0 80px rgba(15, 23, 42, 0.26),
-      -8px 0 24px rgba(5, 150, 105, 0.08),
+      -28px 0 70px rgba(15, 23, 42, 0.22),
+      -8px 0 22px rgba(5, 150, 105, 0.06),
       inset 1px 0 0 rgba(255, 255, 255, 0.78);
     backdrop-filter: blur(24px) saturate(1.12);
     -webkit-backdrop-filter: blur(24px) saturate(1.12);
@@ -3875,8 +3874,8 @@ body[data-page="forgot-password"] .forgot-auth-form-wrap {
     inset: 0;
     z-index: -1;
     background:
-      linear-gradient(90deg, rgba(255, 255, 255, 0.82), transparent 18%),
-      radial-gradient(circle at 82% 22%, rgba(5, 150, 105, 0.14), transparent 34%);
+      linear-gradient(90deg, rgba(255, 255, 255, 0.72), transparent 18%),
+      radial-gradient(circle at 84% 18%, rgba(5, 150, 105, 0.1), transparent 32%);
     pointer-events: none;
   }
 
@@ -3909,16 +3908,17 @@ body[data-page="forgot-password"] .forgot-auth-form-wrap {
     flex-direction: column;
     height: 100vh !important;
     height: 100dvh !important;
+    height: 100svh !important;
     max-height: 100vh;
     max-height: 100dvh;
+    max-height: 100svh;
     overflow-x: hidden;
     overflow-y: hidden;
     transition: transform 0.42s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   .edugo-mobile-nav-header {
-    position: sticky;
-    top: 0;
+    flex: 0 0 auto;
     z-index: 2;
     display: flex;
     align-items: center;
@@ -3927,15 +3927,15 @@ body[data-page="forgot-password"] .forgot-auth-form-wrap {
     width: 100%;
     align-self: stretch;
     box-sizing: border-box;
-    padding: 1.2rem 1.15rem 1.05rem;
-    border-bottom: 1px solid rgba(5, 150, 105, 0.14);
+    padding: 1.05rem 1.05rem 0.95rem;
+    border-bottom: 1px solid rgba(5, 150, 105, 0.12);
     background:
       linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.62)),
       rgba(255, 255, 255, 0.7);
     backdrop-filter: blur(20px) saturate(1.14);
     -webkit-backdrop-filter: blur(20px) saturate(1.14);
     box-shadow:
-      0 18px 34px rgba(15, 23, 42, 0.08),
+      0 14px 28px rgba(15, 23, 42, 0.06),
       inset 0 -1px 0 rgba(255, 255, 255, 0.78);
   }
 
@@ -3948,8 +3948,8 @@ body[data-page="forgot-password"] .forgot-auth-form-wrap {
   }
 
   .edugo-mobile-nav-header .brand-mark {
-    width: 46px;
-    height: 46px;
+    width: 42px;
+    height: 42px;
     border-radius: 14px;
     box-shadow:
       0 16px 30px rgba(5, 150, 105, 0.24),
@@ -3959,8 +3959,8 @@ body[data-page="forgot-password"] .forgot-auth-form-wrap {
   .edugo-mobile-nav-close {
     position: relative;
     flex: 0 0 auto;
-    width: 48px;
-    height: 48px;
+    width: 44px;
+    height: 44px;
     border: 1px solid rgba(5, 150, 105, 0.16);
     border-radius: 16px;
     background:
@@ -4004,42 +4004,46 @@ body[data-page="forgot-password"] .forgot-auth-form-wrap {
   }
 
   .edugo-mobile-nav .navbar-nav {
-    display: grid;
-    gap: 0.82rem;
-    align-items: stretch;
-    align-content: start;
+    display: flex;
+    flex-direction: column;
+    gap: 0.62rem;
     flex: 1 1 auto;
     min-height: 0;
     width: 100%;
     overflow-y: auto;
     overflow-x: hidden;
-    padding: 1.18rem 1.05rem 0.85rem;
+    padding: 1rem 1rem 0.75rem;
     margin: 0 !important;
   }
 
   .edugo-mobile-nav .nav-item {
     width: 100%;
+    opacity: 0;
+    transform: translateY(10px);
   }
 
   .edugo-mobile-nav .nav-link {
     position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.72rem;
     width: 100%;
-    min-height: 64px;
+    min-height: 58px;
     justify-content: space-between;
     margin: 0;
-    padding: 1rem 1.1rem;
+    padding: 0.82rem 1rem 0.82rem 3.6rem;
     overflow: hidden;
-    border: 1px solid rgba(148, 163, 184, 0.16);
-    border-radius: 18px;
+    border: 1px solid rgba(148, 163, 184, 0.13);
+    border-radius: 17px;
     color: var(--ink);
-    font-size: 0.98rem;
-    font-weight: 800;
+    font-size: 0.95rem;
+    font-weight: 780;
     letter-spacing: 0;
     background:
-      linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(244, 248, 251, 0.7)),
-      rgba(255, 255, 255, 0.72);
+      linear-gradient(145deg, rgba(255, 255, 255, 0.62), rgba(244, 248, 251, 0.42)),
+      rgba(255, 255, 255, 0.46);
     box-shadow:
-      0 16px 34px rgba(15, 23, 42, 0.075),
+      0 10px 22px rgba(15, 23, 42, 0.045),
       0 1px 0 rgba(255, 255, 255, 0.92) inset,
       0 -1px 0 rgba(15, 23, 42, 0.035) inset;
     backdrop-filter: blur(14px) saturate(1.08);
@@ -4050,22 +4054,64 @@ body[data-page="forgot-password"] .forgot-auth-form-wrap {
   .edugo-mobile-nav .nav-link::before {
     content: "";
     position: absolute;
-    inset: 1px;
-    border-radius: 17px;
+    top: 50%;
+    left: 0.95rem;
+    width: 34px;
+    height: 34px;
+    border-radius: 13px;
     background:
-      linear-gradient(135deg, rgba(255, 255, 255, 0.5), transparent 42%),
-      radial-gradient(circle at 10% 20%, rgba(5, 150, 105, 0.08), transparent 36%);
-    opacity: 0.82;
+      linear-gradient(145deg, rgba(255, 255, 255, 0.78), rgba(236, 253, 245, 0.5)),
+      rgba(5, 150, 105, 0.08);
+    box-shadow:
+      inset 0 0 0 1px rgba(5, 150, 105, 0.13),
+      0 8px 18px rgba(5, 150, 105, 0.06);
+    transform: translateY(-50%);
+    opacity: 1;
     pointer-events: none;
+  }
+
+  .edugo-mobile-nav .nav-link[data-page-link="home"]::before {
+    background:
+      linear-gradient(45deg, transparent 42%, rgba(4, 120, 87, 0.72) 43% 51%, transparent 52%) 50% 38% / 17px 17px no-repeat,
+      linear-gradient(-45deg, transparent 42%, rgba(4, 120, 87, 0.72) 43% 51%, transparent 52%) 50% 38% / 17px 17px no-repeat,
+      linear-gradient(rgba(4, 120, 87, 0.72), rgba(4, 120, 87, 0.72)) 50% 61% / 13px 8px no-repeat,
+      linear-gradient(145deg, rgba(255, 255, 255, 0.78), rgba(236, 253, 245, 0.5)),
+      rgba(5, 150, 105, 0.08);
+  }
+
+  .edugo-mobile-nav .nav-link[data-page-link="about"]::before {
+    background:
+      radial-gradient(circle at 50% 37%, transparent 0 4px, rgba(4, 120, 87, 0.72) 4.5px 5.8px, transparent 6.2px),
+      radial-gradient(ellipse at 50% 69%, transparent 0 7px, rgba(4, 120, 87, 0.72) 7.5px 8.8px, transparent 9.2px),
+      linear-gradient(145deg, rgba(255, 255, 255, 0.78), rgba(236, 253, 245, 0.5)),
+      rgba(5, 150, 105, 0.08);
+  }
+
+  .edugo-mobile-nav .nav-link[data-page-link="courses"]::before {
+    background:
+      linear-gradient(rgba(4, 120, 87, 0.72), rgba(4, 120, 87, 0.72)) 50% 39% / 15px 2px no-repeat,
+      linear-gradient(rgba(4, 120, 87, 0.56), rgba(4, 120, 87, 0.56)) 50% 50% / 15px 2px no-repeat,
+      linear-gradient(rgba(4, 120, 87, 0.4), rgba(4, 120, 87, 0.4)) 50% 61% / 15px 2px no-repeat,
+      linear-gradient(145deg, rgba(255, 255, 255, 0.78), rgba(236, 253, 245, 0.5)),
+      rgba(5, 150, 105, 0.08);
+  }
+
+  .edugo-mobile-nav .nav-link[data-page-link="contact"]::before {
+    background:
+      linear-gradient(45deg, transparent 46%, rgba(4, 120, 87, 0.68) 47% 53%, transparent 54%) 50% 45% / 16px 12px no-repeat,
+      linear-gradient(-45deg, transparent 46%, rgba(4, 120, 87, 0.68) 47% 53%, transparent 54%) 50% 45% / 16px 12px no-repeat,
+      linear-gradient(rgba(4, 120, 87, 0.72), rgba(4, 120, 87, 0.72)) 50% 62% / 17px 2px no-repeat,
+      linear-gradient(145deg, rgba(255, 255, 255, 0.78), rgba(236, 253, 245, 0.5)),
+      rgba(5, 150, 105, 0.08);
   }
 
   .edugo-mobile-nav .nav-link::after {
     left: auto;
-    right: 1.05rem;
+    right: 1rem;
     bottom: auto;
     top: 50%;
-    width: 8px;
-    height: 8px;
+    width: 7px;
+    height: 7px;
     border-radius: 999px;
     background: var(--brand);
     transform: translateY(-50%) scale(0.4);
@@ -4080,7 +4126,7 @@ body[data-page="forgot-password"] .forgot-auth-form-wrap {
       linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(236, 253, 245, 0.78)),
       rgba(255, 255, 255, 0.9);
     box-shadow:
-      0 20px 38px rgba(15, 23, 42, 0.11),
+      0 16px 30px rgba(15, 23, 42, 0.09),
       0 0 0 4px rgba(5, 150, 105, 0.08),
       0 1px 0 rgba(255, 255, 255, 0.92) inset;
     transform: translateX(-2px) translateY(-1px);
@@ -4088,23 +4134,58 @@ body[data-page="forgot-password"] .forgot-auth-form-wrap {
 
   .edugo-mobile-nav .nav-link.active {
     color: #fff;
-    border-color: rgba(255, 255, 255, 0.28);
+    border-color: rgba(255, 255, 255, 0.34);
     background:
-      radial-gradient(circle at 18% 12%, rgba(255, 255, 255, 0.3), transparent 32%),
-      linear-gradient(135deg, #10b981, var(--brand) 45%, var(--brand-dark));
+      radial-gradient(circle at 18% 12%, rgba(255, 255, 255, 0.24), transparent 30%),
+      linear-gradient(135deg, #34d399, var(--brand) 54%, #047857);
     box-shadow:
-      0 22px 42px rgba(5, 150, 105, 0.28),
-      0 8px 18px rgba(4, 120, 87, 0.18),
-      0 0 0 1px rgba(255, 255, 255, 0.42) inset;
-    transform: translateY(-2px);
+      0 16px 30px rgba(5, 150, 105, 0.2),
+      0 6px 14px rgba(4, 120, 87, 0.12),
+      0 0 0 1px rgba(255, 255, 255, 0.38) inset;
+    transform: translateY(-1px);
     animation: edugo-mobile-nav-active-glow 3.2s ease-in-out infinite;
   }
 
   .edugo-mobile-nav .nav-link.active::before {
-    background:
-      linear-gradient(135deg, rgba(255, 255, 255, 0.32), transparent 44%),
-      radial-gradient(circle at 86% 50%, rgba(255, 255, 255, 0.24), transparent 30%);
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.28),
+      0 8px 18px rgba(4, 120, 87, 0.1);
     opacity: 1;
+  }
+
+  .edugo-mobile-nav .nav-link.active[data-page-link="home"]::before {
+    background:
+      linear-gradient(45deg, transparent 42%, rgba(255, 255, 255, 0.88) 43% 51%, transparent 52%) 50% 38% / 17px 17px no-repeat,
+      linear-gradient(-45deg, transparent 42%, rgba(255, 255, 255, 0.88) 43% 51%, transparent 52%) 50% 38% / 17px 17px no-repeat,
+      linear-gradient(rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.88)) 50% 61% / 13px 8px no-repeat,
+      linear-gradient(145deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.12)),
+      rgba(255, 255, 255, 0.16);
+  }
+
+  .edugo-mobile-nav .nav-link.active[data-page-link="about"]::before {
+    background:
+      radial-gradient(circle at 50% 37%, transparent 0 4px, rgba(255, 255, 255, 0.88) 4.5px 5.8px, transparent 6.2px),
+      radial-gradient(ellipse at 50% 69%, transparent 0 7px, rgba(255, 255, 255, 0.88) 7.5px 8.8px, transparent 9.2px),
+      linear-gradient(145deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.12)),
+      rgba(255, 255, 255, 0.16);
+  }
+
+  .edugo-mobile-nav .nav-link.active[data-page-link="courses"]::before {
+    background:
+      linear-gradient(rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.88)) 50% 39% / 15px 2px no-repeat,
+      linear-gradient(rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.72)) 50% 50% / 15px 2px no-repeat,
+      linear-gradient(rgba(255, 255, 255, 0.56), rgba(255, 255, 255, 0.56)) 50% 61% / 15px 2px no-repeat,
+      linear-gradient(145deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.12)),
+      rgba(255, 255, 255, 0.16);
+  }
+
+  .edugo-mobile-nav .nav-link.active[data-page-link="contact"]::before {
+    background:
+      linear-gradient(45deg, transparent 46%, rgba(255, 255, 255, 0.82) 47% 53%, transparent 54%) 50% 45% / 16px 12px no-repeat,
+      linear-gradient(-45deg, transparent 46%, rgba(255, 255, 255, 0.82) 47% 53%, transparent 54%) 50% 45% / 16px 12px no-repeat,
+      linear-gradient(rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.88)) 50% 62% / 17px 2px no-repeat,
+      linear-gradient(145deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.12)),
+      rgba(255, 255, 255, 0.16);
   }
 
   .edugo-mobile-nav .nav-link.active::after {
@@ -4121,21 +4202,23 @@ body[data-page="forgot-password"] .forgot-auth-form-wrap {
     margin-top: auto;
     flex: 0 0 auto;
     flex-shrink: 0;
-    padding: 1.05rem;
+    padding: 0.74rem 1rem max(0.74rem, env(safe-area-inset-bottom));
     align-items: center;
     width: 100%;
     min-width: 0;
     flex-direction: column;
     flex-wrap: nowrap;
     justify-content: flex-start;
-    gap: 0.82rem;
-    border-top: 1px solid rgba(5, 150, 105, 0.13);
+    gap: 0.68rem;
+    border-top: 1px solid rgba(5, 150, 105, 0.16);
     background:
-      linear-gradient(180deg, rgba(255, 255, 255, 0.42), rgba(236, 253, 245, 0.58)),
-      rgba(255, 255, 255, 0.42);
+      linear-gradient(180deg, rgba(255, 255, 255, 0.5), rgba(236, 253, 245, 0.66)),
+      rgba(255, 255, 255, 0.52);
     box-shadow:
-      0 -18px 36px rgba(15, 23, 42, 0.045),
+      0 -14px 28px rgba(15, 23, 42, 0.04),
       inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    opacity: 0;
+    transform: translateY(10px);
   }
 
   .edugo-mobile-nav .header-actions > * {
@@ -4158,14 +4241,14 @@ body[data-page="forgot-password"] .forgot-auth-form-wrap {
     flex: 0 0 auto;
     order: 2;
     width: 100%;
-    gap: 0.75rem !important;
+    gap: 0.62rem !important;
   }
 
   .edugo-mobile-nav .header-actions .language-picker-trigger {
     justify-content: flex-start;
     width: 100%;
-    height: 48px;
-    min-height: 48px;
+    height: 46px;
+    min-height: 46px;
     padding: 0 1rem;
     border-color: rgba(5, 150, 105, 0.16);
     border-radius: 16px !important;
@@ -4173,7 +4256,7 @@ body[data-page="forgot-password"] .forgot-auth-form-wrap {
       linear-gradient(145deg, rgba(255, 255, 255, 0.86), rgba(244, 248, 251, 0.72)),
       rgba(255, 255, 255, 0.72);
     box-shadow:
-      0 14px 26px rgba(15, 23, 42, 0.07),
+      0 10px 20px rgba(15, 23, 42, 0.055),
       inset 0 1px 0 rgba(255, 255, 255, 0.88);
   }
 
@@ -4182,7 +4265,7 @@ body[data-page="forgot-password"] .forgot-auth-form-wrap {
     order: 2;
     flex: 0 1 auto;
     color: var(--ink);
-    font-size: 0.92rem;
+    font-size: 0.9rem;
     font-weight: 800;
     letter-spacing: 0;
     white-space: nowrap;
@@ -4214,11 +4297,11 @@ body[data-page="forgot-password"] .forgot-auth-form-wrap {
 
   .edugo-mobile-nav .header-auth-button {
     width: 100%;
-    min-height: 52px;
+    min-height: 48px;
     border-radius: 16px;
     font-weight: 800;
     box-shadow:
-      0 14px 28px rgba(15, 23, 42, 0.08),
+      0 10px 22px rgba(15, 23, 42, 0.065),
       inset 0 1px 0 rgba(255, 255, 255, 0.64);
     transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
   }
@@ -4232,35 +4315,72 @@ body[data-page="forgot-password"] .forgot-auth-form-wrap {
   }
 
   .edugo-mobile-nav .header-auth-button.btn-outline-dark {
-    border-color: rgba(15, 23, 42, 0.2);
-    background: rgba(255, 255, 255, 0.72);
+    border-color: rgba(15, 23, 42, 0.16);
+    background: rgba(255, 255, 255, 0.66);
     color: var(--ink);
   }
 
   .edugo-mobile-nav .header-auth-button.btn-brand {
     border-color: transparent;
     background:
-      linear-gradient(135deg, #10b981, var(--brand) 48%, var(--brand-dark));
+      linear-gradient(135deg, #10b981, var(--brand) 52%, var(--brand-dark));
     color: #fff;
     box-shadow:
-      0 20px 38px rgba(5, 150, 105, 0.26),
+      0 16px 30px rgba(5, 150, 105, 0.24),
       0 1px 0 rgba(255, 255, 255, 0.3) inset;
+  }
+
+  body.edugo-mobile-nav-open .edugo-mobile-nav .nav-item,
+  body.edugo-mobile-nav-open .edugo-mobile-nav .header-actions {
+    animation: edugo-mobile-nav-item-in 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  body.edugo-mobile-nav-open .edugo-mobile-nav .nav-item:nth-child(1) {
+    animation-delay: 0.08s;
+  }
+
+  body.edugo-mobile-nav-open .edugo-mobile-nav .nav-item:nth-child(2) {
+    animation-delay: 0.12s;
+  }
+
+  body.edugo-mobile-nav-open .edugo-mobile-nav .nav-item:nth-child(3) {
+    animation-delay: 0.16s;
+  }
+
+  body.edugo-mobile-nav-open .edugo-mobile-nav .nav-item:nth-child(4) {
+    animation-delay: 0.2s;
+  }
+
+  body.edugo-mobile-nav-open .edugo-mobile-nav .header-actions {
+    animation-delay: 0.24s;
   }
 
   @keyframes edugo-mobile-nav-active-glow {
     0%,
     100% {
       box-shadow:
-        0 22px 42px rgba(5, 150, 105, 0.26),
-        0 8px 18px rgba(4, 120, 87, 0.16),
-        0 0 0 1px rgba(255, 255, 255, 0.42) inset;
+        0 16px 30px rgba(5, 150, 105, 0.2),
+        0 6px 14px rgba(4, 120, 87, 0.12),
+        0 0 0 1px rgba(255, 255, 255, 0.38) inset;
     }
 
     50% {
       box-shadow:
-        0 24px 46px rgba(5, 150, 105, 0.34),
-        0 10px 22px rgba(4, 120, 87, 0.2),
-        0 0 0 1px rgba(255, 255, 255, 0.48) inset;
+        0 18px 34px rgba(5, 150, 105, 0.25),
+        0 8px 18px rgba(4, 120, 87, 0.14),
+        0 0 0 1px rgba(255, 255, 255, 0.44) inset;
+    }
+  }
+
+  @keyframes edugo-mobile-nav-item-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
     }
   }
 
@@ -4270,6 +4390,13 @@ body[data-page="forgot-password"] .forgot-auth-form-wrap {
     .edugo-mobile-nav .header-auth-button,
     .edugo-mobile-nav-close {
       transition-duration: 0.01ms;
+    }
+
+    body.edugo-mobile-nav-open .edugo-mobile-nav .nav-item,
+    body.edugo-mobile-nav-open .edugo-mobile-nav .header-actions {
+      animation: none;
+      opacity: 1;
+      transform: none;
     }
 
     .edugo-mobile-nav .nav-link.active {
@@ -4293,9 +4420,60 @@ body[data-page="forgot-password"] .forgot-auth-form-wrap {
     }
 
     .edugo-mobile-nav .nav-link {
-      min-height: 58px;
-      padding: 0.88rem 0.95rem;
+      min-height: 56px;
+      padding: 0.78rem 0.9rem 0.78rem 3.35rem;
       border-radius: 16px;
+    }
+
+    .edugo-mobile-nav .nav-link::before {
+      left: 0.82rem;
+      width: 32px;
+      height: 32px;
+    }
+  }
+
+  @media (max-height: 740px) {
+    .edugo-mobile-nav-header {
+      padding-top: 0.82rem;
+      padding-bottom: 0.72rem;
+    }
+
+    .edugo-mobile-nav-header .brand-mark {
+      width: 38px;
+      height: 38px;
+    }
+
+    .edugo-mobile-nav-close {
+      width: 40px;
+      height: 40px;
+      border-radius: 14px;
+    }
+
+    .edugo-mobile-nav .navbar-nav {
+      gap: 0.5rem;
+      padding-top: 0.75rem;
+      padding-bottom: 0.55rem;
+    }
+
+    .edugo-mobile-nav .nav-link {
+      min-height: 54px;
+      padding-top: 0.7rem;
+      padding-bottom: 0.7rem;
+    }
+
+    .edugo-mobile-nav .header-actions {
+      gap: 0.52rem;
+      padding-top: 0.62rem;
+      padding-bottom: max(0.62rem, env(safe-area-inset-bottom));
+    }
+
+    .edugo-mobile-nav .header-actions .language-picker-trigger,
+    .edugo-mobile-nav .header-auth-button {
+      min-height: 44px;
+    }
+
+    .edugo-mobile-nav .header-actions .language-picker-trigger {
+      height: 44px;
     }
   }
 
