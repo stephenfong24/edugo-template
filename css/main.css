@@ -55,6 +55,24 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+html,
+body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    position:relative;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+img,
+video,
+iframe {
+    max-width: 100%;
+}
+
 h1,
 h2,
 h3,
