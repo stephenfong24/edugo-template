@@ -535,6 +535,50 @@
       });
   }
 
+  function initHomeAnnouncements() {
+    if ($("body").data("page") !== "home" || typeof bootstrap === "undefined") {
+      return;
+    }
+
+    var imageModalElement = document.getElementById("imageAnnouncementModal");
+    var normalModalElement = document.getElementById("normalAnnouncementModal");
+
+    if (!imageModalElement || !normalModalElement || imageModalElement.dataset.announcementInitialized) {
+      return;
+    }
+
+    imageModalElement.dataset.announcementInitialized = "true";
+
+    var imageModal = bootstrap.Modal.getOrCreateInstance(imageModalElement, {
+      backdrop: true,
+      keyboard: true,
+      focus: true
+    });
+    var normalModal = bootstrap.Modal.getOrCreateInstance(normalModalElement, {
+      backdrop: true,
+      keyboard: true,
+      focus: true
+    });
+
+    $(imageModalElement).one("hidden.bs.modal", function () {
+      if (!$(normalModalElement).hasClass("show")) {
+        normalModal.show();
+      }
+    });
+
+    $(normalModalElement).on("show.bs.modal", function () {
+      if ($(imageModalElement).hasClass("show")) {
+        imageModal.hide();
+      }
+    });
+
+    window.setTimeout(function () {
+      if (!$(normalModalElement).hasClass("show")) {
+        imageModal.show();
+      }
+    }, 350);
+  }
+
   function initFeaturedCoursesSlider() {
     var track = document.getElementById("featuredCourses");
     if (!track) {
@@ -1373,6 +1417,7 @@
 
   $(function () {
     loadSharedComponents();
+    initHomeAnnouncements();
     initHomeCourses();
     initCoursesPage();
     initCourseDetailsPage();
