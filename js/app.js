@@ -150,7 +150,7 @@
       window.localStorage.setItem("siteLanguage", normalizedLanguage);
 
       if (shouldPrompt) {
-        window.alert("Language selected: " + getLanguageLabel(normalizedLanguage));
+        showInfoToast("Language selected: " + getLanguageLabel(normalizedLanguage));
       }
     }
 
@@ -246,8 +246,154 @@
     return deferred.promise();
   }
 
-  function renderAlert(targetSelector, type, message) {
-    $(targetSelector).html('<div class="alert alert-' + type + '" role="alert">' + message + "</div>");
+  var toastIconMap = {
+    success: "check",
+    error: "alert",
+    warning: "warning",
+    info: "info"
+  };
+
+  function escapeToastMessage(message) {
+    return $("<div>").text(message || "").html();
+  }
+
+  function getToastMarkup(type, message) {
+    var icon = toastIconMap[type] || toastIconMap.info;
+
+    return (
+      '<div class="edugo-toast__content">' +
+        '<span class="edugo-toast__icon edugo-toast__icon--' + icon + '" aria-hidden="true"></span>' +
+        '<span class="edugo-toast__message">' + escapeToastMessage(message) + "</span>" +
+      "</div>"
+    );
+  }
+
+  function showToast(type, message, options) {
+    var normalizedType = type === "success" || type === "error" || type === "warning" || type === "info" ? type : "info";
+    var toastOptions = $.extend({
+      duration: normalizedType === "info" ? 2600 : 3400
+    }, options || {});
+
+    $(".toastify.edugo-toast, #edugoToastFallback .edugo-toast").remove();
+
+    if (typeof window.Toastify === "function") {
+      window.Toastify({
+        text: getToastMarkup(normalizedType, message),
+        duration: toastOptions.duration,
+        gravity: "top",
+        position: "right",
+        close: true,
+        stopOnFocus: true,
+        escapeMarkup: false,
+        className: "edugo-toast edugo-toast--" + normalizedType
+      }).showToast();
+      return;
+    }
+
+    showFallbackToast(normalizedType, message, toastOptions.duration);
+  }
+
+  function showFallbackToast(type, message, duration) {
+    var $stack = $("#edugoToastFallback");
+
+    if (!$stack.length) {
+      $stack = $('<div id="edugoToastFallback" class="edugo-toast-fallback" aria-live="polite" aria-atomic="false"></div>');
+      $("body").append($stack);
+    }
+
+    var $toast = $('<div class="edugo-toast edugo-toast--' + type + '"></div>').html(getToastMarkup(type, message));
+    var $close = $('<button type="button" class="toast-close" aria-label="Close">&times;</button>');
+    $toast.append($close);
+    $stack.append($toast);
+
+    window.setTimeout(function () {
+      $toast.addClass("on");
+    }, 20);
+
+    function dismissToast() {
+      $toast.removeClass("on").addClass("edugo-toast--leaving");
+      window.setTimeout(function () {
+        $toast.remove();
+      }, 260);
+    }
+
+    $close.on("click", dismissToast);
+    window.setTimeout(dismissToast, duration || 3200);
+  }
+
+  function showSuccessToast(message) {
+    showToast("success", message);
+  }
+
+  function showErrorToast(message) {
+    showToast("error", message);
+  }
+
+  function showWarningToast(message) {
+    showToast("warning", message);
+  }
+
+  function showInfoToast(message) {
+    showToast("info", message);
+  }
+
+  window.showSuccessToast = showSuccessToast;
+  window.showErrorToast = showErrorToast;
+  window.showWarningToast = showWarningToast;
+  window.showInfoToast = showInfoToast;
+
+  function renderToastFeedback(targetSelector, type, message) {
+    $(targetSelector).empty();
+
+    if (type === "success") {
+      showSuccessToast(message);
+    } else if (type === "danger" || type === "error") {
+      showErrorToast(message);
+    } else if (type === "warning") {
+      showWarningToast(message);
+    } else {
+      showInfoToast(message);
+    }
+  }
+
+  function getFieldLabel(field) {
+    var $field = $(field);
+    var fieldId = $field.attr("id");
+    var labelText = fieldId ? $('label[for="' + fieldId + '"]').first().text() : "";
+
+    return $.trim(labelText || $field.attr("name") || "this field");
+  }
+
+  function getInvalidFormMessage(form, fallbackMessage) {
+    var invalidField = $(form).find(":input").filter(function () {
+      return this.willValidate && !this.validity.valid;
+    }).first()[0];
+
+    if (!invalidField) {
+      return fallbackMessage;
+    }
+
+    var label = getFieldLabel(invalidField).replace(/\s+/g, " ");
+    var validity = invalidField.validity;
+    var feedbackMessage = $(invalidField).siblings(".invalid-feedback").first().text();
+
+    if (validity.valueMissing) {
+      return invalidField.type === "checkbox" && feedbackMessage ? feedbackMessage : "Please enter your " + label.toLowerCase() + ".";
+    }
+
+    if (validity.typeMismatch && invalidField.type === "email") {
+      return "Please enter a valid email address.";
+    }
+
+    if (validity.tooShort) {
+      return label + " must be at least " + invalidField.minLength + " characters.";
+    }
+
+    if (validity.customError) {
+      return invalidField.validationMessage || fallbackMessage;
+    }
+
+    return feedbackMessage || fallbackMessage;
   }
 
   function formatRMPrice(amount) {
@@ -378,13 +524,17 @@
       return;
     }
 
-    getCourses().done(function (courses) {
-      featuredTarget.html(courses.map(function (course) {
-        return createCourseCard(course, "featured-slide");
-      }).join(""));
-      initCourseRatings(featuredTarget);
-      initFeaturedCoursesSlider();
-    });
+    getCourses()
+      .done(function (courses) {
+        featuredTarget.html(courses.map(function (course) {
+          return createCourseCard(course, "featured-slide");
+        }).join(""));
+        initCourseRatings(featuredTarget);
+        initFeaturedCoursesSlider();
+      })
+      .fail(function () {
+        showErrorToast("Unable to load featured courses. Please try again.");
+      });
   }
 
   function initFeaturedCoursesSlider() {
@@ -758,6 +908,8 @@
         currentPage = Math.min(Math.max(currentPage, 1), Math.max(totalPages, 1));
         renderList();
       });
+    }).fail(function () {
+      showErrorToast("Unable to load courses. Please refresh and try again.");
     });
   }
 
@@ -815,7 +967,7 @@
                   '<span class="course-price-note">Enrollment fee</span>' +
                   '<div class="summary-price mb-0">' + formatRMPrice(course.price) + "</div>" +
                 "</div>" +
-                '<a class="btn btn-brand btn-lg w-100 mb-3" href="purchase.html?id=' + course.id + '">Enroll Now</a>' +
+                '<a class="btn btn-brand btn-lg w-100 mb-3" href="purchase.html?id=' + course.id + '" data-course-purchase-link>Enroll Now</a>' +
                 '<div class="course-includes">' +
                   "<h3>This course includes:</h3>" +
                   '<ul class="course-sidebar-list">' +
@@ -925,6 +1077,7 @@
       })
       .fail(function () {
         $("#courseDetailFallback").removeClass("d-none");
+        showErrorToast("Course details could not be loaded.");
       });
   }
 
@@ -1003,6 +1156,12 @@
     }
 
     var courseId = getQueryParam("id");
+    var queuedPurchaseToast = window.sessionStorage.getItem("edugoPurchaseToast");
+
+    if (queuedPurchaseToast) {
+      window.sessionStorage.removeItem("edugoPurchaseToast");
+      showInfoToast(queuedPurchaseToast);
+    }
 
     getCourses().done(function (courses) {
       var course = courses.find(function (item) {
@@ -1024,6 +1183,8 @@
         "<div class='summary-price mt-4'>" + formatRMPrice(course.price) + "</div>" +
         "<p class='text-muted mb-0'>This is a demo checkout. No real transaction will occur.</p>"
       );
+    }).fail(function () {
+      showErrorToast("Unable to load the order summary. Please try again.");
     });
 
     $("#purchaseCard").on("input", function () {
@@ -1047,21 +1208,24 @@
       var cardDigits = $("#purchaseCard").val().replace(/\s/g, "");
       var expiry = $("#purchaseExpiry").val();
       var cvv = $("#purchaseCvv").val();
+      $("#purchaseCard")[0].setCustomValidity(cardDigits.length < 16 ? "Please enter a valid card number." : "");
+      $("#purchaseExpiry")[0].setCustomValidity(/^\d{2}\/\d{2}$/.test(expiry) ? "" : "Please enter the card expiry.");
+      $("#purchaseCvv")[0].setCustomValidity(cvv.length < 3 ? "Please enter the CVV." : "");
 
-      if (!form.checkValidity() || cardDigits.length < 16 || !/^\d{2}\/\d{2}$/.test(expiry) || cvv.length < 3) {
+      if (!form.checkValidity()) {
         event.stopPropagation();
         $(form).addClass("was-validated");
-        renderAlert("#purchaseFeedback", "danger", "Please review the highlighted billing fields before submitting.");
+        renderToastFeedback("#purchaseFeedback", "danger", getInvalidFormMessage(form, "Please review the highlighted billing fields before submitting."));
         return;
       }
 
       $(form).addClass("was-validated");
-      renderAlert("#purchaseFeedback", "info", "Processing your enrollment...");
+      renderToastFeedback("#purchaseFeedback", "info", "Processing your enrollment...");
 
       simulateApi({ success: true }, 1200).done(function () {
         form.reset();
         $(form).removeClass("was-validated");
-        renderAlert("#purchaseFeedback", "success", "Enrollment confirmed. A demo confirmation email has been queued successfully.");
+        renderToastFeedback("#purchaseFeedback", "success", "Enrollment confirmed. Your course access is ready.");
       });
     });
   }
@@ -1073,16 +1237,22 @@
 
       if (!form.checkValidity()) {
         $(form).addClass("was-validated");
-        renderAlert("#loginFeedback", "danger", "Please enter a valid email and password to continue.");
+        renderToastFeedback("#loginFeedback", "danger", getInvalidFormMessage(form, "Please enter a valid email and password to continue."));
         return;
       }
 
       $(form).addClass("was-validated");
-      renderAlert("#loginFeedback", "info", "Signing you in...");
+      renderToastFeedback("#loginFeedback", "info", "Signing you in...");
 
       simulateApi({ success: true }, 900).done(function () {
-        renderAlert("#loginFeedback", "success", "Login successful. In a real app, you would now be redirected to your dashboard.");
+        renderToastFeedback("#loginFeedback", "success", "Login successful.");
       });
+    });
+  }
+
+  function initCourseActionToasts() {
+    $(document).on("click", 'a[href*="purchase.html"][data-course-purchase-link], .course-card-actions a[href*="purchase.html"]', function () {
+      window.sessionStorage.setItem("edugoPurchaseToast", "Course added to cart.");
     });
   }
 
@@ -1114,17 +1284,17 @@
 
       if (!form.checkValidity()) {
         $(form).addClass("was-validated");
-        renderAlert("#registerFeedback", "danger", "Please fix the highlighted fields before creating your account.");
+        renderToastFeedback("#registerFeedback", "danger", getInvalidFormMessage(form, "Please fix the highlighted fields before creating your account."));
         return;
       }
 
       $(form).addClass("was-validated");
-      renderAlert("#registerFeedback", "info", "Creating your account...");
+      renderToastFeedback("#registerFeedback", "info", "Creating your account...");
 
       simulateApi({ success: true }, 1100).done(function () {
         form.reset();
         $(form).removeClass("was-validated");
-        renderAlert("#registerFeedback", "success", "Account created successfully. Your learner profile is ready.");
+        renderToastFeedback("#registerFeedback", "success", "Account created successfully. Your learner profile is ready.");
       });
     });
   }
@@ -1136,15 +1306,15 @@
 
       if (!form.checkValidity()) {
         $(form).addClass("was-validated");
-        renderAlert("#forgotPasswordFeedback", "danger", "Please provide the email address for your account.");
+        renderToastFeedback("#forgotPasswordFeedback", "danger", getInvalidFormMessage(form, "Please provide the email address for your account."));
         return;
       }
 
       $(form).addClass("was-validated");
-      renderAlert("#forgotPasswordFeedback", "info", "Sending your reset link...");
+      renderToastFeedback("#forgotPasswordFeedback", "info", "Sending your reset link...");
 
       simulateApi({ success: true }, 800).done(function () {
-        renderAlert("#forgotPasswordFeedback", "success", "Password reset instructions have been sent to your inbox in this demo flow.");
+        renderToastFeedback("#forgotPasswordFeedback", "success", "Password reset instructions have been sent to your inbox in this demo flow.");
       });
     });
   }
@@ -1156,17 +1326,17 @@
 
       if (!form.checkValidity()) {
         $(form).addClass("was-validated");
-        renderAlert("#contactFeedback", "danger", "Please complete the contact form before submitting.");
+        renderToastFeedback("#contactFeedback", "danger", getInvalidFormMessage(form, "Please complete the contact form before submitting."));
         return;
       }
 
       $(form).addClass("was-validated");
-      renderAlert("#contactFeedback", "info", "Sending your message...");
+      renderToastFeedback("#contactFeedback", "info", "Sending your message...");
 
       simulateApi({ success: true }, 1000).done(function () {
         form.reset();
         $(form).removeClass("was-validated");
-        renderAlert("#contactFeedback", "success", "Thanks for reaching out. Our team will respond shortly.");
+        renderToastFeedback("#contactFeedback", "success", "Thanks for reaching out. Our team will respond shortly.");
       });
     });
   }
@@ -1214,6 +1384,7 @@
     initRegisterForm();
     initForgotPasswordForm();
     initContactForm();
+    initCourseActionToasts();
     initStatCounters();
     renderTestimonialStars();
     initTitleAnimations();
