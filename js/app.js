@@ -440,47 +440,47 @@
     );
   }
 
-  function initCourseRatings(context) {
-    var $context = context ? $(context) : $(document);
-    var $ratings = $context.find(".course-rating-select").addBack(".course-rating-select");
-
-    if (!$ratings.length || !$.fn.barrating) {
+  function applyReadonlyBarRating($rating, rating) {
+    if (!$rating.length || !$.fn.barrating || $rating.data("ratingInitialized")) {
       return;
     }
 
-    $ratings.each(function () {
-      var $rating = $(this);
-      var rating = formatCourseRating($rating.data("rating"));
-
-      if ($rating.data("courseRatingInitialized")) {
-        return;
-      }
-
-      $rating.barrating({
+    $rating.barrating({
         theme: "fontawesome-stars",
         initialRating: rating,
         readonly: true,
         fastClicks: false
       });
 
-      $rating.barrating("set", rating);
+    $rating.barrating("set", rating);
 
-      $rating
-        .data("courseRatingInitialized", true)
-        .closest(".course-rating-display")
-        .find(".br-widget a")
-        .each(function () {
-          var $star = $(this);
-          var starRating = parseFloat($star.data("ratingValue"));
+    $rating
+      .data("ratingInitialized", true)
+      .closest(".course-rating-display")
+      .find(".br-widget a")
+      .each(function () {
+        var $star = $(this);
+        var starRating = parseFloat($star.data("ratingValue"));
 
-          $star
-            .toggleClass("br-selected br-active", Number.isFinite(starRating) && starRating <= parseFloat(rating))
-            .toggleClass("br-current", $star.data("ratingValue") === rating);
-        })
-        .attr({
-          "aria-hidden": "true",
-          tabindex: "-1"
-        });
+        $star
+          .toggleClass("br-selected br-active", Number.isFinite(starRating) && starRating <= parseFloat(rating))
+          .toggleClass("br-current", $star.data("ratingValue") === rating);
+      })
+      .attr({
+        "aria-hidden": "true",
+        tabindex: "-1"
+      });
+  }
+
+  function initCourseRatings(context) {
+    var $context = context ? $(context) : $(document);
+    var $ratings = $context.find(".course-rating-select").addBack(".course-rating-select");
+
+    $ratings.each(function () {
+      var $rating = $(this);
+      var rating = formatCourseRating($rating.data("rating"));
+
+      applyReadonlyBarRating($rating, rating);
     });
   }
 
@@ -752,18 +752,25 @@
   function renderTestimonialStars() {
     $(".testimonial-rating").each(function () {
       var $rating = $(this);
-      var rating = parseFloat($rating.data("rating")) || 0;
-      var starsMarkup = "";
+      var rating = formatCourseRating($rating.data("rating"));
+      var options = "";
 
-      for (var i = 1; i <= 5; i += 1) {
-        var fill = Math.max(0, Math.min(1, rating - (i - 1)));
-        starsMarkup +=
-          '<span class="rating-star" aria-hidden="true">' +
-            '<span class="rating-star-fill" style="width:' + (fill * 100) + '%"></span>' +
-          "</span>";
+      if ($rating.data("ratingInitialized")) {
+        return;
       }
 
-      $rating.html(starsMarkup);
+      for (var value = 0.5; value <= 5; value += 0.5) {
+        var optionValue = value.toFixed(1);
+        options += '<option value="' + optionValue + '"' + (optionValue === rating ? " selected" : "") + ">" + optionValue + "</option>";
+      }
+
+      $rating
+        .addClass("course-rating-display testimonial-rating-display")
+        .data("ratingInitialized", true)
+        .attr("aria-label", "Rated " + rating + " out of 5")
+        .html('<select class="testimonial-rating-select" data-rating="' + rating + '" tabindex="-1" aria-hidden="true">' + options + "</select>");
+
+      applyReadonlyBarRating($rating.find(".testimonial-rating-select"), rating);
     });
   }
 

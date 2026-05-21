@@ -1741,6 +1741,14 @@ body.edugo-mobile-nav-open .scroll-to-top {
   margin-bottom: 0.85rem;
 }
 
+.testimonial-rating-display {
+  --course-rating-star-size: 0.92rem;
+  --course-rating-star-gap: 0.14rem;
+  justify-content: flex-start;
+  min-width: 0;
+  margin-bottom: 0.85rem;
+}
+
 .rating-star {
   position: relative;
   display: inline-block;
