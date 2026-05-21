@@ -274,8 +274,6 @@
       duration: normalizedType === "info" ? 2600 : 3400
     }, options || {});
 
-    $(".toastify.edugo-toast, #edugoToastFallback .edugo-toast").remove();
-
     if (typeof window.Toastify === "function") {
       window.Toastify({
         text: getToastMarkup(normalizedType, message),

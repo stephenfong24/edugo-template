@@ -3302,6 +3302,11 @@ body[data-page="contact"] .contact-support-section + .section-space {
   margin-top: 0.35rem;
 }
 
+.was-validated .form-control:invalid,
+.form-control.is-invalid {
+  background-image: none;
+}
+
 textarea.form-control {
   min-height: 150px;
 }
@@ -3953,8 +3958,22 @@ body[data-page="register"] .register-auth-form-wrap .form-control {
   min-height: 58px;
 }
 
+.auth-form-wrap .password-field {
+  margin-bottom: 0.95rem;
+}
+
+.password-field .password-input-wrap {
+  position: relative;
+  margin-bottom: 0;
+}
+
 .password-field .form-control {
   padding-right: 4.75rem;
+}
+
+.was-validated .password-field:has(.form-control:invalid) > .invalid-feedback,
+.password-field:has(.form-control.is-invalid) > .invalid-feedback {
+  display: block;
 }
 
 .password-field .password-toggle {
