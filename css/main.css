@@ -934,9 +934,11 @@ body[data-page="home"] .modal-backdrop.show {
 
 .normal-announcement-modal .modal-dialog {
   max-width: min(900px, calc(100vw - 2rem));
+  max-height: calc(100dvh - 2rem);
 }
 
 .normal-announcement-modal .modal-content {
+  max-height: calc(100dvh - 2rem);
   overflow: hidden;
   border: 1px solid rgba(148, 163, 184, 0.2);
   border-radius: 10px;
@@ -945,6 +947,7 @@ body[data-page="home"] .modal-backdrop.show {
 }
 
 .normal-announcement-modal .modal-header {
+  flex: 0 0 auto;
   align-items: flex-start;
   gap: 1rem;
   padding: 1.35rem 1.5rem 1.05rem;
@@ -963,7 +966,29 @@ body[data-page="home"] .modal-backdrop.show {
 }
 
 .normal-announcement-modal .modal-body {
+  min-height: 0;
   padding: 1.5rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
+.normal-announcement-modal .modal-body::-webkit-scrollbar {
+  width: 10px;
+}
+
+.normal-announcement-modal .modal-body::-webkit-scrollbar-track {
+  background: rgba(244, 248, 251, 0.9);
+}
+
+.normal-announcement-modal .modal-body::-webkit-scrollbar-thumb {
+  border: 2px solid rgba(244, 248, 251, 0.9);
+  border-radius: 999px;
+  background: rgba(100, 116, 139, 0.42);
+}
+
+.normal-announcement-modal .modal-body::-webkit-scrollbar-thumb:hover {
+  background: rgba(71, 85, 105, 0.58);
 }
 
 .announcement-eyebrow {
@@ -980,7 +1005,7 @@ body[data-page="home"] .modal-backdrop.show {
   display: grid;
   grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
   gap: 1.35rem;
-  align-items: center;
+  align-items: start;
 }
 
 .announcement-media {
@@ -5377,11 +5402,13 @@ body[data-page="forgot-password"] .forgot-auth-form-wrap {
 
   .normal-announcement-modal .modal-dialog {
     max-width: calc(100vw - 1rem);
+    max-height: calc(100dvh - 1rem);
     margin-left: auto;
     margin-right: auto;
   }
 
   .normal-announcement-modal .modal-content {
+    max-height: calc(100dvh - 1rem);
     border-radius: 18px;
   }
 
