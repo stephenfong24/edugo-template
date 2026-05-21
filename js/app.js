@@ -263,6 +263,83 @@
     return "RM " + amount;
   }
 
+  function normalizeCourseRating(rating) {
+    var numericRating = parseFloat(rating);
+
+    if (!Number.isFinite(numericRating)) {
+      numericRating = 0.5;
+    }
+
+    return Math.min(5, Math.max(0.5, Math.round(numericRating * 2) / 2));
+  }
+
+  function formatCourseRating(rating) {
+    return normalizeCourseRating(rating).toFixed(1);
+  }
+
+  function createCourseRating(course, extraClass) {
+    var rating = formatCourseRating(course.rating);
+    var options = "";
+
+    for (var value = 0.5; value <= 5; value += 0.5) {
+      var optionValue = value.toFixed(1);
+      options += '<option value="' + optionValue + '"' + (optionValue === rating ? " selected" : "") + ">" + optionValue + "</option>";
+    }
+
+    return (
+      '<div class="course-rating-display ' + (extraClass || "") + '" aria-label="Rated ' + rating + ' out of 5">' +
+        '<select class="course-rating-select" data-rating="' + rating + '" tabindex="-1" aria-hidden="true">' +
+          options +
+        "</select>" +
+        '<span class="course-rating-value">' + rating + "</span>" +
+      "</div>"
+    );
+  }
+
+  function initCourseRatings(context) {
+    var $context = context ? $(context) : $(document);
+    var $ratings = $context.find(".course-rating-select").addBack(".course-rating-select");
+
+    if (!$ratings.length || !$.fn.barrating) {
+      return;
+    }
+
+    $ratings.each(function () {
+      var $rating = $(this);
+      var rating = formatCourseRating($rating.data("rating"));
+
+      if ($rating.data("courseRatingInitialized")) {
+        return;
+      }
+
+      $rating.barrating({
+        theme: "fontawesome-stars",
+        initialRating: rating,
+        readonly: true,
+        fastClicks: false
+      });
+
+      $rating.barrating("set", rating);
+
+      $rating
+        .data("courseRatingInitialized", true)
+        .closest(".course-rating-display")
+        .find(".br-widget a")
+        .each(function () {
+          var $star = $(this);
+          var starRating = parseFloat($star.data("ratingValue"));
+
+          $star
+            .toggleClass("br-selected br-active", Number.isFinite(starRating) && starRating <= parseFloat(rating))
+            .toggleClass("br-current", $star.data("ratingValue") === rating);
+        })
+        .attr({
+          "aria-hidden": "true",
+          tabindex: "-1"
+        });
+    });
+  }
+
   function createCourseCard(course, wrapperClass) {
     var slideClass = wrapperClass || "col-md-6 col-xl-3";
 
@@ -281,7 +358,7 @@
       '<h3 class="course-card-title">' + course.title + "</h3>" +
       '<div class="course-card-stats d-flex justify-content-between align-items-center gap-3">' +
       '<div><div class="course-price">' + formatRMPrice(course.price) + '</div>' + "</div>" +
-      '<span class="badge-soft">' + course.rating + " rating</span>" +
+      createCourseRating(course, "course-card-rating") +
       "</div>" +
       "</div>" +
       '<div class="course-card-spacer" aria-hidden="true"></div>' +
@@ -305,6 +382,7 @@
       featuredTarget.html(courses.map(function (course) {
         return createCourseCard(course, "featured-slide");
       }).join(""));
+      initCourseRatings(featuredTarget);
       initFeaturedCoursesSlider();
     });
   }
@@ -640,6 +718,7 @@
         listTarget.html(pageItems.map(function (course) {
           return createCourseCard(course);
         }).join(""));
+        initCourseRatings(listTarget);
         $("#courseEmptyState").toggleClass("d-none", filtered.length > 0);
         $("#courseCount").text(filtered.length);
         buildPagination(totalPages);
@@ -729,8 +808,7 @@
                 '<div class="course-purchase-trust">' +
                   '<span class="course-flag">Bestseller</span>' +
                   '<div class="course-purchase-rating">' +
-                    '<strong>' + course.rating + "</strong>" +
-                    '<div class="testimonial-rating course-inline-rating" aria-label="' + course.rating + ' out of 5 stars" data-rating="' + course.rating + '"></div>' +
+                    createCourseRating(course, "course-inline-rating") +
                   "</div>" +
                 "</div>" +
                 '<div class="course-price-line">' +
@@ -843,7 +921,7 @@
         $("#courseDetailContent").empty();
         $(".course-detail-body").addClass("course-detail-body-empty");
 
-        renderTestimonialStars();
+        initCourseRatings(detailHero);
       })
       .fail(function () {
         $("#courseDetailFallback").removeClass("d-none");
