@@ -597,10 +597,43 @@ img {
 }
 
 .page-hero p {
-  max-width: 760px;
+  max-width: 860px;
   font-size: var(--text-sm);
   line-height: 1.68;
   color: var(--muted);
+}
+
+.text-page-content {
+  max-width: 860px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+body[data-page="terms-conditions"] .page-hero .container,
+body[data-page="support-policy"] .page-hero .container,
+body[data-page="privacy-policy"] .page-hero .container {
+  max-width: 860px;
+}
+
+.text-page-content h2 {
+  margin: 0 0 0.85rem;
+  font-size: var(--text-xl);
+}
+
+.text-page-content h3 {
+  margin: 1.75rem 0 0.55rem;
+  font-size: var(--text-lg);
+}
+
+.text-page-content p,
+.text-page-content li {
+  color: var(--muted);
+  font-size: var(--text-sm);
+}
+
+.text-page-content ul {
+  margin: 0 0 1.35rem;
+  padding-left: 1.25rem;
 }
 
 .title-reveal {
