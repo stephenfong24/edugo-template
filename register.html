@@ -20,14 +20,14 @@
                   <h2 class="mb-4">Register</h2>
                   <form id="registerForm" novalidate>
                     <div class="row g-3">
-                      <div class="col-md-6">
+                      <div class="col-12">
                         <div class="form-floating">
                           <input type="text" class="form-control" id="registerFirstName" name="registerFirstName" placeholder=" " required />
                           <label for="registerFirstName">First name</label>
                           <div class="invalid-feedback">Please enter your first name.</div>
                         </div>
                       </div>
-                      <div class="col-md-6">
+                      <div class="col-12">
                         <div class="form-floating">
                           <input type="text" class="form-control" id="registerLastName" name="registerLastName" placeholder=" " required />
                           <label for="registerLastName">Last name</label>
@@ -41,17 +41,19 @@
                           <div class="invalid-feedback">Please enter a valid email address.</div>
                         </div>
                       </div>
-                      <div class="col-md-6">
-                        <div class="form-floating">
+                      <div class="col-12">
+                        <div class="form-floating password-field">
                           <input type="password" class="form-control" id="registerPassword" name="registerPassword" placeholder=" " minlength="8" required />
                           <label for="registerPassword">Password</label>
+                          <button class="password-toggle" type="button" data-password-toggle="registerPassword" aria-label="Show password" aria-pressed="false">Show</button>
                           <div class="invalid-feedback">Password must be at least 8 characters.</div>
                         </div>
                       </div>
-                      <div class="col-md-6">
-                        <div class="form-floating">
+                      <div class="col-12">
+                        <div class="form-floating password-field">
                           <input type="password" class="form-control" id="registerConfirmPassword" name="registerConfirmPassword" placeholder=" " minlength="8" required />
                           <label for="registerConfirmPassword">Confirm password</label>
+                          <button class="password-toggle" type="button" data-password-toggle="registerConfirmPassword" aria-label="Show confirm password" aria-pressed="false">Show</button>
                           <div class="invalid-feedback">Please confirm your password.</div>
                         </div>
                       </div>

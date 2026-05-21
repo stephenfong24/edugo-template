@@ -67,6 +67,14 @@ body {
     box-sizing: border-box;
 }
 
+::-ms-reveal {
+    display: none;
+}
+
+::-ms-clear {
+    display: none;
+}
+
 img,
 video,
 iframe {
@@ -3636,7 +3644,7 @@ body[data-page="register"] .register-auth-section .container {
 }
 
 body[data-page="register"] .register-auth-card {
-  width: min(100%, 760px);
+  width: min(100%, 520px);
   border-radius: 24px;
   border-color: rgba(148, 163, 184, 0.22);
   background:
@@ -3674,6 +3682,36 @@ body[data-page="register"] .register-auth-form-wrap h2 {
 
 body[data-page="register"] .register-auth-form-wrap .form-control {
   min-height: 58px;
+}
+
+.password-field .form-control {
+  padding-right: 4.75rem;
+}
+
+.password-field .password-toggle {
+  position: absolute;
+  top: 50%;
+  right: 0.85rem;
+  z-index: 3;
+  transform: translateY(-50%);
+  border: 0;
+  background: transparent;
+  color: var(--brand);
+  font-size: 0.85rem;
+  font-weight: 700;
+  line-height: 1;
+  padding: 0.35rem 0.15rem;
+}
+
+.password-field .password-toggle:hover,
+.password-field .password-toggle:focus {
+  color: var(--brand-dark);
+}
+
+.password-field .password-toggle:focus-visible {
+  outline: 2px solid rgba(5, 150, 105, 0.35);
+  outline-offset: 2px;
+  border-radius: 6px;
 }
 
 body[data-page="register"] .register-auth-form-wrap .btn-brand {

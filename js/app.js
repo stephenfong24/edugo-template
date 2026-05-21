@@ -1008,6 +1008,19 @@
     });
   }
 
+  function initPasswordToggles() {
+    $("[data-password-toggle]").on("click", function () {
+      var button = $(this);
+      var input = $("#" + button.data("password-toggle"));
+      var isPassword = input.attr("type") === "password";
+
+      input.attr("type", isPassword ? "text" : "password");
+      button.text(isPassword ? "Hide" : "Show");
+      button.attr("aria-pressed", isPassword ? "true" : "false");
+      button.attr("aria-label", (isPassword ? "Hide " : "Show ") + input.prev("label").text().toLowerCase());
+    });
+  }
+
   function initRegisterForm() {
     $("#registerForm").on("submit", function (event) {
       event.preventDefault();
@@ -1119,6 +1132,7 @@
     initCourseDetailsPage();
     initPurchasePage();
     initLoginForm();
+    initPasswordToggles();
     initRegisterForm();
     initForgotPasswordForm();
     initContactForm();
