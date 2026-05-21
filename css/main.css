@@ -1003,12 +1003,18 @@ body[data-page="home"] .modal-backdrop.show {
 
 .announcement-grid {
   display: grid;
-  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+  grid-template-columns: minmax(280px, 0.95fr) minmax(0, 1.05fr);
   gap: 1.35rem;
   align-items: start;
+  width: 100%;
+  max-width: 100%;
 }
 
 .announcement-media {
+  align-self: start;
+  width: 100%;
+  max-width: 100%;
+  max-height: min(48vh, 360px);
   overflow: hidden;
   border-radius: 16px;
   background: var(--surface-soft);
@@ -1016,13 +1022,17 @@ body[data-page="home"] .modal-backdrop.show {
 }
 
 .announcement-media img {
+  display: block;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center;
 }
 
 .announcement-copy {
   min-width: 0;
+  max-width: 100%;
+  overflow-wrap: break-word;
 }
 
 .announcement-pill {
@@ -5423,8 +5433,16 @@ body[data-page="forgot-password"] .forgot-auth-form-wrap {
   }
 
   .announcement-media {
+    width: 100%;
+    max-height: min(42vh, 300px);
     aspect-ratio: 16 / 9;
     border-radius: 14px;
+  }
+
+  .announcement-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 
   .announcement-copy .btn {
