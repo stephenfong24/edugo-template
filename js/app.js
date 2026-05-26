@@ -187,6 +187,10 @@
 
     var navHome = nav.parentElement;
     var navNextSibling = nav.nextSibling;
+    var lockedScrollY = 0;
+    var pendingLockScrollY = 0;
+    var lastKnownScrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
+    var toggler = document.querySelector(".site-header .navbar-toggler");
 
     if (backdrop && backdrop.parentElement !== document.body) {
       document.body.appendChild(backdrop);
@@ -205,8 +209,32 @@
     }
 
     function setNavState(isOpen) {
+      if (isOpen) {
+        lockedScrollY = pendingLockScrollY || lastKnownScrollY || window.pageYOffset || document.documentElement.scrollTop || 0;
+        pendingLockScrollY = 0;
+        document.documentElement.classList.add("edugo-mobile-nav-lock");
+        document.body.classList.add("edugo-mobile-nav-lock");
+        document.body.style.top = "-" + lockedScrollY + "px";
+      } else {
+        document.documentElement.classList.remove("edugo-mobile-nav-lock");
+        document.body.classList.remove("edugo-mobile-nav-lock");
+        document.body.style.top = "";
+        window.scrollTo(0, lockedScrollY);
+      }
+
       document.body.classList.toggle("edugo-mobile-nav-open", isOpen);
-      document.body.classList.toggle("edugo-mobile-nav-lock", isOpen);
+    }
+
+    function preventBackgroundScroll(event) {
+      if (!document.body.classList.contains("edugo-mobile-nav-lock")) {
+        return;
+      }
+
+      if (event.target && event.target.closest && event.target.closest(".edugo-mobile-nav")) {
+        return;
+      }
+
+      event.preventDefault();
     }
 
     nav.addEventListener("show.bs.collapse", function () {
@@ -214,12 +242,26 @@
       setNavState(true);
     });
 
+    if (toggler) {
+      ["touchstart", "pointerdown", "mousedown"].forEach(function (eventName) {
+        toggler.addEventListener(eventName, function () {
+          pendingLockScrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
+        }, { passive: true });
+      });
+    }
+
+    window.addEventListener("scroll", function () {
+      if (!document.body.classList.contains("edugo-mobile-nav-lock")) {
+        lastKnownScrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
+      }
+    }, { passive: true });
+
     nav.addEventListener("hide.bs.collapse", function () {
       document.body.classList.remove("edugo-mobile-nav-open");
     });
 
     nav.addEventListener("hidden.bs.collapse", function () {
-      document.body.classList.remove("edugo-mobile-nav-lock");
+      setNavState(false);
       restoreNavHome();
     });
 
@@ -239,6 +281,9 @@
         }).hide();
       }
     });
+
+    document.addEventListener("touchmove", preventBackgroundScroll, { passive: false });
+    document.addEventListener("wheel", preventBackgroundScroll, { passive: false });
   }
 
   function initLanguageSwitcher() {
