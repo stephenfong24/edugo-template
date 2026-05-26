@@ -1338,7 +1338,7 @@
 
     function updateOtpButton() {
       if (otpSecondsRemaining > 0) {
-        otpButton.prop("disabled", true).text("Request (" + otpSecondsRemaining + "s)");
+        otpButton.prop("disabled", true).text(otpSecondsRemaining + "s");
         return;
       }
 
@@ -1404,7 +1404,7 @@
 
     function updateOtpButton() {
       if (otpSecondsRemaining > 0) {
-        otpButton.prop("disabled", true).text("Request (" + otpSecondsRemaining + "s)");
+        otpButton.prop("disabled", true).text(otpSecondsRemaining + "s");
         return;
       }
 

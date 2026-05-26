@@ -4222,21 +4222,33 @@ body[data-page="register"] .register-auth-form-wrap .form-control {
   min-height: 58px;
 }
 
-body[data-page="register"] .register-email-otp-row,
-body[data-page="forgot-password"] .forgot-email-otp-row {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 0.75rem;
-  align-items: flex-start;
+body[data-page="register"] .register-email-otp-row {
+  display: block;
+}
+
+body[data-page="register"] .register-email-input-wrap,
+body[data-page="forgot-password"] .forgot-email-input-wrap {
+  position: relative;
+}
+
+body[data-page="register"] .register-email-input-wrap .form-control,
+body[data-page="forgot-password"] .forgot-email-input-wrap .form-control {
+  padding-right: 7.25rem;
 }
 
 body[data-page="register"] .register-otp-button,
 body[data-page="forgot-password"] .forgot-otp-button {
-  min-width: 132px;
-  min-height: 58px;
-  border-color: var(--brand);
+  position: absolute;
+  top: 50%;
+  right: 1rem;
+  z-index: 3;
+  transform: translateY(-50%);
+  border: 0;
+  background: transparent;
   color: var(--brand);
   font-weight: 700;
+  line-height: 1;
+  padding: 0.35rem 0;
   white-space: nowrap;
 }
 
@@ -4244,15 +4256,18 @@ body[data-page="register"] .register-otp-button:hover,
 body[data-page="register"] .register-otp-button:focus,
 body[data-page="forgot-password"] .forgot-otp-button:hover,
 body[data-page="forgot-password"] .forgot-otp-button:focus {
-  border-color: var(--brand-dark);
-  background: var(--brand-soft);
   color: var(--brand-dark);
+}
+
+body[data-page="register"] .register-otp-button:focus-visible,
+body[data-page="forgot-password"] .forgot-otp-button:focus-visible {
+  outline: 2px solid rgba(5, 150, 105, 0.35);
+  outline-offset: 3px;
+  border-radius: 6px;
 }
 
 body[data-page="register"] .register-otp-button:disabled,
 body[data-page="forgot-password"] .forgot-otp-button:disabled {
-  border-color: var(--line);
-  background: #f8fafc;
   color: var(--muted);
   opacity: 1;
 }
@@ -5732,16 +5747,6 @@ body[data-page="forgot-password"] .forgot-auth-form-wrap .btn-brand {
 
   body[data-page="register"] .register-auth-form-wrap .row {
     --bs-gutter-y: 0.9rem;
-  }
-
-  body[data-page="register"] .register-email-otp-row,
-  body[data-page="forgot-password"] .forgot-email-otp-row {
-    grid-template-columns: 1fr;
-  }
-
-  body[data-page="register"] .register-otp-button,
-  body[data-page="forgot-password"] .forgot-otp-button {
-    width: 100%;
   }
 
   body[data-page="forgot-password"] .forgot-auth-page,
