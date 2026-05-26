@@ -2,6 +2,11 @@
   "use strict";
 
   var courseCache = null;
+  var demoUser = {
+    fullName: "Guest Learner",
+    email: "verylongemailaddress@exampledomain.com",
+    initials: "GA"
+  };
 
   function getQueryParam(key) {
     return new URLSearchParams(window.location.search).get(key);
@@ -12,6 +17,7 @@
       setActiveNav();
       initLanguageSwitcher();
       initMobileNavigation();
+      initHeaderAuth();
     });
     var footerRequest = $("#site-footer").load("partials/footer.html", function () {
       initTitleAnimations();
@@ -30,6 +36,10 @@
         currentPage = "about";
       } else if (path.indexOf("courses") === 0 || path.indexOf("course-details") === 0 || path.indexOf("purchase") === 0) {
         currentPage = "courses";
+      } else if (path.indexOf("my-learnings") === 0) {
+        currentPage = "my-learnings";
+      } else if (path.indexOf("my-certificates") === 0) {
+        currentPage = "my-certificates";
       } else if (path.indexOf("contact") === 0) {
         currentPage = "contact";
       } else if (path.indexOf("login") === 0) {
@@ -41,6 +51,94 @@
 
     $("[data-page-link]").removeClass("active");
     $('[data-page-link="' + currentPage + '"]').addClass("active");
+  }
+
+  function getDemoSession() {
+    try {
+      return JSON.parse(window.localStorage.getItem("edugoDemoSession") || "null");
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function setDemoSession(user) {
+    window.localStorage.setItem("edugoDemoSession", JSON.stringify(user || demoUser));
+  }
+
+  function clearDemoSession() {
+    window.localStorage.removeItem("edugoDemoSession");
+  }
+
+  function isLoggedIn() {
+    return Boolean(getDemoSession());
+  }
+
+  function initHeaderAuth() {
+    var sessionUser = getDemoSession();
+    var $authLinks = $(".header-auth-links, .header-auth-links-desktop");
+    var $menus = $("[data-user-menu]");
+
+    if (!$menus.length) {
+      return;
+    }
+
+    function closeMenus() {
+      $menus.removeClass("is-open");
+      $menus.find(".user-menu-trigger").attr("aria-expanded", "false");
+      $menus.find(".user-menu-panel").attr("aria-hidden", "true");
+    }
+
+    if (sessionUser) {
+      $authLinks.attr("hidden", true).addClass("d-none");
+      $menus.each(function () {
+        var $menu = $(this);
+        $menu.prop("hidden", false).removeAttr("hidden");
+        $menu.find(".user-avatar").text(sessionUser.initials || demoUser.initials);
+        $menu.find(".user-menu-identity strong").text(sessionUser.fullName || demoUser.fullName);
+        $menu.find(".user-menu-identity span").text(sessionUser.email || demoUser.email);
+      });
+    } else {
+      $(".header-auth-links").removeAttr("hidden").removeClass("d-none");
+      $(".header-auth-links-desktop").removeAttr("hidden").addClass("d-none");
+      $menus.prop("hidden", true).attr("hidden", true).removeClass("is-open");
+    }
+
+    $menus.find(".user-menu-trigger").off("click.userMenu").on("click.userMenu", function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      var $menu = $(this).closest("[data-user-menu]");
+      var willOpen = !$menu.hasClass("is-open");
+      closeMenus();
+      $menu.toggleClass("is-open", willOpen);
+      $(this).attr("aria-expanded", willOpen ? "true" : "false");
+      $menu.find(".user-menu-panel").attr("aria-hidden", willOpen ? "false" : "true");
+    });
+
+    $menus.find("[data-logout]").off("click.userMenu").on("click.userMenu", function () {
+      clearDemoSession();
+      closeMenus();
+      initHeaderAuth();
+      showInfoToast("You have been logged out.");
+      if ($("body").data("page") === "my-learnings" || $("body").data("page") === "my-certificates") {
+        window.setTimeout(function () {
+          window.location.href = "login.html";
+        }, 500);
+      }
+    });
+
+    $(document)
+      .off("click.userMenu")
+      .on("click.userMenu", function (event) {
+        if (!$(event.target).closest("[data-user-menu]").length) {
+          closeMenus();
+        }
+      })
+      .off("keydown.userMenu")
+      .on("keydown.userMenu", function (event) {
+        if (event.key === "Escape") {
+          closeMenus();
+        }
+      });
   }
 
   function initMobileNavigation() {
@@ -1283,20 +1381,210 @@
     $("#loginForm").on("submit", function (event) {
       event.preventDefault();
       var form = this;
+      var $form = $(form);
+      var $button = $form.find(".login-submit-button");
+      var username = $.trim($("#loginUsername").val());
+      var password = $("#loginPassword").val();
 
       if (!form.checkValidity()) {
-        $(form).addClass("was-validated");
-        renderToastFeedback("#loginFeedback", "danger", getInvalidFormMessage(form, "Please enter a valid email and password to continue."));
+        $form.addClass("was-validated");
+        renderToastFeedback("#loginFeedback", "danger", getInvalidFormMessage(form, "Please enter your guest credentials to continue."));
         return;
       }
 
-      $(form).addClass("was-validated");
+      if (username !== "guest" || password !== "guest") {
+        $form.addClass("was-validated");
+        renderToastFeedback("#loginFeedback", "danger", "Use username guest and password guest for this demo.");
+        return;
+      }
+
+      $form.addClass("was-validated is-processing");
+      $button.prop("disabled", true).addClass("is-loading");
+      $form.find(":input").not($button).prop("disabled", true);
       renderToastFeedback("#loginFeedback", "info", "Signing you in...");
 
-      simulateApi({ success: true }, 900).done(function () {
-        renderToastFeedback("#loginFeedback", "success", "Login successful.");
+      simulateApi({ success: true }, 1050).done(function () {
+        setDemoSession(demoUser);
+        initHeaderAuth();
+        $button.removeClass("is-loading").addClass("is-success");
+        $form.removeClass("is-processing").addClass("is-success");
+        $(".login-auth-card").addClass("login-success-state");
+        renderToastFeedback("#loginFeedback", "success", "Login successful. Taking you to courses...");
+        window.setTimeout(function () {
+          window.location.href = "courses.html";
+        }, 850);
       });
     });
+  }
+
+  function getLearningItems(courses) {
+    return [
+      {
+        course: courses[1],
+        progress: 72,
+        nextLesson: "Dashboard design and KPI monitoring",
+        pace: "3 lessons left this week"
+      },
+      {
+        course: courses[0],
+        progress: 46,
+        nextLesson: "Experience mapping and service blueprints",
+        pace: "Resume module 3"
+      },
+      {
+        course: courses[4],
+        progress: 28,
+        nextLesson: "Feature scoping and validation",
+        pace: "New project unlocked"
+      }
+    ].filter(function (item) {
+      return item.course;
+    });
+  }
+
+  function renderDashboardSkeleton(target, count) {
+    var markup = "";
+    for (var i = 0; i < count; i += 1) {
+      markup +=
+        '<div class="learning-skeleton-card">' +
+          '<span class="skeleton-line skeleton-image"></span>' +
+          '<span class="skeleton-line skeleton-title"></span>' +
+          '<span class="skeleton-line skeleton-text"></span>' +
+          '<span class="skeleton-line skeleton-button"></span>' +
+        "</div>";
+    }
+    target.html(markup);
+  }
+
+  function initMyLearningsPage() {
+    var $grid = $("#myLearningGrid");
+    if (!$grid.length) {
+      return;
+    }
+
+    renderDashboardSkeleton($grid, 3);
+
+    getCourses().done(function (courses) {
+      var items = getLearningItems(courses);
+
+      window.setTimeout(function () {
+        if (!items.length) {
+          $("#myLearningEmpty").removeClass("d-none");
+          $grid.empty();
+          return;
+        }
+
+        $("#myLearningEmpty").addClass("d-none");
+        $grid.html(items.map(function (item) {
+          var course = item.course;
+          return (
+            '<article class="learning-card">' +
+              '<div class="learning-card-media"><img src="' + course.image + '" alt="' + course.title + '"></div>' +
+              '<div class="learning-card-body">' +
+                '<div class="learning-card-topline">' +
+                  '<span>' + course.category + '</span>' +
+                  '<strong>' + item.progress + '%</strong>' +
+                "</div>" +
+                '<h2>' + course.title + "</h2>" +
+                '<p>' + course.summary + "</p>" +
+                '<div class="learning-progress" aria-label="' + item.progress + '% complete">' +
+                  '<span style="width: ' + item.progress + '%"></span>' +
+                "</div>" +
+                '<div class="learning-card-meta">' +
+                  '<span>' + item.nextLesson + "</span>" +
+                  '<small>' + item.pace + "</small>" +
+                "</div>" +
+                '<a class="btn btn-brand w-100" href="course-details.html?id=' + course.id + '">Continue Learning</a>' +
+              "</div>" +
+            "</article>"
+          );
+        }).join(""));
+      }, 520);
+    }).fail(function () {
+      showErrorToast("Unable to load your learning dashboard.");
+    });
+  }
+
+  function initMyCertificatesPage() {
+    var $grid = $("#certificateGrid");
+    if (!$grid.length) {
+      return;
+    }
+
+    renderDashboardSkeleton($grid, 2);
+
+    getCourses().done(function (courses) {
+      var completed = [courses[2], courses[5], courses[0], courses[1]].filter(Boolean);
+      var issueDates = ["18 Apr 2026", "02 May 2026", "14 May 2026", "22 May 2026"];
+
+      window.setTimeout(function () {
+        if (!completed.length) {
+          $("#certificateEmpty").removeClass("d-none");
+          $grid.empty();
+          return;
+        }
+
+        $("#certificateEmpty").addClass("d-none");
+        $grid.html(completed.map(function (course, index) {
+          var issueDate = issueDates[index];
+          var certificateImage = getSampleCertificateImage(course, issueDate, index);
+          return (
+            '<article class="certificate-card">' +
+              '<div class="certificate-card-pattern" aria-hidden="true"></div>' +
+              '<div class="certificate-preview">' +
+                '<img src="' + certificateImage + '" alt="Sample certificate for ' + course.title + '">' +
+              "</div>" +
+              '<div class="certificate-card-content">' +
+                '<span class="certificate-label">Verified Certificate</span>' +
+                '<h2>' + course.title + "</h2>" +
+                '<p>Completed by Guest Learner</p>' +
+                '<div class="certificate-meta">' +
+                  '<span><strong>Course</strong>' + course.category + "</span>" +
+                  '<span><strong>Issued</strong>' + issueDate + "</span>" +
+                "</div>" +
+                '<button class="btn btn-outline-dark w-100" type="button" data-certificate-download>Download Certificate</button>' +
+              "</div>" +
+            "</article>"
+          );
+        }).join(""));
+      }, 520);
+    }).fail(function () {
+      showErrorToast("Unable to load certificates.");
+    });
+
+    $grid.on("click", "[data-certificate-download]", function () {
+      showSuccessToast("Certificate download prepared for this demo.");
+    });
+  }
+
+  function getSampleCertificateImage(course, issueDate, index) {
+    var palette = index % 2 === 0
+      ? { accent: "#059669", soft: "#ecfdf5", ink: "#0f172a" }
+      : { accent: "#2563eb", soft: "#eff6ff", ink: "#111827" };
+    var title = course.title.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    var category = course.category.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+    var svg =
+      '<svg xmlns="http://www.w3.org/2000/svg" width="960" height="640" viewBox="0 0 960 640">' +
+        '<rect width="960" height="640" rx="42" fill="#ffffff"/>' +
+        '<rect x="28" y="28" width="904" height="584" rx="32" fill="' + palette.soft + '" stroke="' + palette.accent + '" stroke-opacity="0.22" stroke-width="2"/>' +
+        '<rect x="62" y="62" width="836" height="516" rx="22" fill="#ffffff" stroke="#cbd5e1" stroke-width="2"/>' +
+        '<path d="M102 174H858M102 466H858" stroke="' + palette.accent + '" stroke-opacity="0.22" stroke-width="2"/>' +
+        '<circle cx="480" cy="132" r="46" fill="' + palette.accent + '" fill-opacity="0.12"/>' +
+        '<circle cx="480" cy="132" r="30" fill="' + palette.accent + '"/>' +
+        '<path d="M468 132l9 9 17-20" fill="none" stroke="#fff" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>' +
+        '<text x="480" y="224" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="800" fill="' + palette.accent + '" letter-spacing="4">CERTIFICATE OF COMPLETION</text>' +
+        '<text x="480" y="286" text-anchor="middle" font-family="Manrope, Arial, sans-serif" font-size="54" font-weight="800" fill="' + palette.ink + '">Guest Learner</text>' +
+        '<text x="480" y="335" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="22" fill="#64748b">has successfully completed</text>' +
+        '<text x="480" y="392" text-anchor="middle" font-family="Manrope, Arial, sans-serif" font-size="38" font-weight="800" fill="' + palette.ink + '">' + title + '</text>' +
+        '<text x="480" y="436" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="20" font-weight="700" fill="' + palette.accent + '">' + category + ' Program</text>' +
+        '<text x="188" y="528" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="700" fill="' + palette.ink + '">EduGo Academy</text>' +
+        '<text x="188" y="554" font-family="Inter, Arial, sans-serif" font-size="15" fill="#64748b">Verified credential</text>' +
+        '<text x="772" y="528" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="700" fill="' + palette.ink + '">' + issueDate + '</text>' +
+        '<text x="772" y="554" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="15" fill="#64748b">Issue date</text>' +
+      "</svg>";
+
+    return "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg);
   }
 
   function initCourseActionToasts() {
@@ -1513,6 +1801,8 @@
     initHomeCourses();
     initCoursesPage();
     initCourseDetailsPage();
+    initMyLearningsPage();
+    initMyCertificatesPage();
     initPurchasePage();
     initLoginForm();
     initPasswordToggles();

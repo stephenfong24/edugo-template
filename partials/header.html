@@ -20,10 +20,9 @@
           </button>
         </div>
         <ul class="navbar-nav mx-auto mb-2 mb-lg-0">
-          <li class="nav-item"><a class="nav-link" data-page-link="home" href="index.html">Home</a></li>
-          <li class="nav-item"><a class="nav-link" data-page-link="about" href="about.html">About Us</a></li>
           <li class="nav-item"><a class="nav-link" data-page-link="courses" href="courses.html">Courses</a></li>
-          <li class="nav-item"><a class="nav-link" data-page-link="contact" href="contact.html">Contact Us</a></li>
+          <li class="nav-item"><a class="nav-link" data-page-link="my-learnings" href="my-learnings.html">My Learnings</a></li>
+          <li class="nav-item"><a class="nav-link" data-page-link="my-certificates" href="my-certificates.html">My Certificates</a></li>
         </ul>
         <div class="header-actions d-flex align-items-center gap-2">
           <div class="language-picker">
@@ -86,11 +85,47 @@
             <a class="btn btn-outline-dark header-auth-button" data-page-link="login" href="login.html">Sign In</a>
             <a class="btn btn-brand header-auth-button" data-page-link="register" href="register.html">Join for Free</a>
           </div>
+          <div class="user-menu d-lg-none" data-user-menu hidden>
+            <button class="user-menu-trigger" type="button" aria-haspopup="menu" aria-expanded="false" aria-label="Open profile menu">
+              <span class="user-avatar">GA</span>
+            </button>
+            <div class="user-menu-panel" role="menu" aria-hidden="true">
+              <div class="user-menu-card">
+                <span class="user-avatar user-avatar-lg">GA</span>
+                <div class="user-menu-identity">
+                  <strong>Guest Learner</strong>
+                  <span>verylongemailaddress@exampledomain.com</span>
+                </div>
+              </div>
+              <div class="user-menu-divider"></div>
+              <a href="my-learnings.html" role="menuitem">Profile</a>
+              <button type="button" role="menuitem">Change Password</button>
+              <button type="button" role="menuitem" data-logout>Logout</button>
+            </div>
+          </div>
         </div>
       </div>
       <div class="header-auth-links-desktop d-none d-lg-flex align-items-center gap-2">
         <a class="btn btn-outline-dark header-auth-button" data-page-link="login" href="login.html">Sign In</a>
         <a class="btn btn-brand header-auth-button" data-page-link="register" href="register.html">Join for Free</a>
+      </div>
+      <div class="user-menu user-menu-desktop d-none d-lg-flex" data-user-menu hidden>
+        <button class="user-menu-trigger" type="button" aria-haspopup="menu" aria-expanded="false" aria-label="Open profile menu">
+          <span class="user-avatar">GA</span>
+        </button>
+        <div class="user-menu-panel" role="menu" aria-hidden="true">
+          <div class="user-menu-card">
+            <span class="user-avatar user-avatar-lg">GA</span>
+            <div class="user-menu-identity">
+              <strong>Guest Learner</strong>
+              <span>verylongemailaddress@exampledomain.com</span>
+            </div>
+          </div>
+          <div class="user-menu-divider"></div>
+          <a href="my-learnings.html" role="menuitem">Profile</a>
+          <button type="button" role="menuitem">Change Password</button>
+          <button type="button" role="menuitem" data-logout>Logout</button>
+        </div>
       </div>
     </div>
   </nav>
