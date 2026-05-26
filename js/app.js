@@ -14,7 +14,7 @@
   }
 
   function loadSharedComponents() {
-    var headerRequest = $("#site-header").load("partials/header.html?v=profile-ui", function () {
+    var headerRequest = $("#site-header").load("partials/header.html?v=public-nav", function () {
       setActiveNav();
       initLanguageSwitcher();
       initMobileNavigation();
@@ -84,6 +84,8 @@
     var sessionUser = getDemoSession();
     var $authLinks = $(".header-auth-links, .header-auth-links-desktop");
     var $menus = $("[data-user-menu]");
+    var $authNavItems = $("[data-auth-nav]");
+    var $guestNavItems = $("[data-guest-nav]");
 
     if (!$menus.length) {
       return;
@@ -114,6 +116,8 @@
 
     if (sessionUser) {
       $authLinks.attr("hidden", true).addClass("d-none");
+      $authNavItems.removeAttr("hidden").removeClass("d-none");
+      $guestNavItems.attr("hidden", true).addClass("d-none");
       $menus.each(function () {
         var $menu = $(this);
         $menu.prop("hidden", false).removeAttr("hidden");
@@ -127,6 +131,8 @@
     } else {
       $(".header-auth-links").removeAttr("hidden").removeClass("d-none");
       $(".header-auth-links-desktop").removeAttr("hidden").addClass("d-none");
+      $authNavItems.attr("hidden", true).addClass("d-none");
+      $guestNavItems.removeAttr("hidden").removeClass("d-none");
       $menus.prop("hidden", true).attr("hidden", true).removeClass("is-open");
       positionMobileUserMenu(false);
     }
@@ -684,23 +690,42 @@
       keyboard: true,
       focus: true
     });
+    var shouldOpenNormalAnnouncement = false;
 
-    $(imageModalElement).one("hidden.bs.modal", function () {
+    function showNormalAnnouncement() {
       if (!$(normalModalElement).hasClass("show")) {
         normalModal.show();
+      }
+    }
+
+    $(imageModalElement).on("shown.bs.modal", function () {
+      shouldOpenNormalAnnouncement = true;
+    });
+
+    $(imageModalElement).on("click", ".modal-content", function (event) {
+      if ($(event.target).closest(".image-announcement-close").length) {
+        return;
+      }
+
+      imageModal.hide();
+    });
+
+    $(imageModalElement).on("hidden.bs.modal", function () {
+      if (shouldOpenNormalAnnouncement) {
+        shouldOpenNormalAnnouncement = false;
+        window.setTimeout(showNormalAnnouncement, 120);
       }
     });
 
     $(normalModalElement).on("show.bs.modal", function () {
       if ($(imageModalElement).hasClass("show")) {
+        shouldOpenNormalAnnouncement = false;
         imageModal.hide();
       }
     });
 
     window.setTimeout(function () {
-      if (!$(normalModalElement).hasClass("show")) {
-        imageModal.show();
-      }
+      imageModal.show();
     }, 350);
   }
 

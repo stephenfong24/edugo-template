@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 620" role="img" aria-labelledby="posterTitle posterDesc">
+  <title id="posterTitle">EduGo admissions announcement</title>
+  <desc id="posterDesc">Admissions open poster for EduGo online programs.</desc>
+  <defs>
+    <linearGradient id="posterBg" x1="0" y1="0" x2="960" y2="620" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#064E3B"/>
+      <stop offset="0.52" stop-color="#0F766E"/>
+      <stop offset="1" stop-color="#111827"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(718 132) rotate(133) scale(390 300)">
+      <stop stop-color="#A7F3D0" stop-opacity="0.58"/>
+      <stop offset="1" stop-color="#A7F3D0" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="960" height="620" rx="42" fill="url(#posterBg)"/>
+  <rect width="960" height="620" rx="42" fill="url(#glow)"/>
+  <circle cx="118" cy="116" r="42" fill="#10B981"/>
+  <text x="118" y="131" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="32" font-weight="800" fill="#ECFDF5">EA</text>
+  <text x="82" y="230" font-family="Inter, Arial, sans-serif" font-size="28" font-weight="800" letter-spacing="4" fill="#34D399">ADMISSIONS OPEN</text>
+  <text x="82" y="318" font-family="Inter, Arial, sans-serif" font-size="72" font-weight="800" fill="#FFFFFF">Build practical</text>
+  <text x="82" y="402" font-family="Inter, Arial, sans-serif" font-size="72" font-weight="800" fill="#FFFFFF">digital skills</text>
+  <text x="82" y="470" font-family="Inter, Arial, sans-serif" font-size="32" font-weight="600" fill="#D1FAE5">Guided mentorship, flexible study, and</text>
+  <text x="82" y="514" font-family="Inter, Arial, sans-serif" font-size="32" font-weight="600" fill="#D1FAE5">portfolio-ready projects for busy learners.</text>
+  <rect x="628" y="138" width="232" height="300" rx="26" fill="#ECFDF5" opacity="0.96"/>
+  <circle cx="744" cy="232" r="58" fill="#A7F3D0"/>
+  <path d="M686 360c13-55 45-82 58-82s45 27 58 82H686Z" fill="#059669"/>
+  <path d="M704 230c25 20 62 22 92 4-2 40-20 62-52 62-30 0-48-23-40-66Z" fill="#F8D9C6"/>
+  <path d="M700 223c0-44 27-70 62-70 32 0 56 23 56 64-26-1-52-7-78-19-8 13-21 21-40 25Z" fill="#0F766E"/>
+  <rect x="608" y="464" width="272" height="62" rx="31" fill="#34D399"/>
+  <text x="744" y="504" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="800" fill="#052E2B">Tap to learn more</text>
+</svg>

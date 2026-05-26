@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 720 520" role="img" aria-labelledby="workshopTitle workshopDesc">
+  <title id="workshopTitle">Learners collaborating in a workshop</title>
+  <desc id="workshopDesc">Illustration of an online learning workshop with laptops and sticky notes.</desc>
+  <defs>
+    <linearGradient id="room" x1="0" y1="0" x2="720" y2="520" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#F8FAFC"/>
+      <stop offset="1" stop-color="#DCFCE7"/>
+    </linearGradient>
+  </defs>
+  <rect width="720" height="520" rx="28" fill="url(#room)"/>
+  <rect x="66" y="54" width="588" height="292" rx="24" fill="#FFFFFF"/>
+  <rect x="100" y="86" width="120" height="26" rx="6" fill="#F59E0B"/>
+  <rect x="236" y="86" width="120" height="26" rx="6" fill="#F43F5E"/>
+  <rect x="372" y="86" width="120" height="26" rx="6" fill="#FBBF24"/>
+  <rect x="508" y="86" width="90" height="26" rx="6" fill="#10B981"/>
+  <rect x="100" y="132" width="120" height="26" rx="6" fill="#FBBF24"/>
+  <rect x="236" y="132" width="120" height="26" rx="6" fill="#10B981"/>
+  <rect x="372" y="132" width="120" height="26" rx="6" fill="#F43F5E"/>
+  <rect x="100" y="178" width="120" height="26" rx="6" fill="#10B981"/>
+  <rect x="236" y="178" width="120" height="26" rx="6" fill="#F59E0B"/>
+  <path d="M448 316c5-49 28-82 66-82s63 34 69 82H448Z" fill="#0F766E"/>
+  <circle cx="514" cy="208" r="42" fill="#F8D9C6"/>
+  <path d="M471 206c1-42 27-68 61-68 30 0 52 22 54 60-31 0-58-7-82-22-7 14-18 23-33 30Z" fill="#0F766E"/>
+  <rect x="104" y="378" width="512" height="58" rx="14" fill="#0F172A" opacity="0.12"/>
+  <rect x="168" y="320" width="180" height="96" rx="12" fill="#111827"/>
+  <rect x="188" y="340" width="140" height="56" rx="7" fill="#D1FAE5"/>
+  <circle cx="126" cy="358" r="34" fill="#F8D9C6"/>
+  <path d="M82 438c9-43 27-66 44-66s36 23 44 66H82Z" fill="#059669"/>
+  <circle cx="624" cy="360" r="34" fill="#F8D9C6"/>
+  <path d="M580 438c9-43 27-66 44-66s36 23 44 66H580Z" fill="#047857"/>
+</svg>
