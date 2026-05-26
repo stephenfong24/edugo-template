@@ -13,7 +13,20 @@
     return new URLSearchParams(window.location.search).get(key);
   }
 
+  function ensureFontAwesome() {
+    if (document.querySelector('link[href*="font-awesome"][rel="stylesheet"]')) {
+      return;
+    }
+
+    var fontAwesome = document.createElement("link");
+    fontAwesome.rel = "stylesheet";
+    fontAwesome.href = "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css";
+    document.head.appendChild(fontAwesome);
+  }
+
   function loadSharedComponents() {
+    ensureFontAwesome();
+
     var headerRequest = $("#site-header").load("partials/header.html?v=public-nav", function () {
       setActiveNav();
       initLanguageSwitcher();
@@ -86,6 +99,7 @@
     var $menus = $("[data-user-menu]");
     var $authNavItems = $("[data-auth-nav]");
     var $guestNavItems = $("[data-guest-nav]");
+    var $mobileLogout = $("[data-mobile-logout]");
 
     if (!$menus.length) {
       return;
@@ -118,6 +132,7 @@
       $authLinks.attr("hidden", true).addClass("d-none");
       $authNavItems.removeAttr("hidden").removeClass("d-none");
       $guestNavItems.attr("hidden", true).addClass("d-none");
+      $mobileLogout.prop("hidden", false).removeAttr("hidden");
       $menus.each(function () {
         var $menu = $(this);
         $menu.prop("hidden", false).removeAttr("hidden");
@@ -133,6 +148,7 @@
       $(".header-auth-links-desktop").removeAttr("hidden").addClass("d-none");
       $authNavItems.attr("hidden", true).addClass("d-none");
       $guestNavItems.removeAttr("hidden").removeClass("d-none");
+      $mobileLogout.prop("hidden", true).attr("hidden", true);
       $menus.prop("hidden", true).attr("hidden", true).removeClass("is-open");
       positionMobileUserMenu(false);
     }
@@ -148,7 +164,7 @@
       $menu.find(".user-menu-panel").attr("aria-hidden", willOpen ? "false" : "true");
     });
 
-    $menus.find("[data-logout]").off("click.userMenu").on("click.userMenu", function () {
+    $("[data-logout]").off("click.userMenu").on("click.userMenu", function () {
       $("body").addClass("is-logging-out");
       clearDemoSession();
       closeMenus();
@@ -449,20 +465,6 @@
     var toastOptions = $.extend({
       duration: normalizedType === "info" ? 2600 : 3400
     }, options || {});
-
-    if (typeof window.Toastify === "function") {
-      window.Toastify({
-        text: getToastMarkup(normalizedType, message),
-        duration: toastOptions.duration,
-        gravity: "top",
-        position: "right",
-        close: true,
-        stopOnFocus: true,
-        escapeMarkup: false,
-        className: "edugo-toast edugo-toast--" + normalizedType
-      }).showToast();
-      return;
-    }
 
     showFallbackToast(normalizedType, message, toastOptions.duration);
   }
