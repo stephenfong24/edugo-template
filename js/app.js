@@ -1306,19 +1306,68 @@
   }
 
   function initPasswordToggles() {
+    var passwordVisibleIcon =
+      '<svg class="password-toggle-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">' +
+      '<path d="M2.25 12s3.5-6.25 9.75-6.25S21.75 12 21.75 12 18.25 18.25 12 18.25 2.25 12 2.25 12Z"></path>' +
+      '<circle cx="12" cy="12" r="2.75"></circle>' +
+      "</svg>";
+    var passwordHiddenIcon =
+      '<svg class="password-toggle-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">' +
+      '<path d="M3 3l18 18"></path>' +
+      '<path d="M10.58 10.58a2.75 2.75 0 0 0 3.89 3.89"></path>' +
+      '<path d="M9.18 5.98A9.72 9.72 0 0 1 12 5.75c6.25 0 9.75 6.25 9.75 6.25a17.02 17.02 0 0 1-3.22 3.72"></path>' +
+      '<path d="M6.5 7.5A16.77 16.77 0 0 0 2.25 12S5.75 18.25 12 18.25c1.03 0 2-.17 2.9-.46"></path>' +
+      "</svg>";
+
     $("[data-password-toggle]").on("click", function () {
       var button = $(this);
       var input = $("#" + button.data("password-toggle"));
       var isPassword = input.attr("type") === "password";
 
       input.attr("type", isPassword ? "text" : "password");
-      button.text(isPassword ? "Hide" : "Show");
+      button.html(isPassword ? passwordHiddenIcon : passwordVisibleIcon);
       button.attr("aria-pressed", isPassword ? "true" : "false");
-      button.attr("aria-label", (isPassword ? "Hide " : "Show ") + input.prev("label").text().toLowerCase());
+      button.attr("aria-label", (isPassword ? "Hide " : "Show ") + input.siblings("label").text().toLowerCase());
     });
   }
 
   function initRegisterForm() {
+    var otpTimerId = null;
+    var otpSecondsRemaining = 0;
+    var otpButton = $("#requestOtpButton");
+
+    function updateOtpButton() {
+      if (otpSecondsRemaining > 0) {
+        otpButton.prop("disabled", true).text("Request (" + otpSecondsRemaining + "s)");
+        return;
+      }
+
+      otpButton.prop("disabled", false).text("Request");
+    }
+
+    otpButton.on("click", function () {
+      if (otpSecondsRemaining > 0) {
+        return;
+      }
+
+      otpSecondsRemaining = 60;
+      updateOtpButton();
+
+      otpTimerId = window.setInterval(function () {
+        otpSecondsRemaining -= 1;
+
+        if (otpSecondsRemaining <= 0) {
+          window.clearInterval(otpTimerId);
+          otpTimerId = null;
+          otpSecondsRemaining = 0;
+        }
+
+        updateOtpButton();
+      }, 1000);
+
+      renderToastFeedback("#registerFeedback", "info", "OTP request sent. Please check your email.");
+    });
+
     $("#registerForm").on("submit", function (event) {
       event.preventDefault();
       var form = this;
@@ -1349,13 +1398,49 @@
   }
 
   function initForgotPasswordForm() {
+    var otpTimerId = null;
+    var otpSecondsRemaining = 0;
+    var otpButton = $("#forgotRequestOtpButton");
+
+    function updateOtpButton() {
+      if (otpSecondsRemaining > 0) {
+        otpButton.prop("disabled", true).text("Request (" + otpSecondsRemaining + "s)");
+        return;
+      }
+
+      otpButton.prop("disabled", false).text("Request");
+    }
+
+    otpButton.on("click", function () {
+      if (otpSecondsRemaining > 0) {
+        return;
+      }
+
+      otpSecondsRemaining = 60;
+      updateOtpButton();
+
+      otpTimerId = window.setInterval(function () {
+        otpSecondsRemaining -= 1;
+
+        if (otpSecondsRemaining <= 0) {
+          window.clearInterval(otpTimerId);
+          otpTimerId = null;
+          otpSecondsRemaining = 0;
+        }
+
+        updateOtpButton();
+      }, 1000);
+
+      renderToastFeedback("#forgotPasswordFeedback", "info", "OTP request sent. Please check your email.");
+    });
+
     $("#forgotPasswordForm").on("submit", function (event) {
       event.preventDefault();
       var form = this;
 
       if (!form.checkValidity()) {
         $(form).addClass("was-validated");
-        renderToastFeedback("#forgotPasswordFeedback", "danger", getInvalidFormMessage(form, "Please provide the email address for your account."));
+        renderToastFeedback("#forgotPasswordFeedback", "danger", getInvalidFormMessage(form, "Please provide your email address and OTP."));
         return;
       }
 

@@ -4222,6 +4222,41 @@ body[data-page="register"] .register-auth-form-wrap .form-control {
   min-height: 58px;
 }
 
+body[data-page="register"] .register-email-otp-row,
+body[data-page="forgot-password"] .forgot-email-otp-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0.75rem;
+  align-items: flex-start;
+}
+
+body[data-page="register"] .register-otp-button,
+body[data-page="forgot-password"] .forgot-otp-button {
+  min-width: 132px;
+  min-height: 58px;
+  border-color: var(--brand);
+  color: var(--brand);
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+body[data-page="register"] .register-otp-button:hover,
+body[data-page="register"] .register-otp-button:focus,
+body[data-page="forgot-password"] .forgot-otp-button:hover,
+body[data-page="forgot-password"] .forgot-otp-button:focus {
+  border-color: var(--brand-dark);
+  background: var(--brand-soft);
+  color: var(--brand-dark);
+}
+
+body[data-page="register"] .register-otp-button:disabled,
+body[data-page="forgot-password"] .forgot-otp-button:disabled {
+  border-color: var(--line);
+  background: #f8fafc;
+  color: var(--muted);
+  opacity: 1;
+}
+
 .auth-form-wrap .password-field {
   margin-bottom: 0.95rem;
 }
@@ -4232,7 +4267,7 @@ body[data-page="register"] .register-auth-form-wrap .form-control {
 }
 
 .password-field .form-control {
-  padding-right: 4.75rem;
+  padding-right: 4rem;
 }
 
 .was-validated .password-field:has(.form-control:invalid) > .invalid-feedback,
@@ -4245,25 +4280,39 @@ body[data-page="register"] .register-auth-form-wrap .form-control {
   top: 50%;
   right: 0.85rem;
   z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
   transform: translateY(-50%);
   border: 0;
+  border-radius: 50%;
   background: transparent;
   color: var(--brand);
-  font-size: 0.85rem;
-  font-weight: 700;
-  line-height: 1;
-  padding: 0.35rem 0.15rem;
+  padding: 0;
 }
 
 .password-field .password-toggle:hover,
 .password-field .password-toggle:focus {
+  background: var(--brand-soft);
   color: var(--brand-dark);
 }
 
 .password-field .password-toggle:focus-visible {
   outline: 2px solid rgba(5, 150, 105, 0.35);
   outline-offset: 2px;
-  border-radius: 6px;
+}
+
+.password-field .password-toggle-icon {
+  width: 1.2rem;
+  height: 1.2rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  pointer-events: none;
 }
 
 body[data-page="register"] .register-auth-form-wrap .btn-brand {
@@ -5678,6 +5727,16 @@ body[data-page="forgot-password"] .forgot-auth-form-wrap {
 
   body[data-page="register"] .register-auth-form-wrap .row {
     --bs-gutter-y: 0.9rem;
+  }
+
+  body[data-page="register"] .register-email-otp-row,
+  body[data-page="forgot-password"] .forgot-email-otp-row {
+    grid-template-columns: 1fr;
+  }
+
+  body[data-page="register"] .register-otp-button,
+  body[data-page="forgot-password"] .forgot-otp-button {
+    width: 100%;
   }
 
   body[data-page="forgot-password"] .forgot-auth-page,

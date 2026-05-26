@@ -23,23 +23,40 @@
                     <div class="row g-3">
                       <div class="col-12">
                         <div class="form-floating">
-                          <input type="text" class="form-control" id="registerFirstName" name="registerFirstName" placeholder=" " required />
-                          <label for="registerFirstName">First name</label>
-                          <div class="invalid-feedback">Please enter your first name.</div>
+                          <input type="text" class="form-control" id="registerFullName" name="registerFullName" placeholder=" " required />
+                          <label for="registerFullName">Full name</label>
+                          <div class="invalid-feedback">Please enter your full name.</div>
                         </div>
                       </div>
                       <div class="col-12">
                         <div class="form-floating">
-                          <input type="text" class="form-control" id="registerLastName" name="registerLastName" placeholder=" " required />
-                          <label for="registerLastName">Last name</label>
-                          <div class="invalid-feedback">Please enter your last name.</div>
+                          <input type="text" class="form-control" id="registerCompanyName" name="registerCompanyName" placeholder=" " required />
+                          <label for="registerCompanyName">Company name</label>
+                          <div class="invalid-feedback">Please enter your company name.</div>
                         </div>
                       </div>
                       <div class="col-12">
                         <div class="form-floating">
-                          <input type="email" class="form-control" id="registerEmail" name="registerEmail" placeholder=" " required />
-                          <label for="registerEmail">Email address</label>
-                          <div class="invalid-feedback">Please enter a valid email address.</div>
+                          <input type="text" class="form-control" id="registerOccupation" name="registerOccupation" placeholder=" " required />
+                          <label for="registerOccupation">Occupation</label>
+                          <div class="invalid-feedback">Please enter your occupation.</div>
+                        </div>
+                      </div>
+                      <div class="col-12">
+                        <div class="register-email-otp-row">
+                          <div class="form-floating">
+                            <input type="email" class="form-control" id="registerEmail" name="registerEmail" placeholder=" " required />
+                            <label for="registerEmail">Email address</label>
+                            <div class="invalid-feedback">Please enter a valid email address.</div>
+                          </div>
+                          <button type="button" class="btn btn-outline-brand register-otp-button" id="requestOtpButton">Request</button>
+                        </div>
+                      </div>
+                      <div class="col-12">
+                        <div class="form-floating">
+                          <input type="text" class="form-control" id="registerOtp" name="registerOtp" placeholder=" " inputmode="numeric" required />
+                          <label for="registerOtp">One Time Password (OTP)</label>
+                          <div class="invalid-feedback">Please enter the OTP sent to your email.</div>
                         </div>
                       </div>
                       <div class="col-12">
@@ -47,7 +64,12 @@
                           <div class="form-floating password-input-wrap">
                             <input type="password" class="form-control" id="registerPassword" name="registerPassword" placeholder=" " minlength="8" required />
                             <label for="registerPassword">Password</label>
-                            <button class="password-toggle" type="button" data-password-toggle="registerPassword" aria-label="Show password" aria-pressed="false">Show</button>
+                            <button class="password-toggle" type="button" data-password-toggle="registerPassword" aria-label="Show password" aria-pressed="false">
+                              <svg class="password-toggle-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                <path d="M2.25 12s3.5-6.25 9.75-6.25S21.75 12 21.75 12 18.25 18.25 12 18.25 2.25 12 2.25 12Z"></path>
+                                <circle cx="12" cy="12" r="2.75"></circle>
+                              </svg>
+                            </button>
                           </div>
                           <div class="invalid-feedback">Password must be at least 8 characters.</div>
                         </div>
@@ -57,7 +79,12 @@
                           <div class="form-floating password-input-wrap">
                             <input type="password" class="form-control" id="registerConfirmPassword" name="registerConfirmPassword" placeholder=" " minlength="8" required />
                             <label for="registerConfirmPassword">Confirm password</label>
-                            <button class="password-toggle" type="button" data-password-toggle="registerConfirmPassword" aria-label="Show confirm password" aria-pressed="false">Show</button>
+                            <button class="password-toggle" type="button" data-password-toggle="registerConfirmPassword" aria-label="Show confirm password" aria-pressed="false">
+                              <svg class="password-toggle-icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                <path d="M2.25 12s3.5-6.25 9.75-6.25S21.75 12 21.75 12 18.25 18.25 12 18.25 2.25 12 2.25 12Z"></path>
+                                <circle cx="12" cy="12" r="2.75"></circle>
+                              </svg>
+                            </button>
                           </div>
                           <div class="invalid-feedback">Please confirm your password.</div>
                         </div>
