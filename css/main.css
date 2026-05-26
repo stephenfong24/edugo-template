@@ -1074,16 +1074,29 @@ body[data-page="privacy-policy"] .page-hero .container {
 }
 
 body[data-page="home"] .modal-backdrop.show {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
   opacity: 0.74;
+}
+
+html.announcement-modal-open,
+body.announcement-modal-open {
+  overflow: hidden !important;
+  overscroll-behavior: none;
 }
 
 .image-announcement-modal,
 .normal-announcement-modal {
+  position: fixed;
+  inset: 0;
   height: 100vh;
   height: 100dvh;
   max-height: 100vh;
   max-height: 100dvh;
-  overflow-y: auto;
+  overflow: hidden;
 }
 
 .image-announcement-modal.fade .modal-dialog,

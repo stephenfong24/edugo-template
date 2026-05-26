@@ -698,8 +698,15 @@
       }
     }
 
+    function updateAnnouncementLock() {
+      var isAnnouncementOpen = $(imageModalElement).hasClass("show") || $(normalModalElement).hasClass("show");
+      document.documentElement.classList.toggle("announcement-modal-open", isAnnouncementOpen);
+      document.body.classList.toggle("announcement-modal-open", isAnnouncementOpen);
+    }
+
     $(imageModalElement).on("shown.bs.modal", function () {
       shouldOpenNormalAnnouncement = true;
+      updateAnnouncementLock();
     });
 
     $(imageModalElement).on("click", ".modal-content", function (event) {
@@ -711,11 +718,14 @@
     });
 
     $(imageModalElement).on("hidden.bs.modal", function () {
+      updateAnnouncementLock();
       if (shouldOpenNormalAnnouncement) {
         shouldOpenNormalAnnouncement = false;
         window.setTimeout(showNormalAnnouncement, 120);
       }
     });
+
+    $(normalModalElement).on("shown.bs.modal hidden.bs.modal", updateAnnouncementLock);
 
     $(normalModalElement).on("show.bs.modal", function () {
       if ($(imageModalElement).hasClass("show")) {
