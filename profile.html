@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EduGo | Profile</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css" />
+    <link rel="stylesheet" href="css/main.css" />
+  </head>
+  <body data-page="profile">
+    <div id="site-header"></div>
+    <main class="account-page premium-profile-page">
+      <section class="account-hero profile-hero">
+        <div class="container">
+          <span class="eyebrow text-brand">Account</span>
+          <h1>Profile workspace</h1>
+          <p>Manage your learner identity, security posture, and progress signals from a polished account hub.</p>
+        </div>
+      </section>
+
+      <section class="section-space pt-0">
+        <div class="container">
+          <div class="profile-shell">
+            <section class="profile-cover-card profile-fade-in">
+              <div class="profile-cover-main">
+                <div class="profile-avatar-stack">
+                  <img id="profileAvatarInitials" class="profile-hero-avatar" src="assets/sample-avatar.svg" alt="Guest Learner" />
+                  <button id="changeAvatarButton" class="profile-avatar-edit" type="button" aria-label="Change avatar"></button>
+                </div>
+                <div class="profile-hero-copy">
+                  <div class="profile-name-row">
+                    <h2 id="profileDisplayName">Guest Learner</h2>
+                    <span class="profile-status-pill"><i aria-hidden="true"></i><span id="profileStatus">Active</span></span>
+                  </div>
+                  <p id="profileDisplayEmail">verylongemailaddress@exampledomain.com</p>
+                  <div class="profile-badge-row">
+                    <span>Learner member</span>
+                    <span id="profileJoined">May 2026</span>
+                  </div>
+                </div>
+              </div>
+              <div class="profile-cover-actions">
+                <a class="btn btn-outline-dark" href="edit-profile.html">Edit Profile</a>
+                <a class="btn btn-brand" href="change-password.html">Change Password</a>
+              </div>
+            </section>
+
+            <section class="profile-section profile-fade-in">
+              <div class="profile-section-heading">
+                <div>
+                  <span class="eyebrow text-brand">Profile information</span>
+                  <h2>Personal details</h2>
+                </div>
+              </div>
+              <div class="profile-info-grid">
+                <article class="profile-info-card">
+                  <span>Full Name</span>
+                  <strong id="profileInfoName">Guest Learner</strong>
+                </article>
+                <article class="profile-info-card">
+                  <span>Email</span>
+                  <strong id="profileInfoEmail">verylongemailaddress@exampledomain.com</strong>
+                </article>
+                <article class="profile-info-card">
+                  <span>Mobile Number</span>
+                  <strong id="profileInfoPhone">+1 (555) 018-2049</strong>
+                </article>
+                <article class="profile-info-card">
+                  <span>Gender</span>
+                  <strong id="profileInfoGender">Prefer not to say</strong>
+                </article>
+                <article class="profile-info-card">
+                  <span>Date of Birth</span>
+                  <strong id="profileInfoDob">12 Aug 1994</strong>
+                </article>
+                <article class="profile-info-card">
+                  <span>Country</span>
+                  <strong id="profileInfoCountry">Malaysia</strong>
+                </article>
+                <article class="profile-info-card profile-info-card-wide">
+                  <span>Address</span>
+                  <strong id="profileInfoAddress">Level 8, Menara Learning, Kuala Lumpur</strong>
+                </article>
+              </div>
+            </section>
+
+            <div class="profile-dashboard-grid">
+              <section class="profile-section profile-security-card profile-fade-in">
+                <div class="profile-section-heading">
+                  <div>
+                    <span class="eyebrow text-brand">Security</span>
+                    <h2>Account protection</h2>
+                  </div>
+                </div>
+                <div class="security-status-list">
+                  <span><strong>Last password update</strong><em>26 May 2026</em></span>
+                  <span><strong>Login method</strong><em>Email and password</em></span>
+                  <span><strong>Google / LinkedIn</strong><em>Not linked</em></span>
+                </div>
+              </section>
+
+              <section class="profile-section profile-fade-in">
+                <div class="profile-section-heading">
+                  <div>
+                    <span class="eyebrow text-brand">Learning statistics</span>
+                    <h2>Progress snapshot</h2>
+                  </div>
+                </div>
+                <div class="profile-stats-grid">
+                  <article class="profile-stat-card"><span class="profile-stat-icon icon-courses"></span><strong>3</strong><em>Courses Enrolled</em></article>
+                  <article class="profile-stat-card"><span class="profile-stat-icon icon-completed"></span><strong>2</strong><em>Courses Completed</em></article>
+                  <article class="profile-stat-card"><span class="profile-stat-icon icon-certificates"></span><strong>4</strong><em>Certificates Earned</em></article>
+                  <article class="profile-stat-card"><span class="profile-stat-icon icon-hours"></span><strong>48h</strong><em>Learning Hours</em></article>
+                </div>
+              </section>
+            </div>
+
+          </div>
+        </div>
+      </section>
+    </main>
+    <div id="site-footer"></div>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script src="js/app.js"></script>
+  </body>
+</html>

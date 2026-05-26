@@ -5,7 +5,8 @@
   var demoUser = {
     fullName: "Guest Learner",
     email: "verylongemailaddress@exampledomain.com",
-    initials: "GA"
+    initials: "GA",
+    avatarUrl: "assets/sample-avatar.svg"
   };
 
   function getQueryParam(key) {
@@ -13,7 +14,7 @@
   }
 
   function loadSharedComponents() {
-    var headerRequest = $("#site-header").load("partials/header.html", function () {
+    var headerRequest = $("#site-header").load("partials/header.html?v=profile-ui", function () {
       setActiveNav();
       initLanguageSwitcher();
       initMobileNavigation();
@@ -40,6 +41,12 @@
         currentPage = "my-learnings";
       } else if (path.indexOf("my-certificates") === 0) {
         currentPage = "my-certificates";
+      } else if (path.indexOf("purchase-history") === 0) {
+        currentPage = "purchase-history";
+      } else if (path.indexOf("profile") === 0 || path.indexOf("edit-profile") === 0) {
+        currentPage = "profile";
+      } else if (path.indexOf("change-password") === 0) {
+        currentPage = "change-password";
       } else if (path.indexOf("contact") === 0) {
         currentPage = "contact";
       } else if (path.indexOf("login") === 0) {
@@ -88,19 +95,40 @@
       $menus.find(".user-menu-panel").attr("aria-hidden", "true");
     }
 
+    function positionMobileUserMenu(isAuthenticated) {
+      var $mobileNav = $(".edugo-mobile-nav");
+      var $mobileMenu = $mobileNav.find(".user-menu.d-lg-none");
+      var $navList = $mobileNav.find(".navbar-nav");
+      var $actions = $mobileNav.find(".header-actions");
+
+      if (!$mobileMenu.length || !$navList.length || !$actions.length) {
+        return;
+      }
+
+      if (isAuthenticated) {
+        $mobileMenu.insertBefore($navList);
+      } else {
+        $actions.append($mobileMenu);
+      }
+    }
+
     if (sessionUser) {
       $authLinks.attr("hidden", true).addClass("d-none");
       $menus.each(function () {
         var $menu = $(this);
         $menu.prop("hidden", false).removeAttr("hidden");
-        $menu.find(".user-avatar").text(sessionUser.initials || demoUser.initials);
+        $menu.find(".user-avatar")
+          .attr("src", sessionUser.avatarUrl || demoUser.avatarUrl)
+          .attr("alt", sessionUser.fullName || demoUser.fullName);
         $menu.find(".user-menu-identity strong").text(sessionUser.fullName || demoUser.fullName);
         $menu.find(".user-menu-identity span").text(sessionUser.email || demoUser.email);
       });
+      positionMobileUserMenu(true);
     } else {
       $(".header-auth-links").removeAttr("hidden").removeClass("d-none");
       $(".header-auth-links-desktop").removeAttr("hidden").addClass("d-none");
       $menus.prop("hidden", true).attr("hidden", true).removeClass("is-open");
+      positionMobileUserMenu(false);
     }
 
     $menus.find(".user-menu-trigger").off("click.userMenu").on("click.userMenu", function (event) {
@@ -115,15 +143,14 @@
     });
 
     $menus.find("[data-logout]").off("click.userMenu").on("click.userMenu", function () {
+      $("body").addClass("is-logging-out");
       clearDemoSession();
       closeMenus();
       initHeaderAuth();
       showInfoToast("You have been logged out.");
-      if ($("body").data("page") === "my-learnings" || $("body").data("page") === "my-certificates") {
-        window.setTimeout(function () {
-          window.location.href = "login.html";
-        }, 500);
-      }
+      window.setTimeout(function () {
+        window.location.href = "login.html";
+      }, 620);
     });
 
     $(document)
@@ -1587,6 +1614,215 @@
     return "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg);
   }
 
+  function getProfileUser() {
+    return $.extend({
+      fullName: demoUser.fullName,
+      email: demoUser.email,
+      initials: demoUser.initials,
+      avatarUrl: demoUser.avatarUrl,
+      phone: "+1 (555) 018-2049",
+      company: "EduGo Labs",
+      occupation: "Learning Experience Manager",
+      gender: "Prefer not to say",
+      dob: "12 Aug 1994",
+      country: "Malaysia",
+      address: "Level 8, Menara Learning, Kuala Lumpur",
+      status: "Active",
+      joinedDate: "May 2026"
+    }, getDemoSession() || {});
+  }
+
+  function getInitials(name) {
+    return $.trim(name || "")
+      .split(/\s+/)
+      .slice(0, 2)
+      .map(function (part) {
+        return part.charAt(0).toUpperCase();
+      })
+      .join("") || demoUser.initials;
+  }
+
+  function initProfilePage() {
+    var $form = $("#profileForm");
+    var hasProfileSurface = $("#profileDisplayName, #profileInfoName, #profileForm").length;
+    if (!hasProfileSurface) {
+      return;
+    }
+
+    var user = getProfileUser();
+    $("#profileAvatarInitials, #profileMiniAvatar").attr("src", user.avatarUrl || demoUser.avatarUrl).attr("alt", user.fullName);
+    $("#profileDisplayName").text(user.fullName);
+    $("#profileDisplayEmail").text(user.email);
+    $("#profileStatus").text(user.status);
+    $("#profileJoined").text(user.joinedDate);
+    $("#profileCompanyDisplay").text(user.company);
+    $("#profileOccupationDisplay").text(user.occupation);
+    $("#profileInfoName").text(user.fullName);
+    $("#profileInfoEmail").text(user.email);
+    $("#profileInfoPhone").text(user.phone);
+    $("#profileInfoGender").text(user.gender);
+    $("#profileInfoDob").text(user.dob);
+    $("#profileInfoCountry").text(user.country);
+    $("#profileInfoAddress").text(user.address);
+    if ($form.length) {
+      $("#profileFullName").val(user.fullName);
+      $("#profileEmail").val(user.email);
+      $("#profilePhone").val(user.phone);
+      $("#profileCompany").val(user.company);
+      $("#profileOccupation").val(user.occupation);
+      $("#profileGender").val(user.gender);
+      $("#profileDob").val(user.dob);
+      $("#profileCountry").val(user.country);
+      $("#profileAddress").val(user.address);
+    }
+    window.setTimeout(function () {
+      $(".profile-shell").removeClass("is-loading");
+    }, 420);
+
+    $("#changeAvatarButton").on("click", function () {
+      $("#profileAvatarInitials, #profileMiniAvatar").addClass("avatar-refresh");
+      window.setTimeout(function () {
+        $("#profileAvatarInitials, #profileMiniAvatar").removeClass("avatar-refresh");
+      }, 520);
+      showInfoToast("Avatar change simulated for this demo.");
+    });
+
+    if (!$form.length) {
+      return;
+    }
+
+    $form.on("submit", function (event) {
+      event.preventDefault();
+      var form = this;
+
+      if (!form.checkValidity()) {
+        $(form).addClass("was-validated");
+        renderToastFeedback("#profileFeedback", "danger", getInvalidFormMessage(form, "Please review your profile details."));
+        return;
+      }
+
+      var updatedUser = $.extend({}, getProfileUser(), {
+        fullName: $.trim($("#profileFullName").val()),
+        email: $.trim($("#profileEmail").val()),
+        phone: $.trim($("#profilePhone").val()),
+        company: $.trim($("#profileCompany").val()),
+        occupation: $.trim($("#profileOccupation").val()),
+        gender: $("#profileGender").val(),
+        dob: $.trim($("#profileDob").val()),
+        country: $.trim($("#profileCountry").val()),
+        address: $.trim($("#profileAddress").val())
+      });
+      updatedUser.initials = getInitials(updatedUser.fullName);
+      updatedUser.avatarUrl = updatedUser.avatarUrl || demoUser.avatarUrl;
+      setDemoSession(updatedUser);
+      initHeaderAuth();
+      $("#profileAvatarInitials, #profileMiniAvatar").attr("src", updatedUser.avatarUrl).attr("alt", updatedUser.fullName);
+      $("#profileDisplayName").text(updatedUser.fullName);
+      $("#profileDisplayEmail").text(updatedUser.email);
+      $("#profileCompanyDisplay").text(updatedUser.company);
+      $("#profileOccupationDisplay").text(updatedUser.occupation);
+      $("#profileInfoName").text(updatedUser.fullName);
+      $("#profileInfoEmail").text(updatedUser.email);
+      $("#profileInfoPhone").text(updatedUser.phone);
+      $("#profileInfoGender").text(updatedUser.gender);
+      $("#profileInfoDob").text(updatedUser.dob);
+      $("#profileInfoCountry").text(updatedUser.country);
+      $("#profileInfoAddress").text(updatedUser.address);
+      renderToastFeedback("#profileFeedback", "success", "Profile changes saved for this demo.");
+      window.setTimeout(function () {
+        window.location.href = "profile.html";
+      }, 850);
+    });
+  }
+
+  function getPasswordStrength(password) {
+    var score = 0;
+    if (password.length >= 8) {
+      score += 1;
+    }
+    if (/[A-Z]/.test(password)) {
+      score += 1;
+    }
+    if (/[0-9]/.test(password)) {
+      score += 1;
+    }
+    if (/[^A-Za-z0-9]/.test(password)) {
+      score += 1;
+    }
+    return score;
+  }
+
+  function initChangePasswordPage() {
+    var $form = $("#changePasswordForm");
+    if (!$form.length) {
+      return;
+    }
+
+    var $newPassword = $("#newPassword");
+    var $confirmPassword = $("#confirmNewPassword");
+    var $strength = $("#passwordStrengthBar");
+    var $strengthLabel = $("#passwordStrengthLabel");
+
+    function updateStrength() {
+      var password = $newPassword.val();
+      var score = getPasswordStrength(password);
+      var labels = ["Too weak", "Weak", "Good", "Strong", "Excellent"];
+      var classes = ["is-empty", "is-weak", "is-fair", "is-good", "is-strong"];
+      var percent = password ? Math.max(score, 1) * 25 : 0;
+
+      $strength
+        .removeClass(classes.join(" "))
+        .addClass(classes[password ? score : 0])
+        .css("width", percent + "%");
+      $strengthLabel.text(password ? labels[score] : "Enter a new password");
+
+      $("[data-password-rule]").each(function () {
+        var rule = $(this).data("passwordRule");
+        var passes = false;
+        if (rule === "length") {
+          passes = password.length >= 8;
+        } else if (rule === "uppercase") {
+          passes = /[A-Z]/.test(password);
+        } else if (rule === "number") {
+          passes = /[0-9]/.test(password);
+        } else if (rule === "symbol") {
+          passes = /[^A-Za-z0-9]/.test(password);
+        }
+        $(this).toggleClass("is-met", passes);
+      });
+    }
+
+    $newPassword.on("input", updateStrength);
+    updateStrength();
+
+    $form.on("submit", function (event) {
+      event.preventDefault();
+      var form = this;
+      var currentPassword = $("#currentPassword").val();
+      var newPassword = $newPassword.val();
+      var confirmPassword = $confirmPassword.val();
+
+      $("#currentPassword")[0].setCustomValidity(currentPassword === "guest" ? "" : "Use guest as the current password in this demo.");
+      $newPassword[0].setCustomValidity(getPasswordStrength(newPassword) < 3 ? "Choose a stronger password." : "");
+      $confirmPassword[0].setCustomValidity(newPassword === confirmPassword ? "" : "Passwords must match.");
+
+      if (!form.checkValidity()) {
+        $(form).addClass("was-validated");
+        renderToastFeedback("#changePasswordFeedback", "danger", getInvalidFormMessage(form, "Please fix the highlighted password fields."));
+        return;
+      }
+
+      $(form).addClass("was-validated is-processing");
+      renderToastFeedback("#changePasswordFeedback", "info", "Updating your password...");
+      simulateApi({ success: true }, 850).done(function () {
+        form.reset();
+        $(form).removeClass("was-validated is-processing");
+        updateStrength();
+        renderToastFeedback("#changePasswordFeedback", "success", "Password updated successfully for this demo.");
+      });
+    });
+  }
+
   function initCourseActionToasts() {
     $(document).on("click", 'a[href*="purchase.html"][data-course-purchase-link], .course-card-actions a[href*="purchase.html"]', function () {
       window.sessionStorage.setItem("edugoPurchaseToast", "Course added to cart.");
@@ -1606,6 +1842,15 @@
       '<path d="M9.18 5.98A9.72 9.72 0 0 1 12 5.75c6.25 0 9.75 6.25 9.75 6.25a17.02 17.02 0 0 1-3.22 3.72"></path>' +
       '<path d="M6.5 7.5A16.77 16.77 0 0 0 2.25 12S5.75 18.25 12 18.25c1.03 0 2-.17 2.9-.46"></path>' +
       "</svg>";
+
+    $("[data-password-toggle]").each(function () {
+      var button = $(this);
+      var input = $("#" + button.data("password-toggle"));
+      if (!button.html()) {
+        button.html(passwordVisibleIcon);
+      }
+      button.attr("aria-label", "Show " + input.siblings("label").text().toLowerCase());
+    });
 
     $("[data-password-toggle]").on("click", function () {
       var button = $(this);
@@ -1803,6 +2048,8 @@
     initCourseDetailsPage();
     initMyLearningsPage();
     initMyCertificatesPage();
+    initProfilePage();
+    initChangePasswordPage();
     initPurchasePage();
     initLoginForm();
     initPasswordToggles();
