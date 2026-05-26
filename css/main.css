@@ -4353,6 +4353,11 @@ body[data-page="forgot-password"] .forgot-auth-form-wrap {
   padding: 2.75rem;
 }
 
+body[data-page="forgot-password"] .forgot-auth-form-wrap .btn-brand {
+  min-height: 52px;
+  border-radius: 10px;
+}
+
 .btn,
 .btn-lg {
   border-radius: 8px;
