@@ -14,95 +14,96 @@
   <body data-page="purchase">
     <div id="site-header"></div>
     <main>
-      <section class="page-hero compact">
+      <section class="page-hero compact purchase-hero">
         <div class="container">
-          <span class="eyebrow text-brand">Secure enrollment</span>
-          <h1>Complete your simulated checkout</h1>
-          <p>This purchase page is for UI demonstration only. Form submission is validated and processed through a simulated jQuery API flow.</p>
+          <span class="eyebrow text-brand"><i class="fa fa-lock" aria-hidden="true"></i> Secure enrollment</span>
+          <h1>Complete your enrollment</h1>
+          <p>You're almost there! Please review your details and confirm your enrollment to get started with the course.</p>
+          <div class="purchase-access-alert" role="status">
+            <i class="fa fa-check-circle" aria-hidden="true"></i>
+            <span>You must be registered and signed in to complete a purchase.</span>
+          </div>
         </div>
       </section>
-      <section class="section-space pt-0">
+      <section class="section-space purchase-section pt-0">
         <div class="container">
-          <div class="row g-5">
-            <div class="col-lg-7">
-              <div class="form-shell">
-                <h2 class="mb-4">Billing details</h2>
-                <form id="purchaseForm" novalidate>
-                  <div class="row g-3">
-                    <div class="col-md-6">
-                      <div class="form-floating">
-                        <input type="text" class="form-control" id="purchaseName" name="purchaseName" placeholder=" " required />
-                        <label for="purchaseName">Full name</label>
-                        <div class="invalid-feedback">Please enter your full name.</div>
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div class="form-floating">
-                        <input type="email" class="form-control" id="purchaseEmail" name="purchaseEmail" placeholder=" " required />
-                        <label for="purchaseEmail">Email address</label>
-                        <div class="invalid-feedback">Please provide a valid email address.</div>
-                      </div>
-                    </div>
-                    <div class="col-12">
-                      <div class="form-floating">
-                        <input type="text" class="form-control" id="purchaseAddress" name="purchaseAddress" placeholder=" " required />
-                        <label for="purchaseAddress">Billing address</label>
-                        <div class="invalid-feedback">Please add a billing address.</div>
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div class="form-floating">
-                        <input type="text" class="form-control" id="purchaseCity" name="purchaseCity" placeholder=" " required />
-                        <label for="purchaseCity">City</label>
-                        <div class="invalid-feedback">Please enter your city.</div>
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div class="form-floating">
-                        <input type="text" class="form-control" id="purchaseCountry" name="purchaseCountry" placeholder=" " required />
-                        <label for="purchaseCountry">Country</label>
-                        <div class="invalid-feedback">Please enter your country.</div>
-                      </div>
-                    </div>
-                    <div class="col-md-6">
-                      <div class="form-floating">
-                        <input type="text" class="form-control" id="purchaseCard" name="purchaseCard" maxlength="19" placeholder=" " required />
-                        <label for="purchaseCard">Card number</label>
-                        <div class="invalid-feedback">Please enter a valid card number.</div>
-                      </div>
-                    </div>
-                    <div class="col-md-3">
-                      <div class="form-floating">
-                        <input type="text" class="form-control" id="purchaseExpiry" name="purchaseExpiry" maxlength="5" placeholder=" " required />
-                        <label for="purchaseExpiry">Expiry</label>
-                        <div class="invalid-feedback">Please enter the card expiry.</div>
-                      </div>
-                    </div>
-                    <div class="col-md-3">
-                      <div class="form-floating">
-                        <input type="text" class="form-control" id="purchaseCvv" name="purchaseCvv" maxlength="4" placeholder=" " required />
-                        <label for="purchaseCvv">CVV</label>
-                        <div class="invalid-feedback">Please enter the CVV.</div>
-                      </div>
-                    </div>
+          <form id="purchaseForm" class="purchase-layout" novalidate>
+            <div class="purchase-main-column">
+              <section class="purchase-card account-details-card" aria-labelledby="purchaseAccountTitle">
+                <div class="purchase-card-heading">
+                  <h2 id="purchaseAccountTitle">Your account details</h2>
+                  <p>These details are from your registered account and cannot be changed here.</p>
+                </div>
+                <div class="account-readonly-grid">
+                  <div class="account-readonly-field">
+                    <span class="account-readonly-icon" aria-hidden="true"><i class="fa fa-user-o"></i></span>
+                    <span class="account-readonly-copy">
+                      <span>Full name</span>
+                      <strong id="purchaseNameDisplay">Sign in required</strong>
+                    </span>
                   </div>
-                  <div class="form-check mt-4">
-                    <input class="form-check-input" type="checkbox" value="" id="purchaseAgree" required />
-                    <label class="form-check-label" for="purchaseAgree">I understand this is a simulated checkout and no real payment will be processed.</label>
-                    <div class="invalid-feedback">Please confirm before continuing.</div>
+                  <div class="account-readonly-field">
+                    <span class="account-readonly-icon" aria-hidden="true"><i class="fa fa-envelope-o"></i></span>
+                    <span class="account-readonly-copy">
+                      <span>Email address</span>
+                      <strong id="purchaseEmailDisplay">Sign in required</strong>
+                    </span>
                   </div>
-                  <div class="d-flex flex-wrap gap-3 mt-4">
-                    <button type="submit" class="btn btn-brand btn-lg">Confirm Enrollment</button>
-                    <a class="btn btn-outline-dark btn-lg" href="courses.html">Return to Courses</a>
+                  <div class="account-readonly-field">
+                    <span class="account-readonly-icon" aria-hidden="true"><i class="fa fa-phone"></i></span>
+                    <span class="account-readonly-copy">
+                      <span>Phone number</span>
+                      <strong id="purchasePhoneDisplay">Sign in required</strong>
+                    </span>
                   </div>
-                  <div id="purchaseFeedback" class="form-feedback mt-4"></div>
-                </form>
+                </div>
+                <input type="text" id="purchaseName" name="purchaseName" required readonly hidden />
+                <input type="email" id="purchaseEmail" name="purchaseEmail" required readonly hidden />
+                <input type="tel" id="purchasePhone" name="purchasePhone" required readonly hidden />
+              </section>
+
+              <section class="purchase-card coupon-card" aria-labelledby="couponTitle">
+                <div class="purchase-card-heading compact-heading">
+                  <h2 id="couponTitle"><i class="fa fa-tags" aria-hidden="true"></i> Apply coupon</h2>
+                </div>
+                <div class="coupon-entry">
+                  <label class="visually-hidden" for="couponCode">Coupon code</label>
+                  <input type="text" class="form-control" id="couponCode" placeholder="Enter coupon code" autocomplete="off" />
+                  <button type="button" class="btn btn-outline-success" id="applyCouponButton">Apply</button>
+                </div>
+                <div class="coupon-message" id="couponMessage" aria-live="polite" hidden></div>
+              </section>
+
+              <section class="purchase-card confirmation-card">
+                <p class="terms-copy">
+                  <i class="fa fa-lock" aria-hidden="true"></i>
+                  <span>By confirming, you agree to our <a href="terms-conditions.html">Terms of Service</a> and <a href="privacy-policy.html">Privacy Policy</a>.</span>
+                </p>
+                <div class="purchase-actions">
+                  <a class="btn btn-outline-dark btn-lg" href="courses.html"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back to Courses</a>
+                  <button type="submit" class="btn btn-brand btn-lg confirm-enrollment-button">
+                    <i class="fa fa-lock" aria-hidden="true"></i>
+                    <span>Confirm Enrollment</span>
+                  </button>
+                </div>
+                <div id="purchaseFeedback" class="form-feedback mt-3" aria-live="polite"></div>
+              </section>
+            </div>
+
+            <aside class="purchase-side-column" aria-label="Order summary">
+              <div class="purchase-card summary-card enrollment-summary-card" id="purchaseSummary"></div>
+              <div class="purchase-trust-strip" aria-label="Enrollment benefits">
+                <div class="purchase-trust-item">
+                  <i class="fa fa-clock-o" aria-hidden="true"></i>
+                  <span><strong>Instant access</strong><small>Start learning right away</small></span>
+                </div>
+                <div class="purchase-trust-item">
+                  <i class="fa fa-briefcase" aria-hidden="true"></i>
+                  <span><strong>Secure enrollment</strong><small>Your data is protected</small></span>
+                </div>
               </div>
-            </div>
-            <div class="col-lg-5">
-              <div class="summary-card" id="purchaseSummary"></div>
-            </div>
-          </div>
+            </aside>
+          </form>
         </div>
       </section>
     </main>

@@ -1413,10 +1413,99 @@
 
     var courseId = getQueryParam("id");
     var queuedPurchaseToast = window.sessionStorage.getItem("edugoPurchaseToast");
+    var selectedCourse = null;
+    var appliedCoupon = null;
 
     if (queuedPurchaseToast) {
       window.sessionStorage.removeItem("edugoPurchaseToast");
       showInfoToast(queuedPurchaseToast);
+    }
+
+    function formatEnrollmentPrice(amount) {
+      var numericAmount = Number(amount) || 0;
+      return "RM " + numericAmount.toLocaleString("en-MY", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+    }
+
+    function getDiscountAmount(course) {
+      if (!course || !appliedCoupon) {
+        return 0;
+      }
+
+      return Math.round((Number(course.price) || 0) * appliedCoupon.percent) / 100;
+    }
+
+    function renderAccountDetails() {
+      var signedIn = isLoggedIn();
+      var user = signedIn ? getProfileUser() : {};
+
+      $("#purchaseName").val(signedIn ? $.trim(user.fullName || "") : "");
+      $("#purchaseEmail").val(signedIn ? $.trim(user.email || "") : "");
+      $("#purchasePhone").val(signedIn ? $.trim(user.phone || "") : "");
+      $("#purchaseNameDisplay").text(signedIn && user.fullName ? user.fullName : "Sign in required");
+      $("#purchaseEmailDisplay").text(signedIn && user.email ? user.email : "Sign in required");
+      $("#purchasePhoneDisplay").text(signedIn && user.phone ? user.phone : "Sign in required");
+      $(".account-details-card").toggleClass("is-missing-account", !signedIn);
+    }
+
+    function renderCouponMessage(course) {
+      var $message = $("#couponMessage");
+
+      if (!appliedCoupon || !course) {
+        $message.attr("hidden", true).empty();
+        return;
+      }
+
+      var discountAmount = getDiscountAmount(course);
+      $message
+        .removeAttr("hidden")
+        .html(
+          '<span class="coupon-code-pill">' + appliedCoupon.code + "</span>" +
+          '<span><strong>' + appliedCoupon.label + " applied</strong><small>You saved " + formatEnrollmentPrice(discountAmount) + " (" + appliedCoupon.label + ")</small></span>" +
+          '<button type="button" class="coupon-remove" id="removeCouponButton">Remove</button>'
+        );
+    }
+
+    function renderSummary(course) {
+      var price = Number(course.price) || 0;
+      var discountAmount = getDiscountAmount(course);
+      var total = Math.max(price - discountAmount, 0);
+      var discountLabel = appliedCoupon ? "Discount (" + appliedCoupon.label + ")" : "Discount Amount";
+
+      summaryTarget.html(
+        "<h2>Order summary</h2>" +
+        '<div class="summary-course">' +
+          '<img src="' + course.image + '" alt="' + course.title + '">' +
+          '<div class="summary-course-copy">' +
+            "<h3>" + course.title + "</h3>" +
+            "<p>" + course.summary + "</p>" +
+            '<div class="summary-course-meta">' +
+              '<span><i class="fa fa-briefcase" aria-hidden="true"></i><strong>Category:</strong> ' + course.category + "</span>" +
+              '<span><i class="fa fa-clock-o" aria-hidden="true"></i><strong>Duration:</strong> ' + course.duration + "</span>" +
+            "</div>" +
+          "</div>" +
+        "</div>" +
+        '<div class="summary-divider"></div>' +
+        '<div class="price-lines">' +
+          '<div><span>Original Price</span><strong>' + formatEnrollmentPrice(price) + "</strong></div>" +
+          '<div class="discount-line"><span>' + discountLabel + '</span><strong>- ' + formatEnrollmentPrice(discountAmount) + "</strong></div>" +
+          '<div class="summary-total"><span>Total After Discount</span><strong>' + formatEnrollmentPrice(total) + "</strong></div>" +
+        "</div>" +
+        (appliedCoupon ?
+          '<div class="summary-coupon-applied">' +
+            '<span class="summary-coupon-icon" aria-hidden="true"><i class="fa fa-tags"></i></span>' +
+            '<span><strong>Coupon Applied <em>' + appliedCoupon.code + "</em></strong><small>You saved " + formatEnrollmentPrice(discountAmount) + " (" + appliedCoupon.label + " off)</small></span>" +
+          "</div>" :
+          '<div class="summary-coupon-applied muted">' +
+            '<span class="summary-coupon-icon" aria-hidden="true"><i class="fa fa-shield"></i></span>' +
+            "<span><strong>Enrollment protected</strong><small>Confirm access from your registered account.</small></span>" +
+          "</div>"
+        )
+      );
+
+      renderCouponMessage(course);
     }
 
     getCourses().done(function (courses) {
@@ -1424,54 +1513,79 @@
         return item.id === courseId;
       }) || courses[0];
 
-      summaryTarget.html(
-        "<h2 class='mb-4'>Order summary</h2>" +
-        '<img class="img-fluid rounded-4 mb-4" src="' + course.image + '" alt="' + course.title + '">' +
-        "<h3>" + course.title + "</h3>" +
-        "<p class='text-muted'>" + course.summary + "</p>" +
-        '<ul class="summary-list mt-4">' +
-        "<li><strong>Category:</strong> " + course.category + "</li>" +
-        "<li><strong>Duration:</strong> " + course.duration + "</li>" +
-        "<li><strong>Level:</strong> " + course.level + "</li>" +
-        "<li><strong>Enrollment fee:</strong> " + formatRMPrice(course.price) + "</li>" +
-        "<li><strong>Platform access:</strong> Included</li>" +
-        "</ul>" +
-        "<div class='summary-price mt-4'>" + formatRMPrice(course.price) + "</div>" +
-        "<p class='text-muted mb-0'>This is a demo checkout. No real transaction will occur.</p>"
-      );
+      selectedCourse = course;
+      renderAccountDetails();
+      renderSummary(course);
     }).fail(function () {
       showErrorToast("Unable to load the order summary. Please try again.");
     });
 
-    $("#purchaseCard").on("input", function () {
-      var digits = $(this).val().replace(/\D/g, "").slice(0, 16);
-      $(this).val(digits.replace(/(.{4})/g, "$1 ").trim());
+    $("#applyCouponButton").on("click", function () {
+      var code = $.trim($("#couponCode").val()).toUpperCase();
+
+      if (!selectedCourse) {
+        showWarningToast("Please wait for the course summary to load.");
+        return;
+      }
+
+      if (code === "100%") {
+        appliedCoupon = {
+          code: code,
+          percent: 100,
+          label: "100%"
+        };
+      } else if (code === "50%") {
+        appliedCoupon = {
+          code: code,
+          percent: 50,
+          label: "50%"
+        };
+      } else {
+        appliedCoupon = null;
+        renderSummary(selectedCourse);
+        showErrorToast("Use demo coupon 100% or 50%.");
+        return;
+      }
+
+      $("#couponCode").val("");
+      renderSummary(selectedCourse);
+      showSuccessToast("Coupon applied successfully.");
     });
 
-    $("#purchaseExpiry").on("input", function () {
-      var digits = $(this).val().replace(/\D/g, "").slice(0, 4);
-      var formatted = digits.length > 2 ? digits.slice(0, 2) + "/" + digits.slice(2) : digits;
-      $(this).val(formatted);
-    });
-
-    $("#purchaseCvv").on("input", function () {
-      $(this).val($(this).val().replace(/\D/g, "").slice(0, 4));
+    $(document).on("click", "#removeCouponButton", function () {
+      appliedCoupon = null;
+      if (selectedCourse) {
+        renderSummary(selectedCourse);
+      }
+      showInfoToast("Coupon removed.");
     });
 
     $("#purchaseForm").on("submit", function (event) {
       event.preventDefault();
       var form = this;
-      var cardDigits = $("#purchaseCard").val().replace(/\s/g, "");
-      var expiry = $("#purchaseExpiry").val();
-      var cvv = $("#purchaseCvv").val();
-      $("#purchaseCard")[0].setCustomValidity(cardDigits.length < 16 ? "Please enter a valid card number." : "");
-      $("#purchaseExpiry")[0].setCustomValidity(/^\d{2}\/\d{2}$/.test(expiry) ? "" : "Please enter the card expiry.");
-      $("#purchaseCvv")[0].setCustomValidity(cvv.length < 3 ? "Please enter the CVV." : "");
+
+      renderAccountDetails();
+      $("#purchaseName")[0].setCustomValidity($.trim($("#purchaseName").val()) ? "" : "Full name is required from your registered account.");
+      $("#purchaseEmail")[0].setCustomValidity($.trim($("#purchaseEmail").val()) ? "" : "Email address is required from your registered account.");
+      $("#purchasePhone")[0].setCustomValidity($.trim($("#purchasePhone").val()) ? "" : "Phone number is required from your registered account.");
+      var hasAccountDetails = $.trim($("#purchaseName").val()) && $.trim($("#purchaseEmail").val()) && $.trim($("#purchasePhone").val());
+
+      if (!isLoggedIn()) {
+        $(form).addClass("was-validated");
+        renderToastFeedback("#purchaseFeedback", "danger", "Please sign in with a registered account before confirming enrollment.");
+        return;
+      }
+
+      if (!hasAccountDetails) {
+        $(form).addClass("was-validated");
+        renderToastFeedback("#purchaseFeedback", "danger", "Your registered account must include full name, email address, and phone number before enrollment.");
+        return;
+      }
 
       if (!form.checkValidity()) {
         event.stopPropagation();
         $(form).addClass("was-validated");
-        renderToastFeedback("#purchaseFeedback", "danger", getInvalidFormMessage(form, "Please review the highlighted billing fields before submitting."));
+        renderToastFeedback("#purchaseFeedback", "danger", getInvalidFormMessage(form, "Please review your registered account details before confirming."));
         return;
       }
 
@@ -1479,7 +1593,6 @@
       renderToastFeedback("#purchaseFeedback", "info", "Processing your enrollment...");
 
       simulateApi({ success: true }, 1200).done(function () {
-        form.reset();
         $(form).removeClass("was-validated");
         renderToastFeedback("#purchaseFeedback", "success", "Enrollment confirmed. Your course access is ready.");
       });
