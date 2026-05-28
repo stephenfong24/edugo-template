@@ -27,18 +27,15 @@
         <div class="container">
           <div class="course-filter-shell mb-4">
             <div class="course-filter-toolbar">
-              <div class="filter-chip-group">
-                <div class="filter-icon" aria-hidden="true">
+              <button class="course-filter-button" id="courseFilterToggle" type="button" data-bs-toggle="modal" data-bs-target="#courseFilterModal" aria-label="Open course filters">
+                <span class="filter-icon" aria-hidden="true">
                   <span></span>
                   <span></span>
                   <span></span>
-                </div>
-                <button type="button" class="filter-chip active" data-category-button="" data-category-label="All">All</button>
-                <button type="button" class="filter-chip" data-category-button="Data">Data</button>
-                <button type="button" class="filter-chip" data-category-button="Design">Design</button>
-                <button type="button" class="filter-chip" data-category-button="Marketing">Marketing</button>
-                <button type="button" class="filter-chip" data-category-button="Product">Product</button>
-              </div>
+                </span>
+                <span class="filter-button-text">Filters</span>
+                <span class="filter-count-badge d-none" id="courseFilterCount">0</span>
+              </button>
               <div class="filter-search-wrap form-floating">
                 <input type="search" class="form-control filter-search-input" id="courseSearch" placeholder=" " />
                 <label for="courseSearch">Search courses</label>
@@ -59,6 +56,36 @@
         </div>
       </section>
     </main>
+    <div class="modal fade course-filter-modal-wrap" id="courseFilterModal" tabindex="-1" aria-label="Course filters" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable course-filter-modal-dialog">
+        <div class="modal-content course-filter-modal">
+          <div class="modal-body">
+            <button type="button" class="btn-close course-filter-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div class="filter-modal-section">
+              <span class="filter-modal-kicker">Categories</span>
+              <div class="filter-option-grid" id="courseCategoryOptions"></div>
+            </div>
+            <div class="filter-modal-section">
+              <span class="filter-modal-kicker">Price range</span>
+              <div class="price-filter-grid">
+                <div class="form-floating">
+                  <input type="number" class="form-control price-filter-input" id="courseMinPrice" min="0" step="1" placeholder=" " inputmode="numeric" />
+                  <label for="courseMinPrice">Min Price</label>
+                </div>
+                <div class="form-floating">
+                  <input type="number" class="form-control price-filter-input" id="courseMaxPrice" min="0" step="1" placeholder=" " inputmode="numeric" />
+                  <label for="courseMaxPrice">Max Price</label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer course-filter-modal-footer">
+            <button type="button" class="btn btn-outline-dark" id="courseFilterReset">Reset</button>
+            <button type="button" class="btn btn-brand" id="courseFilterApply">Apply Filter</button>
+          </div>
+        </div>
+      </div>
+    </div>
     <div id="site-footer"></div>
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>

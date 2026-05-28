@@ -1068,6 +1068,104 @@
     getCourses().done(function (courses) {
       var currentPage = 1;
       var pageSize = 4;
+      var appliedFilters = {
+        category: "",
+        minPrice: "",
+        maxPrice: ""
+      };
+      var draftFilters = $.extend({}, appliedFilters);
+      var $filterToggle = $("#courseFilterToggle");
+      var $filterCount = $("#courseFilterCount");
+      var $categoryOptions = $("#courseCategoryOptions");
+      var $minPrice = $("#courseMinPrice");
+      var $maxPrice = $("#courseMaxPrice");
+      var courseFilterModal = document.getElementById("courseFilterModal");
+      var bootstrapFilterModal = courseFilterModal && window.bootstrap ? bootstrap.Modal.getOrCreateInstance(courseFilterModal) : null;
+      var prices = courses.map(function (course) {
+        return Number(course.price) || 0;
+      });
+      var minAvailablePrice = prices.length ? Math.min.apply(null, prices) : 0;
+      var maxAvailablePrice = prices.length ? Math.max.apply(null, prices) : 0;
+
+      function getCourseCategories() {
+        return courses.reduce(function (categories, course) {
+          if (course.category && categories.indexOf(course.category) === -1) {
+            categories.push(course.category);
+          }
+          return categories;
+        }, []).sort();
+      }
+
+      function normalizePrice(value) {
+        if (value === "" || value === null || typeof value === "undefined") {
+          return "";
+        }
+        var parsed = Number(value);
+        return Number.isFinite(parsed) && parsed >= 0 ? parsed : "";
+      }
+
+      function renderCategoryOptions() {
+        if (!$categoryOptions.length) {
+          return;
+        }
+
+        var options = ["All"].concat(getCourseCategories());
+        $categoryOptions.html(options.map(function (category) {
+          var value = category === "All" ? "" : category;
+          var optionId = "course-filter-category-" + (value || "all").toLowerCase().replace(/[^a-z0-9]+/g, "-");
+          return (
+            '<input class="filter-option-input" type="radio" name="courseFilterCategory" id="' + optionId + '" value="' + value + '"' + (value === draftFilters.category ? " checked" : "") + ">" +
+            '<label class="filter-option-pill" for="' + optionId + '">' + category + "</label>"
+          );
+        }).join(""));
+      }
+
+      function syncDraftControls() {
+        draftFilters = $.extend({}, appliedFilters);
+        renderCategoryOptions();
+        $minPrice.val(draftFilters.minPrice);
+        $maxPrice.val(draftFilters.maxPrice);
+      }
+
+      function getActiveFilterCount() {
+        var count = 0;
+        if (appliedFilters.category) {
+          count += 1;
+        }
+        if (appliedFilters.minPrice !== "" || appliedFilters.maxPrice !== "") {
+          count += 1;
+        }
+        return count;
+      }
+
+      function updateFilterButtonState() {
+        var count = getActiveFilterCount();
+        $filterToggle.toggleClass("is-active", count > 0);
+        $filterCount.toggleClass("d-none", count === 0).text(count);
+      }
+
+      function getFilteredCourses() {
+        var keyword = ($("#courseSearch").val() || "").toLowerCase().trim();
+        var category = appliedFilters.category;
+        var minPrice = normalizePrice(appliedFilters.minPrice);
+        var maxPrice = normalizePrice(appliedFilters.maxPrice);
+
+        if (minPrice !== "" && maxPrice !== "" && minPrice > maxPrice) {
+          var swapPrice = minPrice;
+          minPrice = maxPrice;
+          maxPrice = swapPrice;
+        }
+
+        return courses.filter(function (course) {
+          var coursePrice = Number(course.price) || 0;
+          var haystack = [course.title, course.category, course.summary, course.skills.join(" ")].join(" ").toLowerCase();
+          var keywordMatch = !keyword || haystack.indexOf(keyword) !== -1;
+          var categoryMatch = !category || course.category === category;
+          var minPriceMatch = minPrice === "" || coursePrice >= minPrice;
+          var maxPriceMatch = maxPrice === "" || coursePrice <= maxPrice;
+          return keywordMatch && categoryMatch && minPriceMatch && maxPriceMatch;
+        });
+      }
 
       function buildPagination(totalPages) {
         if (!paginationTarget.length) {
@@ -1106,14 +1204,7 @@
       }
 
       function renderList() {
-        var keyword = ($("#courseSearch").val() || "").toLowerCase().trim();
-        var category = $(".filter-chip.active").data("categoryButton") || "";
-        var filtered = courses.filter(function (course) {
-          var haystack = [course.title, course.category, course.summary, course.skills.join(" ")].join(" ").toLowerCase();
-          var keywordMatch = !keyword || haystack.indexOf(keyword) !== -1;
-          var categoryMatch = !category || course.category === category;
-          return keywordMatch && categoryMatch;
-        });
+        var filtered = getFilteredCourses();
 
         var totalPages = Math.ceil(filtered.length / pageSize);
         clampPage(totalPages);
@@ -1127,31 +1218,64 @@
         initCourseRatings(listTarget);
         $("#courseEmptyState").toggleClass("d-none", filtered.length > 0);
         $("#courseCount").text(filtered.length);
+        $(".course-filter-meta").toggleClass("d-none", filtered.length < 1);
         buildPagination(totalPages);
+        updateFilterButtonState();
       }
 
+      $minPrice.attr("placeholder", "RM " + minAvailablePrice);
+      $maxPrice.attr("placeholder", "RM " + maxAvailablePrice);
+      renderCategoryOptions();
       renderList();
       $("#courseSearch").on("input", function () {
         currentPage = 1;
         renderList();
       });
-      $(".filter-chip").on("click", function () {
-        $(".filter-chip").removeClass("active");
-        $(this).addClass("active");
+      if (courseFilterModal) {
+        courseFilterModal.addEventListener("show.bs.modal", syncDraftControls);
+      }
+      $categoryOptions.on("change", 'input[name="courseFilterCategory"]', function () {
+        draftFilters.category = $(this).val();
+      });
+      $minPrice.add($maxPrice).on("input", function () {
+        draftFilters.minPrice = $minPrice.val();
+        draftFilters.maxPrice = $maxPrice.val();
+      });
+      $("#courseFilterReset").on("click", function () {
+        appliedFilters = {
+          category: "",
+          minPrice: "",
+          maxPrice: ""
+        };
+        syncDraftControls();
         currentPage = 1;
         renderList();
+        if (bootstrapFilterModal) {
+          bootstrapFilterModal.hide();
+        }
+      });
+      $("#courseFilterApply").on("click", function () {
+        appliedFilters = {
+          category: $categoryOptions.find('input[name="courseFilterCategory"]:checked').val() || "",
+          minPrice: normalizePrice($minPrice.val()),
+          maxPrice: normalizePrice($maxPrice.val())
+        };
+        if (appliedFilters.minPrice !== "" && appliedFilters.maxPrice !== "" && appliedFilters.minPrice > appliedFilters.maxPrice) {
+          var swapPrice = appliedFilters.minPrice;
+          appliedFilters.minPrice = appliedFilters.maxPrice;
+          appliedFilters.maxPrice = swapPrice;
+        }
+        syncDraftControls();
+        currentPage = 1;
+        renderList();
+        if (bootstrapFilterModal) {
+          bootstrapFilterModal.hide();
+        }
       });
       paginationTarget.on("click", ".page-link", function () {
         var pageNumber = $(this).data("pageNumber");
         var action = $(this).data("pageAction");
-        var totalPages = Math.ceil(courses.filter(function (course) {
-          var keyword = ($("#courseSearch").val() || "").toLowerCase().trim();
-          var category = $(".filter-chip.active").data("categoryButton") || "";
-          var haystack = [course.title, course.category, course.summary, course.skills.join(" ")].join(" ").toLowerCase();
-          var keywordMatch = !keyword || haystack.indexOf(keyword) !== -1;
-          var categoryMatch = !category || course.category === category;
-          return keywordMatch && categoryMatch;
-        }).length / pageSize);
+        var totalPages = Math.ceil(getFilteredCourses().length / pageSize);
 
         if (typeof pageNumber === "number") {
           currentPage = pageNumber;

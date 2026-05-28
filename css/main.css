@@ -4297,6 +4297,10 @@ body[data-page="purchase"] {
   border-radius: var(--radius-lg);
 }
 
+#courseEmptyState {
+  margin-top: 1.5rem;
+}
+
 .learner-dashboard-page {
   background:
     radial-gradient(circle at 15% 8%, rgba(5, 150, 105, 0.08), transparent 26%),
@@ -6472,7 +6476,8 @@ body[data-page="forgot-password"] .forgot-auth-form-wrap .btn-brand {
   border-radius: 8px;
 }
 
-.filter-chip {
+.filter-chip,
+.filter-option-pill {
   border-radius: 8px;
 }
 
@@ -6527,9 +6532,82 @@ body[data-page="forgot-password"] .forgot-auth-form-wrap .btn-brand {
   flex-wrap: wrap;
 }
 
+.course-filter-button,
 .filter-chip-group {
   display: flex;
   align-items: center;
+}
+
+.course-filter-button {
+  position: relative;
+  min-height: 58px;
+  gap: 0.72rem;
+  padding: 0.75rem 1rem;
+  border: 1px solid rgba(203, 213, 225, 0.9);
+  background: rgba(255, 255, 255, 0.86);
+  color: #334155;
+  font-weight: 700;
+  border-radius: 10px;
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.07);
+  transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
+}
+
+.course-filter-button:hover,
+.course-filter-button:focus {
+  border-color: rgba(211, 142, 41, 0.48);
+  background: #fffaf2;
+  color: #7c3f12;
+  box-shadow: 0 16px 34px rgba(211, 142, 41, 0.14);
+  transform: translateY(-1px);
+}
+
+.course-filter-button:focus-visible {
+  outline: 3px solid rgba(211, 142, 41, 0.24);
+  outline-offset: 3px;
+}
+
+.course-filter-button.is-active {
+  border-color: rgba(211, 142, 41, 0.64);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0) 38%),
+    linear-gradient(135deg, #c3882c 0%, #d38e29 52%, #da902a 100%);
+  color: #fff;
+  box-shadow:
+    0 16px 34px rgba(211, 142, 41, 0.2),
+    0 6px 16px rgba(195, 136, 44, 0.14);
+}
+
+.course-filter-button.is-active .filter-icon span,
+.course-filter-button.is-active .filter-icon::before,
+.course-filter-button.is-active .filter-icon::after {
+  background: #fff;
+}
+
+.filter-button-text {
+  line-height: 1;
+}
+
+.filter-count-badge {
+  min-width: 22px;
+  height: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 0.4rem;
+  border-radius: 999px;
+  background: #0f172a;
+  color: #fff;
+  font-size: 0.76rem;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.course-filter-button.is-active .filter-count-badge {
+  background: #fff;
+  color: #9a5a13;
+}
+
+.filter-chip-group {
   gap: 0.85rem;
   flex-wrap: wrap;
 }
@@ -6565,7 +6643,7 @@ body[data-page="forgot-password"] .forgot-auth-form-wrap .btn-brand {
 
 .filter-icon::before,
 .filter-icon::after {
-  content: "\2713";
+  content: "";
   position: absolute;
   width: 6px;
   height: 6px;
@@ -6581,6 +6659,137 @@ body[data-page="forgot-password"] .forgot-auth-form-wrap .btn-brand {
 .filter-icon::after {
   right: 4px;
   bottom: 5px;
+}
+
+.course-filter-modal-dialog {
+  width: min(560px, calc(100% - 2rem));
+  margin-inline: auto;
+}
+
+.course-filter-modal {
+  overflow: hidden;
+  border: 1px solid rgba(226, 232, 240, 0.92);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 26px 80px rgba(15, 23, 42, 0.22);
+}
+
+.course-filter-modal .modal-body {
+  position: relative;
+  display: grid;
+  gap: 1.35rem;
+  padding: 1.35rem;
+}
+
+.course-filter-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 2;
+}
+
+.filter-modal-section {
+  display: grid;
+  gap: 0.8rem;
+  min-width: 0;
+}
+
+.filter-modal-section:first-of-type {
+  padding-right: 2.2rem;
+}
+
+.filter-modal-kicker {
+  color: #475569;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.filter-option-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
+  gap: 0.65rem;
+  min-width: 0;
+}
+
+.filter-option-input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.filter-option-pill {
+  min-width: 0;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.68rem 0.85rem;
+  border: 1px solid rgba(203, 213, 225, 0.86);
+  background: rgba(248, 250, 252, 0.92);
+  color: #334155;
+  font-size: 0.94rem;
+  font-weight: 700;
+  line-height: 1.1;
+  text-align: center;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+  transition: background 0.22s ease, color 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease, transform 0.22s ease;
+}
+
+.filter-option-pill:hover {
+  border-color: rgba(211, 142, 41, 0.42);
+  background: #fffaf2;
+  color: #7c3f12;
+}
+
+.filter-option-input:focus-visible + .filter-option-pill {
+  outline: 3px solid rgba(211, 142, 41, 0.22);
+  outline-offset: 2px;
+}
+
+.filter-option-input:checked + .filter-option-pill {
+  border-color: rgba(211, 142, 41, 0.72);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0) 38%),
+    linear-gradient(135deg, #c3882c 0%, #d38e29 52%, #da902a 100%);
+  color: #fff;
+  box-shadow: 0 12px 24px rgba(211, 142, 41, 0.18);
+}
+
+.price-filter-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.price-filter-input {
+  min-height: 54px;
+  border: 1px solid var(--input-border);
+  border-radius: 10px;
+  background: var(--input-bg);
+  box-shadow: var(--input-shadow);
+}
+
+.price-filter-input:focus {
+  border-color: var(--input-border-focus);
+  box-shadow: var(--input-shadow-focus);
+}
+
+.course-filter-modal-footer {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  padding: 1rem 1.35rem 1.35rem;
+  border-top: 1px solid rgba(226, 232, 240, 0.86);
+  background: rgba(248, 250, 252, 0.72);
+}
+
+.course-filter-modal-footer > * {
+  width: 100%;
+  margin: 0;
+  min-height: 46px;
 }
 
 .filter-chip {
@@ -7634,6 +7843,11 @@ body[data-page="forgot-password"] .forgot-auth-form-wrap .btn-brand {
     align-items: stretch;
   }
 
+  .course-filter-button {
+    justify-content: center;
+    width: 100%;
+  }
+
   .filter-search-wrap {
     min-width: 100%;
   }
@@ -8296,6 +8510,37 @@ body[data-page="forgot-password"] .forgot-auth-form-wrap .btn-brand {
 }
 
 @media (max-width: 575.98px) {
+  .course-filter-modal-dialog {
+    width: calc(100% - 1rem);
+  }
+
+  .course-filter-modal {
+    border-radius: 14px;
+  }
+
+  .course-filter-modal .modal-body {
+    padding: 1rem;
+  }
+
+  .filter-modal-section:first-of-type {
+    padding-right: 1.9rem;
+  }
+
+  .filter-option-grid,
+  .price-filter-grid,
+  .course-filter-modal-footer {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-option-pill {
+    justify-content: flex-start;
+    text-align: left;
+  }
+
+  .course-filter-modal-footer {
+    padding: 0.9rem 1rem 1rem;
+  }
+
   .course-card-title {
     font-size: 1rem;
     line-height: 1.45;
