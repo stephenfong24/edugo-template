@@ -4027,6 +4027,53 @@ body[data-page="purchase"] {
   font-weight: 800;
 }
 
+.course-audience-wrapper {
+  padding: var(--space-4);
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 18px 45px rgba(15, 23, 42, 0.06);
+}
+
+.course-audience-wrapper .eyebrow {
+  display: block;
+  margin-bottom: var(--space-2);
+}
+
+.course-audience-wrapper h3 {
+  margin: 0 0 var(--space-4);
+  color: #111827;
+  font-family: var(--font-heading);
+  font-size: var(--text-lg);
+  line-height: 1.24;
+  letter-spacing: -0.022em;
+  font-weight: 700;
+}
+
+.course-audience-wrapper ul {
+  display: grid;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.course-audience-wrapper li {
+  padding: 0.9rem 0;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink);
+  font-size: var(--text-base);
+  line-height: 1.62;
+}
+
+.course-audience-wrapper li:first-child {
+  padding-top: 0;
+}
+
+.course-audience-wrapper li:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
 .course-tag-row {
   display: flex;
   flex-wrap: wrap;

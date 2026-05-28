@@ -1309,13 +1309,16 @@
                   }).join("") +
                 "</div>" +
               "</section>" +
-              '<section class="course-detail-section card-surface">' +
-                '<div class="course-section-heading"><span class="eyebrow text-brand">Learners</span><h2>Who this course is for</h2></div>' +
-                '<ul class="detail-list">' +
-                  detailMeta.audience.map(function (item) {
-                    return "<li>" + item + "</li>";
-                  }).join("") +
-                "</ul>" +
+              '<section class="course-detail-section course-audience-card">' +
+                '<div class="course-audience-wrapper">' +
+                  '<span class="eyebrow text-brand">Learners</span>' +
+                  '<h3>Who this course is for</h3>' +
+                  '<ul>' +
+                    detailMeta.audience.map(function (item) {
+                      return "<li>" + item + "</li>";
+                    }).join("") +
+                  "</ul>" +
+                "</div>" +
               "</section>" +
               '<section class="course-detail-section card-surface">' +
                 '<div class="course-section-heading"><span class="eyebrow text-brand">Keep Learning</span><h2>Related courses</h2></div>' +
