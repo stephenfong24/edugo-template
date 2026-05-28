@@ -1239,18 +1239,28 @@
           "</div>"
         );
 
+        var learnItems = course.outcomes.concat(course.skills).slice(0, 8);
+        var learnColumnBreak = Math.ceil(learnItems.length / 2);
+
         $("#courseDetailContent").html(
           '<div id="course-content" class="course-detail-layout">' +
             '<div class="course-detail-main">' +
-              '<section class="course-detail-section course-overview-card card-surface">' +
-                '<div class="course-section-heading">' +
+              '<section class="course-detail-section course-overview-card">' +
+                '<div class="course-learn-wrapper">' +
                   '<span class="eyebrow text-brand">Course Overview</span>' +
-                  '<h2>What you will learn</h2>' +
-                "</div>" +
-                '<div class="course-learn-grid">' +
-                  course.outcomes.concat(course.skills).slice(0, 8).map(function (item) {
-                    return '<div class="learn-item">' + item + "</div>";
-                  }).join("") +
+                  '<h3>What you will learn</h3>' +
+                  '<div>' +
+                    '<ul>' +
+                      learnItems.slice(0, learnColumnBreak).map(function (item) {
+                        return "<li>" + item + "</li>";
+                      }).join("") +
+                    "</ul>" +
+                    '<ul>' +
+                      learnItems.slice(learnColumnBreak).map(function (item) {
+                        return "<li>" + item + "</li>";
+                      }).join("") +
+                    "</ul>" +
+                  "</div>" +
                 "</div>" +
               "</section>" +
               '<section class="course-detail-section card-surface">' +
