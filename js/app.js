@@ -237,6 +237,7 @@
 
     var navHome = nav.parentElement;
     var navNextSibling = nav.nextSibling;
+    var lockedScrollY = 0;
     var pendingLockScrollY = 0;
     var lastKnownScrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
     var toggler = document.querySelector(".site-header .navbar-toggler");
@@ -259,24 +260,37 @@
 
     function setNavState(isOpen) {
       if (isOpen) {
-        lastKnownScrollY = pendingLockScrollY || lastKnownScrollY || window.pageYOffset || document.documentElement.scrollTop || 0;
+        lockedScrollY = pendingLockScrollY || lastKnownScrollY || window.pageYOffset || document.documentElement.scrollTop || 0;
+        lastKnownScrollY = lockedScrollY;
         pendingLockScrollY = 0;
         document.documentElement.classList.add("edugo-mobile-nav-lock");
         document.body.classList.add("edugo-mobile-nav-lock");
+        document.body.style.top = "-" + lockedScrollY + "px";
       } else {
+        var restoreY = lockedScrollY || lastKnownScrollY || 0;
+        var previousScrollBehavior = document.documentElement.style.scrollBehavior;
+
         document.documentElement.classList.remove("edugo-mobile-nav-lock");
         document.body.classList.remove("edugo-mobile-nav-lock");
+        document.body.style.top = "";
+        document.documentElement.style.scrollBehavior = "auto";
+        window.scrollTo(0, restoreY);
+        document.documentElement.style.scrollBehavior = previousScrollBehavior;
+        lastKnownScrollY = restoreY;
       }
 
       document.body.classList.toggle("edugo-mobile-nav-open", isOpen);
     }
 
     function preserveScrollPosition() {
+      var previousScrollBehavior = document.documentElement.style.scrollBehavior;
+      document.documentElement.style.scrollBehavior = "auto";
       window.scrollTo({
         top: lastKnownScrollY,
         left: 0,
         behavior: "auto"
       });
+      document.documentElement.style.scrollBehavior = previousScrollBehavior;
     }
 
     function preventBackgroundScroll(event) {

@@ -7921,10 +7921,15 @@ body[data-page="forgot-password"] .forgot-auth-form-wrap .btn-brand {
 
   html.edugo-mobile-nav-lock,
   body.edugo-mobile-nav-lock {
+    overflow: hidden !important;
     overscroll-behavior: none;
+    touch-action: none;
   }
 
   body.edugo-mobile-nav-lock {
+    position: fixed;
+    left: 0;
+    right: 0;
     width: 100%;
   }
 
@@ -7958,11 +7963,11 @@ body[data-page="forgot-password"] .forgot-auth-form-wrap .btn-brand {
     width: min(86dvw, 408px);
     max-width: 100dvw;
     height: 100vh !important;
-    height: 100dvh !important;
     height: 100svh !important;
+    height: 100dvh !important;
     max-height: 100vh;
-    max-height: 100dvh;
     max-height: 100svh;
+    max-height: 100dvh;
     margin: 0;
     padding: 0;
     overflow-y: hidden;
@@ -8024,11 +8029,11 @@ body[data-page="forgot-password"] .forgot-auth-form-wrap .btn-brand {
     display: flex;
     flex-direction: column;
     height: 100vh !important;
-    height: 100dvh !important;
     height: 100svh !important;
+    height: 100dvh !important;
     max-height: 100vh;
-    max-height: 100dvh;
     max-height: 100svh;
+    max-height: 100dvh;
     overflow-x: hidden;
     overflow-y: hidden;
     transition: transform 0.42s cubic-bezier(0.22, 1, 0.36, 1);
