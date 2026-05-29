@@ -5997,6 +5997,10 @@ body[data-page="purchase"] {
   grid-column: span 2;
 }
 
+.profile-info-card-full {
+  grid-column: 1 / -1;
+}
+
 .profile-info-card:hover,
 .profile-stat-card:hover,
 .profile-timeline article:hover {
@@ -8740,7 +8744,8 @@ body[data-page="forgot-password"] .forgot-auth-form-wrap .btn-brand {
     grid-template-columns: 1fr;
   }
 
-  .profile-info-card-wide {
+  .profile-info-card-wide,
+  .profile-info-card-full {
     grid-column: auto;
   }
 
