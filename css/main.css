@@ -4738,6 +4738,10 @@ body[data-page="purchase"] {
   min-width: 0;
 }
 
+.enrolment-main-column .course-detail-section {
+  margin-bottom: 0;
+}
+
 .enrolment-video-card {
   padding: 1rem;
   border: 1px solid rgba(148, 163, 184, 0.18);
