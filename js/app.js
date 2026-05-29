@@ -2809,6 +2809,30 @@
     });
   }
 
+  function initPurchaseHistoryPage() {
+    var $filters = $("[data-purchase-filter]");
+    var $items = $(".purchase-history-item[data-payment-status]");
+
+    if (!$filters.length || !$items.length) {
+      return;
+    }
+
+    $filters.on("click", function () {
+      var $button = $(this);
+      var selectedStatus = $button.data("purchase-filter");
+
+      $filters.removeClass("active").attr("aria-pressed", "false");
+      $button.addClass("active").attr("aria-pressed", "true");
+
+      $items.each(function () {
+        var $item = $(this);
+        var matchesStatus = selectedStatus === "all" || $item.data("payment-status") === selectedStatus;
+
+        $item.toggleClass("is-hidden", !matchesStatus);
+      });
+    });
+  }
+
   function initScrollToTop() {
     if (document.querySelector(".scroll-to-top")) {
       return;
@@ -2858,6 +2882,7 @@
     initRegisterForm();
     initForgotPasswordForm();
     initContactForm();
+    initPurchaseHistoryPage();
     initCourseActionToasts();
     initStatCounters();
     renderTestimonialStars();

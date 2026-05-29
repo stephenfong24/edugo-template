@@ -23,9 +23,9 @@
               <p>Review your recent EduGo enrollments, receipts, payment methods, and course access status.</p>
             </div>
             <div class="dashboard-metric-strip" aria-label="Purchase summary">
-              <span><strong>4</strong> Total purchases</span>
+              <span><strong>6</strong> Total purchases</span>
               <span><strong>RM 1,286</strong> Lifetime spend</span>
-              <span><strong>0</strong> Pending payments</span>
+              <span><strong>1</strong> Pending payment</span>
             </div>
           </div>
         </div>
@@ -36,33 +36,51 @@
             <div class="dashboard-section-heading">
               <div>
                 <span class="eyebrow text-brand">Transactions</span>
-                <h2>Completed orders</h2>
+                <h2>Purchase records</h2>
+              </div>
+              <div class="purchase-status-filter" aria-label="Filter purchases by payment status">
+                <button class="active" type="button" data-purchase-filter="all" aria-pressed="true">All</button>
+                <button type="button" data-purchase-filter="paid" aria-pressed="false">Paid</button>
+                <button type="button" data-purchase-filter="pending" aria-pressed="false">Pending</button>
+                <button type="button" data-purchase-filter="failed" aria-pressed="false">Failed</button>
               </div>
             </div>
             <div class="purchase-history-list">
-              <article class="purchase-history-item">
+              <article class="purchase-history-item" data-payment-status="paid">
                 <div><span class="purchase-status paid">Paid</span><h3>Data Analytics Pro</h3><p>Order EG-2026-1008</p></div>
                 <span><strong>RM 399.00</strong><em>22 May 2026</em></span>
                 <span><strong>Visa ending 4242</strong><em>Receipt ready</em></span>
-                <a class="btn btn-outline-dark" href="course-details.html?id=data-analytics-pro">View Course</a>
+                <a class="btn btn-outline-dark" href="course-details.html?id=data-analytics-pro">Send Receipt</a>
               </article>
-              <article class="purchase-history-item">
+              <article class="purchase-history-item" data-payment-status="paid">
                 <div><span class="purchase-status paid">Paid</span><h3>UX Strategy Immersive</h3><p>Order EG-2026-0982</p></div>
                 <span><strong>RM 349.00</strong><em>14 May 2026</em></span>
                 <span><strong>Mastercard ending 8821</strong><em>Receipt ready</em></span>
-                <a class="btn btn-outline-dark" href="course-details.html?id=ux-strategy-immersive">View Course</a>
+                <a class="btn btn-outline-dark" href="course-details.html?id=ux-strategy-immersive">Send Receipt</a>
               </article>
-              <article class="purchase-history-item">
+              <article class="purchase-history-item" data-payment-status="pending">
+                <div><span class="purchase-status pending">Pending</span><h3>Product Leadership Sprint</h3><p>Order EG-2026-0941</p></div>
+                <span><strong>RM 319.00</strong><em>06 May 2026</em></span>
+                <span><strong>FPX bank transfer</strong><em>Awaiting confirmation</em></span>
+                <button class="btn btn-outline-dark" type="button" disabled>Receipt Unavailable</button>
+              </article>
+              <article class="purchase-history-item" data-payment-status="failed">
+                <div><span class="purchase-status failed">Failed</span><h3>AI Workflow Foundations</h3><p>Order EG-2026-0935</p></div>
+                <span><strong>RM 279.00</strong><em>29 Apr 2026</em></span>
+                <span><strong>Visa ending 1189</strong><em>Payment declined</em></span>
+                <button class="btn btn-outline-dark" type="button" disabled>Receipt Unavailable</button>
+              </article>
+              <article class="purchase-history-item" data-payment-status="paid">
                 <div><span class="purchase-status paid">Paid</span><h3>Growth Marketing Lab</h3><p>Order EG-2026-0916</p></div>
                 <span><strong>RM 289.00</strong><em>18 Apr 2026</em></span>
                 <span><strong>Online banking</strong><em>Receipt ready</em></span>
-                <a class="btn btn-outline-dark" href="course-details.html?id=growth-marketing-lab">View Course</a>
+                <a class="btn btn-outline-dark" href="course-details.html?id=growth-marketing-lab">Send Receipt</a>
               </article>
-              <article class="purchase-history-item">
+              <article class="purchase-history-item" data-payment-status="paid">
                 <div><span class="purchase-status paid">Paid</span><h3>Data Storytelling Essentials</h3><p>Order EG-2026-0844</p></div>
                 <span><strong>RM 249.00</strong><em>02 Apr 2026</em></span>
                 <span><strong>Visa ending 4242</strong><em>Receipt ready</em></span>
-                <a class="btn btn-outline-dark" href="course-details.html?id=data-storytelling-essentials">View Course</a>
+                <a class="btn btn-outline-dark" href="course-details.html?id=data-storytelling-essentials">Send Receipt</a>
               </article>
             </div>
           </div>
