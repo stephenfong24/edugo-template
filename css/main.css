@@ -214,7 +214,7 @@ body.has-sticky-header #site-header {
 
 .navbar {
   min-height: var(--header-height);
-  padding: 0.8rem 0;
+  padding: 1rem 0;
   position: relative;
   z-index: 1041;
   transition: min-height 0.28s ease, padding 0.28s ease;
@@ -222,7 +222,7 @@ body.has-sticky-header #site-header {
 
 .site-header.is-sticky .navbar {
   min-height: var(--header-compact-height);
-  padding: 0.48rem 0;
+  padding: 0.68rem 0;
 }
 
 .navbar-brand {
@@ -7886,11 +7886,11 @@ body[data-page="forgot-password"] .forgot-auth-form-wrap .btn-brand {
   }
 
   .site-header .navbar {
-    padding: 0.62rem 0;
+    padding: 1rem 0;
   }
 
   .site-header.is-sticky .navbar {
-    padding: 0.42rem 0;
+    padding: 0.88rem 0;
   }
 
   .site-header .brand-mark {
