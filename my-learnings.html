@@ -32,10 +32,16 @@
       </section>
       <section class="section-space pt-0">
         <div class="container">
-          <div class="dashboard-section-heading">
+          <div class="dashboard-section-heading learning-section-heading">
             <div>
               <span class="eyebrow text-brand">Enrolled</span>
               <h2>Continue learning</h2>
+            </div>
+            <div class="learning-status-filter" role="tablist" aria-label="Filter enrolments by status">
+              <button class="active" type="button" role="tab" aria-selected="true" data-learning-filter="all">All</button>
+              <button type="button" role="tab" aria-selected="false" data-learning-filter="active">Active</button>
+              <button type="button" role="tab" aria-selected="false" data-learning-filter="completed">Completed</button>
+              <button type="button" role="tab" aria-selected="false" data-learning-filter="expired">Expired</button>
             </div>
           </div>
           <div id="myLearningGrid" class="learning-grid"></div>

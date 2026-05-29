@@ -1845,18 +1845,21 @@
     return [
       {
         course: courses[1],
+        status: "active",
         progress: 72,
         nextLesson: "Dashboard design and KPI monitoring",
         subscriptionExpires: "2026-12-31"
       },
       {
         course: courses[0],
-        progress: 46,
-        nextLesson: "Experience mapping and service blueprints",
-        subscriptionExpires: "2026-06-21"
+        status: "completed",
+        progress: 100,
+        nextLesson: "Final assessment completed",
+        subscriptionExpires: "2026-10-18"
       },
       {
         course: courses[4],
+        status: "expired",
         progress: 28,
         nextLesson: "Feature scoping and validation",
         subscriptionExpires: "2026-05-15"
@@ -1909,6 +1912,25 @@
     };
   }
 
+  function getLearningStatusMeta(status) {
+    var statuses = {
+      active: {
+        label: "Active",
+        className: " is-active"
+      },
+      completed: {
+        label: "Completed",
+        className: " is-completed"
+      },
+      expired: {
+        label: "Expired",
+        className: " is-expired"
+      }
+    };
+
+    return statuses[status] || statuses.active;
+  }
+
   function renderDashboardSkeleton(target, count) {
     var markup = "";
     for (var i = 0; i < count; i += 1) {
@@ -1925,54 +1947,94 @@
 
   function initMyLearningsPage() {
     var $grid = $("#myLearningGrid");
+    var $filters = $("[data-learning-filter]");
+    var $empty = $("#myLearningEmpty");
     if (!$grid.length) {
       return;
     }
 
+    var learningItems = [];
+    var selectedStatus = "all";
+
     renderDashboardSkeleton($grid, 3);
 
     getCourses().done(function (courses) {
-      var items = getLearningItems(courses);
+      learningItems = getLearningItems(courses);
 
       window.setTimeout(function () {
-        if (!items.length) {
-          $("#myLearningEmpty").removeClass("d-none");
-          $grid.empty();
-          return;
-        }
-
-        $("#myLearningEmpty").addClass("d-none");
-        $grid.html(items.map(function (item) {
-          var course = item.course;
-          var expiryState = getSubscriptionExpiryState(item.subscriptionExpires);
-          return (
-            '<article class="learning-card">' +
-              '<div class="learning-card-media"><img src="' + course.image + '" alt="' + course.title + '"></div>' +
-              '<div class="learning-card-body">' +
-                '<div class="learning-card-topline">' +
-                  '<span>' + course.category + '</span>' +
-                  '<strong>' + item.progress + '%</strong>' +
-                "</div>" +
-                '<h2>' + course.title + "</h2>" +
-                '<div class="learning-progress" aria-label="' + item.progress + '% complete">' +
-                  '<span style="width: ' + item.progress + '%"></span>' +
-                "</div>" +
-                '<div class="learning-card-lesson">' +
-                  '<span>Current Lesson:</span>' +
-                  '<strong>' + item.nextLesson + "</strong>" +
-                "</div>" +
-                '<p class="learning-card-expiry' + expiryState.className + '">' +
-                  '<span>' + expiryState.label + ':</span> ' + expiryState.value +
-                "</p>" +
-                '<a class="btn btn-brand w-100" href="enrolment.html?id=' + course.id + '">Continue Learning</a>' +
-              "</div>" +
-            "</article>"
-          );
-        }).join(""));
+        renderLearningCards();
       }, 520);
     }).fail(function () {
       showErrorToast("Unable to load your learning dashboard.");
     });
+
+    $filters.on("click", function () {
+      var $button = $(this);
+      selectedStatus = $button.data("learning-filter") || "all";
+
+      $filters.removeClass("active").attr("aria-selected", "false");
+      $button.addClass("active").attr("aria-selected", "true");
+      renderLearningCards();
+    });
+
+    function renderLearningCards() {
+      var filteredItems = selectedStatus === "all"
+        ? learningItems
+        : learningItems.filter(function (item) {
+          return item.status === selectedStatus;
+        });
+
+      if (!filteredItems.length) {
+        $grid.empty();
+        $empty.removeClass("d-none");
+        if (learningItems.length) {
+          $empty.find("h3").text("No " + selectedStatus + " courses");
+          $empty.find("p").text("Try a different enrolment status to keep browsing your learning dashboard.");
+          $empty.find(".btn").addClass("d-none");
+        } else {
+          $empty.find("h3").text("No enrolled courses yet");
+          $empty.find("p").text("Explore the catalog and enroll in a course to start building your learning dashboard.");
+          $empty.find(".btn").removeClass("d-none");
+        }
+        return;
+      }
+
+      $empty.addClass("d-none");
+      $grid.html(filteredItems.map(createLearningCard).join(""));
+    }
+
+    function createLearningCard(item) {
+      var course = item.course;
+      var expiryState = getSubscriptionExpiryState(item.subscriptionExpires);
+      var statusMeta = getLearningStatusMeta(item.status);
+
+      return (
+        '<article class="learning-card" data-enrolment-status="' + item.status + '">' +
+          '<div class="learning-card-media"><img src="' + course.image + '" alt="' + course.title + '"></div>' +
+          '<div class="learning-card-body">' +
+            '<div class="learning-card-topline">' +
+              '<span>' + course.category + '</span>' +
+              '<span class="learning-status-badge' + statusMeta.className + '">' + statusMeta.label + '</span>' +
+            "</div>" +
+            '<h2>' + course.title + "</h2>" +
+            '<div class="learning-progress-row">' +
+              '<div class="learning-progress" aria-label="' + item.progress + '% complete">' +
+                '<span style="width: ' + item.progress + '%"></span>' +
+              "</div>" +
+              '<strong>' + item.progress + '%</strong>' +
+            "</div>" +
+            '<div class="learning-card-lesson">' +
+              '<span>Current Lesson:</span>' +
+              '<strong>' + item.nextLesson + "</strong>" +
+            "</div>" +
+            '<p class="learning-card-expiry' + expiryState.className + '">' +
+              '<span>' + expiryState.label + ':</span> ' + expiryState.value +
+            "</p>" +
+            '<a class="btn btn-brand w-100" href="enrolment.html?id=' + course.id + '">Continue Learning</a>' +
+          "</div>" +
+        "</article>"
+      );
+    }
   }
 
   function initEnrolmentPage() {
