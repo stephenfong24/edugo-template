@@ -1847,23 +1847,66 @@
         course: courses[1],
         progress: 72,
         nextLesson: "Dashboard design and KPI monitoring",
-        pace: "3 lessons left this week"
+        subscriptionExpires: "2026-12-31"
       },
       {
         course: courses[0],
         progress: 46,
         nextLesson: "Experience mapping and service blueprints",
-        pace: "Resume module 3"
+        subscriptionExpires: "2026-06-21"
       },
       {
         course: courses[4],
         progress: 28,
         nextLesson: "Feature scoping and validation",
-        pace: "New project unlocked"
+        subscriptionExpires: "2026-05-15"
       }
     ].filter(function (item) {
       return item.course;
     });
+  }
+
+  function getSubscriptionExpiryState(expiryDate) {
+    var date = new Date(expiryDate + "T00:00:00");
+    var today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    if (Number.isNaN(date.getTime())) {
+      return {
+        className: "",
+        label: "Subscription Expires",
+        value: "Date unavailable"
+      };
+    }
+
+    var daysUntilExpiry = Math.ceil((date.getTime() - today.getTime()) / 86400000);
+    var formattedDate = date.toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric"
+    }).replace(/ /g, " ");
+
+    if (daysUntilExpiry < 0) {
+      return {
+        className: " is-expired",
+        label: "Subscription",
+        value: "Expired"
+      };
+    }
+
+    if (daysUntilExpiry <= 30) {
+      return {
+        className: " is-expiring",
+        label: "Subscription Expires",
+        value: formattedDate
+      };
+    }
+
+    return {
+      className: "",
+      label: "Subscription Expires",
+      value: formattedDate
+    };
   }
 
   function renderDashboardSkeleton(target, count) {
@@ -1901,6 +1944,7 @@
         $("#myLearningEmpty").addClass("d-none");
         $grid.html(items.map(function (item) {
           var course = item.course;
+          var expiryState = getSubscriptionExpiryState(item.subscriptionExpires);
           return (
             '<article class="learning-card">' +
               '<div class="learning-card-media"><img src="' + course.image + '" alt="' + course.title + '"></div>' +
@@ -1910,14 +1954,16 @@
                   '<strong>' + item.progress + '%</strong>' +
                 "</div>" +
                 '<h2>' + course.title + "</h2>" +
-                '<p>' + course.summary + "</p>" +
                 '<div class="learning-progress" aria-label="' + item.progress + '% complete">' +
                   '<span style="width: ' + item.progress + '%"></span>' +
                 "</div>" +
-                '<div class="learning-card-meta">' +
-                  '<span>' + item.nextLesson + "</span>" +
-                  '<small>' + item.pace + "</small>" +
+                '<div class="learning-card-lesson">' +
+                  '<span>Current Lesson:</span>' +
+                  '<strong>' + item.nextLesson + "</strong>" +
                 "</div>" +
+                '<p class="learning-card-expiry' + expiryState.className + '">' +
+                  '<span>' + expiryState.label + ':</span> ' + expiryState.value +
+                "</p>" +
                 '<a class="btn btn-brand w-100" href="enrolment.html?id=' + course.id + '">Continue Learning</a>' +
               "</div>" +
             "</article>"
