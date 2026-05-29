@@ -4694,7 +4694,7 @@ body[data-page="purchase"] {
 .learning-grid,
 .certificate-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 1rem;
 }
 
@@ -5258,7 +5258,7 @@ body[data-page="purchase"] {
 }
 
 .certificate-grid {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
 .certificate-card {
@@ -5330,7 +5330,9 @@ body[data-page="purchase"] {
   align-self: start;
   max-width: 520px;
   margin-top: 0.85rem;
-  font-size: clamp(1.08rem, 1.6vw, 1.38rem);
+  font-size: 1.1rem;
+  line-height: 1.32;
+  letter-spacing: -0.02em;
 }
 
 .certificate-card p {
