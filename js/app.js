@@ -572,6 +572,15 @@
     return feedbackMessage || fallbackMessage;
   }
 
+  function escapeHtml(value) {
+    return String(value || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
   function formatRMPrice(amount) {
     var numericAmount = Number(String(amount).replace(/[^\d.-]/g, ""));
 
@@ -1870,58 +1879,280 @@
       return;
     }
 
+    var currentYear = new Date().getFullYear();
+    var selectedYear = currentYear;
+    var certificateList = [];
+    var reviewModal = null;
+    var reviewModalElement = document.getElementById("certificateReviewModal");
+    var $yearFilter = $("#certificateYearFilter");
+    var $reviewForm = $("#certificateReviewForm");
+    var $reviewRating = $("#certificateReviewRating");
+    var $reviewText = $("#certificateReviewText");
+    var $reviewFeedback = $("#certificateReviewFeedback");
+    var $reviewSubmit = $("#certificateReviewSubmit");
+
+    renderCertificateYearFilter();
     renderDashboardSkeleton($grid, 2);
 
     getCourses().done(function (courses) {
-      var completed = [courses[2], courses[5], courses[0], courses[1]].filter(Boolean);
-      var issueDates = ["18 Apr 2026", "02 May 2026", "14 May 2026", "22 May 2026"];
+      var completed = courses.slice(0, 8).filter(Boolean);
+      var issueDates = [
+        "18 Apr 2026",
+        "02 May 2026",
+        "14 May 2026",
+        "22 May 2026",
+        "08 Jun 2026",
+        "19 Jun 2026",
+        "12 Sep 2025",
+        "28 Nov 2025"
+      ];
 
       window.setTimeout(function () {
         if (!completed.length) {
-          $("#certificateEmpty").removeClass("d-none");
+          showCertificateEmptyState("No certificates yet", "Complete an enrolled course to unlock your first certificate.", true);
           $grid.empty();
           return;
         }
 
         $("#certificateEmpty").addClass("d-none");
-        $grid.html(completed.map(function (course, index) {
+        certificateList = completed.map(function (course, index) {
           var issueDate = issueDates[index];
-          var certificateImage = getSampleCertificateImage(course, issueDate, index);
-          return (
-            '<article class="certificate-card">' +
-              '<div class="certificate-card-pattern" aria-hidden="true"></div>' +
-              '<div class="certificate-preview">' +
-                '<img src="' + certificateImage + '" alt="Sample certificate for ' + course.title + '">' +
-              "</div>" +
-              '<div class="certificate-card-content">' +
-                '<span class="certificate-label">Verified Certificate</span>' +
-                '<h2>' + course.title + "</h2>" +
-                '<p>Completed by Guest Learner</p>' +
-                '<div class="certificate-meta">' +
-                  '<span><strong>Course</strong>' + course.category + "</span>" +
-                  '<span><strong>Issued</strong>' + issueDate + "</span>" +
-                "</div>" +
-                '<button class="btn btn-outline-dark w-100" type="button" data-certificate-download>Download Certificate</button>' +
-              "</div>" +
-            "</article>"
-          );
-        }).join(""));
+          var issuedYear = getIssuedYear(issueDate);
+          var certificateNo = "EDG-" + issuedYear + "-" + String(index + 1).padStart(4, "0");
+
+          return {
+            id: "certificate-" + course.id,
+            course: course,
+            issueDate: issueDate,
+            issuedYear: issuedYear,
+            certificateNo: certificateNo,
+            certificateThumbnailUrl: getSampleCertificateImage(course, issueDate, index, certificateNo),
+            placeholderThumbnailUrl: getCertificatePlaceholderImage(course, certificateNo),
+            hasReview: index !== 0,
+            isSubmittingReview: false
+          };
+        });
+        renderCertificateCards();
       }, 520);
     }).fail(function () {
       showErrorToast("Unable to load certificates.");
     });
 
+    $yearFilter.on("change", function () {
+      selectedYear = parseInt($(this).val(), 10) || currentYear;
+      renderCertificateCards();
+    });
+
     $grid.on("click", "[data-certificate-download]", function () {
       showSuccessToast("Certificate download prepared for this demo.");
     });
+
+    $grid.on("click", "[data-certificate-review]", function () {
+      var certificate = getCertificateById($(this).data("certificateReview"));
+
+      if (!certificate || certificate.hasReview || certificate.isSubmittingReview) {
+        return;
+      }
+
+      openCertificateReviewModal(certificate);
+    });
+
+    if (reviewModalElement) {
+      reviewModalElement.addEventListener("hidden.bs.modal", function () {
+        resetCertificateReviewForm();
+      });
+    }
+
+    $reviewForm.on("submit", function (event) {
+      event.preventDefault();
+
+      var form = this;
+      var certificate = getCertificateById($("#certificateReviewId").val());
+
+      if (!certificate || certificate.hasReview || certificate.isSubmittingReview) {
+        return;
+      }
+
+      if (!form.checkValidity() || !$reviewRating.val()) {
+        $(form).addClass("was-validated");
+        $reviewFeedback
+          .removeClass("d-none certificate-review-feedback-success")
+          .addClass("certificate-review-feedback-error")
+          .text(getInvalidFormMessage(form, "Please add your rating and review before submitting."));
+        return;
+      }
+
+      certificate.isSubmittingReview = true;
+      $reviewSubmit.prop("disabled", true).text("Submitting...");
+
+      simulateApi({ success: true }, 650).done(function () {
+        certificate.hasReview = true;
+        certificate.review = $.trim($reviewText.val());
+        certificate.rating = $reviewRating.val();
+        certificate.isSubmittingReview = false;
+
+        renderCertificateCards();
+        $reviewFeedback
+          .removeClass("d-none certificate-review-feedback-error")
+          .addClass("certificate-review-feedback-success")
+          .text("Review submitted successfully. Your certificate is now available.");
+        showSuccessToast("Review submitted. Certificate unlocked.");
+
+        window.setTimeout(function () {
+          if (reviewModal) {
+            reviewModal.hide();
+          }
+        }, 520);
+      }).fail(function () {
+        certificate.isSubmittingReview = false;
+        $reviewSubmit.prop("disabled", false).text("Submit Review");
+        $reviewFeedback
+          .removeClass("d-none certificate-review-feedback-success")
+          .addClass("certificate-review-feedback-error")
+          .text("We could not submit your review. Please try again.");
+      });
+    });
+
+    function renderCertificateCards() {
+      var filteredCertificates = certificateList.filter(function (certificate) {
+        return certificate.issuedYear === selectedYear;
+      });
+
+      if (!filteredCertificates.length) {
+        $grid.empty();
+        if (certificateList.length) {
+          showCertificateEmptyState("No certificates found", "No certificates found for this year.", false);
+        } else {
+          showCertificateEmptyState("No certificates yet", "Complete an enrolled course to unlock your first certificate.", true);
+        }
+        return;
+      }
+
+      $("#certificateEmpty").addClass("d-none");
+      $grid.html(filteredCertificates.map(createCertificateCard).join(""));
+    }
+
+    function createCertificateCard(certificate) {
+      var course = certificate.course;
+      var thumbnailUrl = certificate.hasReview ? certificate.certificateThumbnailUrl : certificate.placeholderThumbnailUrl;
+      var thumbnailAlt = certificate.hasReview
+        ? "Certificate for " + course.title
+        : "Certificate preview locked until review is submitted";
+      var cardStateClass = certificate.hasReview ? "is-reviewed" : "requires-review";
+      var certificateNoDisplay = certificate.hasReview ? certificate.certificateNo : "-";
+      var issueDateDisplay = certificate.hasReview ? certificate.issueDate : "-";
+      var actionButton = certificate.hasReview
+        ? '<button class="btn btn-outline-dark w-100 certificate-action-button" type="button" data-certificate-download>Download Certificate</button>'
+        : '<button class="btn btn-brand w-100 certificate-action-button" type="button" data-certificate-review="' + escapeHtml(certificate.id) + '">Review</button>';
+
+      return (
+        '<article class="certificate-card ' + cardStateClass + '" data-certificate-id="' + escapeHtml(certificate.id) + '">' +
+          '<div class="certificate-card-pattern" aria-hidden="true"></div>' +
+          '<div class="certificate-preview">' +
+            '<img class="certificate-thumbnail" src="' + thumbnailUrl + '" alt="' + escapeHtml(thumbnailAlt) + '">' +
+          "</div>" +
+          '<div class="certificate-card-content">' +
+            '<span class="certificate-label">Verified Certificate</span>' +
+            '<h2>' + escapeHtml(course.title) + "</h2>" +
+            '<div class="certificate-meta">' +
+              '<span><strong>Cert No.</strong><em class="certificate-no">' + escapeHtml(certificateNoDisplay) + "</em></span>" +
+              '<span><strong>Issued</strong>' + escapeHtml(issueDateDisplay) + "</span>" +
+            "</div>" +
+            '<div class="certificate-action">' + actionButton + "</div>" +
+          "</div>" +
+        "</article>"
+      );
+    }
+
+    function getCertificateById(id) {
+      return certificateList.find(function (certificate) {
+        return certificate.id === id;
+      });
+    }
+
+    function renderCertificateYearFilter() {
+      if (!$yearFilter.length) {
+        return;
+      }
+
+      var options = "";
+      for (var year = currentYear; year >= currentYear - 10; year -= 1) {
+        options += '<option value="' + year + '"' + (year === selectedYear ? " selected" : "") + ">" + year + "</option>";
+      }
+
+      $yearFilter.html(options);
+    }
+
+    function getIssuedYear(issuedDate) {
+      var parsedYear = new Date(issuedDate).getFullYear();
+
+      if (Number.isFinite(parsedYear)) {
+        return parsedYear;
+      }
+
+      var yearMatch = String(issuedDate || "").match(/\b(19|20)\d{2}\b/);
+      return yearMatch ? parseInt(yearMatch[0], 10) : currentYear;
+    }
+
+    function showCertificateEmptyState(title, message, showAction) {
+      $("#certificateEmpty")
+        .removeClass("d-none")
+        .find("h3")
+        .text(title)
+        .end()
+        .find("p")
+        .text(message)
+        .end()
+        .find(".btn")
+        .toggleClass("d-none", !showAction);
+    }
+
+    function openCertificateReviewModal(certificate) {
+      resetCertificateReviewForm();
+      $("#certificateReviewId").val(certificate.id);
+      $("#certificateReviewCourseName").text(certificate.course.title);
+
+      if ($reviewRating.length && $.fn.barrating && !$reviewRating.data("ratingInitialized")) {
+        $reviewRating.barrating({
+          theme: "fontawesome-stars",
+          initialRating: null,
+          showSelectedRating: false
+        });
+        $reviewRating.data("ratingInitialized", true);
+      }
+
+      if (reviewModalElement && window.bootstrap) {
+        reviewModal = reviewModal || new bootstrap.Modal(reviewModalElement);
+        reviewModal.show();
+      }
+    }
+
+    function resetCertificateReviewForm() {
+      if (!$reviewForm.length) {
+        return;
+      }
+
+      $reviewForm[0].reset();
+      $reviewForm.removeClass("was-validated");
+      $reviewSubmit.prop("disabled", false).text("Submit Review");
+      $reviewFeedback
+        .addClass("d-none")
+        .removeClass("certificate-review-feedback-success certificate-review-feedback-error")
+        .text("");
+
+      if ($reviewRating.length && $.fn.barrating && $reviewRating.data("ratingInitialized")) {
+        $reviewRating.barrating("clear");
+      }
+    }
   }
 
-  function getSampleCertificateImage(course, issueDate, index) {
+  function getSampleCertificateImage(course, issueDate, index, certificateNo) {
     var palette = index % 2 === 0
       ? { accent: "#059669", soft: "#ecfdf5", ink: "#0f172a" }
       : { accent: "#2563eb", soft: "#eff6ff", ink: "#111827" };
-    var title = course.title.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-    var category = course.category.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    var title = escapeHtml(course.title);
+    var category = escapeHtml(course.category);
+    var certNo = escapeHtml(certificateNo || "");
 
     var svg =
       '<svg xmlns="http://www.w3.org/2000/svg" width="960" height="640" viewBox="0 0 960 640">' +
@@ -1941,6 +2172,26 @@
         '<text x="188" y="554" font-family="Inter, Arial, sans-serif" font-size="15" fill="#64748b">Verified credential</text>' +
         '<text x="772" y="528" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="18" font-weight="700" fill="' + palette.ink + '">' + issueDate + '</text>' +
         '<text x="772" y="554" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="15" fill="#64748b">Issue date</text>' +
+        '<text x="480" y="584" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="700" fill="#475569">Cert No. ' + certNo + '</text>' +
+      "</svg>";
+
+    return "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg);
+  }
+
+  function getCertificatePlaceholderImage(course, certificateNo) {
+    var title = escapeHtml(course.title);
+    var certNo = escapeHtml(certificateNo);
+    var svg =
+      '<svg xmlns="http://www.w3.org/2000/svg" width="960" height="640" viewBox="0 0 960 640">' +
+        '<rect width="960" height="640" rx="42" fill="#f8fafc"/>' +
+        '<rect x="36" y="36" width="888" height="568" rx="30" fill="#ffffff" stroke="#dbe4ee" stroke-width="2"/>' +
+        '<rect x="78" y="84" width="804" height="472" rx="24" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="2" stroke-dasharray="16 14"/>' +
+        '<circle cx="480" cy="216" r="58" fill="#dbeafe"/>' +
+        '<path d="M456 216l17 17 34-44" fill="none" stroke="#2563eb" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>' +
+        '<text x="480" y="324" text-anchor="middle" font-family="Manrope, Arial, sans-serif" font-size="38" font-weight="800" fill="#0f172a">Review required</text>' +
+        '<text x="480" y="376" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="22" fill="#64748b">Submit your course review to unlock this certificate.</text>' +
+        '<text x="480" y="434" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="20" font-weight="700" fill="#2563eb">' + title + '</text>' +
+        '<text x="480" y="492" text-anchor="middle" font-family="Inter, Arial, sans-serif" font-size="17" font-weight="700" fill="#475569">Cert No. ' + certNo + '</text>' +
       "</svg>";
 
     return "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(svg);
