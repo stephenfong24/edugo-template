@@ -7921,15 +7921,10 @@ body[data-page="forgot-password"] .forgot-auth-form-wrap .btn-brand {
 
   html.edugo-mobile-nav-lock,
   body.edugo-mobile-nav-lock {
-    overflow: hidden !important;
     overscroll-behavior: none;
-    touch-action: none;
   }
 
   body.edugo-mobile-nav-lock {
-    position: fixed;
-    left: 0;
-    right: 0;
     width: 100%;
   }
 

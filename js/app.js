@@ -237,7 +237,6 @@
 
     var navHome = nav.parentElement;
     var navNextSibling = nav.nextSibling;
-    var lockedScrollY = 0;
     var pendingLockScrollY = 0;
     var lastKnownScrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
     var toggler = document.querySelector(".site-header .navbar-toggler");
@@ -260,19 +259,24 @@
 
     function setNavState(isOpen) {
       if (isOpen) {
-        lockedScrollY = pendingLockScrollY || lastKnownScrollY || window.pageYOffset || document.documentElement.scrollTop || 0;
+        lastKnownScrollY = pendingLockScrollY || lastKnownScrollY || window.pageYOffset || document.documentElement.scrollTop || 0;
         pendingLockScrollY = 0;
         document.documentElement.classList.add("edugo-mobile-nav-lock");
         document.body.classList.add("edugo-mobile-nav-lock");
-        document.body.style.top = "-" + lockedScrollY + "px";
       } else {
         document.documentElement.classList.remove("edugo-mobile-nav-lock");
         document.body.classList.remove("edugo-mobile-nav-lock");
-        document.body.style.top = "";
-        window.scrollTo(0, lockedScrollY);
       }
 
       document.body.classList.toggle("edugo-mobile-nav-open", isOpen);
+    }
+
+    function preserveScrollPosition() {
+      window.scrollTo({
+        top: lastKnownScrollY,
+        left: 0,
+        behavior: "auto"
+      });
     }
 
     function preventBackgroundScroll(event) {
@@ -288,9 +292,12 @@
     }
 
     nav.addEventListener("show.bs.collapse", function () {
+      lastKnownScrollY = pendingLockScrollY || window.pageYOffset || document.documentElement.scrollTop || 0;
       moveNavToBody();
       setNavState(true);
     });
+
+    nav.addEventListener("shown.bs.collapse", preserveScrollPosition);
 
     if (toggler) {
       ["touchstart", "pointerdown", "mousedown"].forEach(function (eventName) {
@@ -313,6 +320,7 @@
     nav.addEventListener("hidden.bs.collapse", function () {
       setNavState(false);
       restoreNavHome();
+      preserveScrollPosition();
     });
 
     closeTargets.forEach(function (target) {
