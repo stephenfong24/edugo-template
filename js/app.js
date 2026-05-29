@@ -1862,7 +1862,7 @@
                   '<span>' + item.nextLesson + "</span>" +
                   '<small>' + item.pace + "</small>" +
                 "</div>" +
-                '<a class="btn btn-brand w-100" href="course-details.html?id=' + course.id + '">Continue Learning</a>' +
+                '<a class="btn btn-brand w-100" href="enrolment.html?id=' + course.id + '">Continue Learning</a>' +
               "</div>" +
             "</article>"
           );
@@ -1870,6 +1870,224 @@
       }, 520);
     }).fail(function () {
       showErrorToast("Unable to load your learning dashboard.");
+    });
+  }
+
+  function initEnrolmentPage() {
+    var $page = $("#enrolmentPage");
+    if (!$page.length) {
+      return;
+    }
+
+    var $shell = $("#enrolmentShell");
+    var $courseTitle = $("#enrolmentCourseTitle");
+    var $courseMeta = $("#enrolmentCourseMeta");
+    var $videoTitle = $("#enrolmentVideoTitle");
+    var $videoDuration = $("#enrolmentVideoDuration");
+    var $courseOverview = $("#enrolmentCourseOverview");
+    var $courseDescription = $("#enrolmentCourseDescription");
+    var $targetLearners = $("#enrolmentTargetLearners");
+    var $lessonList = $("#enrolmentLessonList");
+    var $collapseButton = $("#collapseLessonPanel");
+    var $expandButton = $("#expandLessonPanel");
+    var $completeButton = $("#completeLessonButton");
+
+    var lessonList = [];
+    var currentLessonIndex = 1;
+    var completedLessons = [0];
+    var isLessonPanelCollapsed = false;
+    var selectedLesson = null;
+    var courseOverview = [];
+    var courseDescription = "";
+    var targetLearners = [];
+
+    function createLessonList(course) {
+      var durations = ["08:40", "12:15", "10:30", "15:20", "09:45", "18:00", "11:25", "14:10"];
+      var lessons = [];
+
+      (course.modules || []).forEach(function (moduleTitle, moduleIndex) {
+        lessons.push({
+          module: "Module " + (moduleIndex + 1),
+          title: moduleTitle,
+          duration: durations[moduleIndex % durations.length]
+        });
+      });
+
+      lessons.push({
+        module: "Final Project",
+        title: "Apply the framework in a portfolio-ready exercise",
+        duration: "22:00"
+      });
+
+      return lessons;
+    }
+
+    function hasCompletedPreviousLessons(index) {
+      for (var i = 0; i < index; i += 1) {
+        if (completedLessons.indexOf(i) === -1) {
+          return false;
+        }
+      }
+
+      return true;
+    }
+
+    function isLessonAvailable(index) {
+      return completedLessons.indexOf(index) !== -1 || hasCompletedPreviousLessons(index);
+    }
+
+    function getCurrentLessonIndex() {
+      for (var i = 0; i < lessonList.length; i += 1) {
+        if (completedLessons.indexOf(i) === -1 && hasCompletedPreviousLessons(i)) {
+          return i;
+        }
+      }
+
+      return Math.max(lessonList.length - 1, 0);
+    }
+
+    function renderLessonList() {
+      $lessonList.html(lessonList.map(function (lesson, index) {
+        var isCompleted = completedLessons.indexOf(index) !== -1;
+        var isCurrent = index === currentLessonIndex && !isCompleted;
+        var isLocked = !isLessonAvailable(index);
+        var stateLabel = isCompleted ? "Completed" : isCurrent ? "Current" : isLocked ? "Locked" : "Unlocked";
+        var iconClass = isCompleted ? "fa-check" : isLocked ? "fa-lock" : isCurrent ? "fa-play" : "fa-circle-o";
+
+        return (
+          '<li class="enrolment-lesson-item ' + (isCompleted ? "is-completed " : "") + (isCurrent ? "is-current " : "") + (isLocked ? "is-locked" : "") + '">' +
+            '<button type="button" class="enrolment-lesson-button" data-lesson-index="' + index + '" data-locked="' + (isLocked ? "true" : "false") + '" aria-label="' + escapeHtml(lesson.title + ". " + stateLabel) + '" title="' + (isLocked ? "Complete the previous lesson to unlock this one." : "Open lesson") + '">' +
+              '<span class="lesson-state-icon" aria-hidden="true"><i class="fa ' + iconClass + '"></i></span>' +
+              '<span class="lesson-copy">' +
+                '<small>' + escapeHtml(lesson.module) + '</small>' +
+                '<strong>' + escapeHtml(lesson.title) + '</strong>' +
+              '</span>' +
+              '<span class="lesson-meta">' +
+                '<em>' + escapeHtml(lesson.duration) + '</em>' +
+                '<span>' + stateLabel + '</span>' +
+              '</span>' +
+            '</button>' +
+          '</li>'
+        );
+      }).join(""));
+    }
+
+    function renderSelectedLesson() {
+      if (!selectedLesson) {
+        return;
+      }
+
+      var selectedIndex = lessonList.indexOf(selectedLesson);
+      var selectedCompleted = completedLessons.indexOf(selectedIndex) !== -1;
+
+      $videoTitle.text(selectedLesson.title);
+      $videoDuration.text(selectedLesson.duration + " lesson");
+      $completeButton.prop("disabled", selectedCompleted).text(selectedCompleted ? "Lesson completed" : "Mark lesson complete");
+    }
+
+    function setSelectedLesson(index) {
+      selectedLesson = lessonList[index];
+      currentLessonIndex = getCurrentLessonIndex();
+      renderSelectedLesson();
+      renderLessonList();
+    }
+
+    function setLessonPanelCollapsed(collapsed) {
+      isLessonPanelCollapsed = collapsed;
+      $shell.toggleClass("is-lesson-panel-collapsed", isLessonPanelCollapsed);
+      $collapseButton.attr("aria-expanded", isLessonPanelCollapsed ? "false" : "true");
+      $expandButton.prop("hidden", !isLessonPanelCollapsed);
+    }
+
+    getCourses().done(function (courses) {
+      var requestedId = getQueryParam("id");
+      var course = courses.find(function (item) {
+        return item.id === requestedId;
+      }) || courses[1] || courses[0];
+      var detailMeta;
+      var overviewBreak;
+
+      if (!course) {
+        showErrorToast("Course enrolment could not be loaded.");
+        return;
+      }
+
+      detailMeta = getCourseDetailMeta(course);
+      lessonList = createLessonList(course);
+      currentLessonIndex = getCurrentLessonIndex();
+      selectedLesson = lessonList[currentLessonIndex] || lessonList[0];
+      courseOverview = course.outcomes.concat(course.skills).slice(0, 8);
+      courseDescription = course.description + " " + detailMeta.descriptionExtended;
+      targetLearners = detailMeta.audience;
+      overviewBreak = Math.ceil(courseOverview.length / 2);
+
+      $courseTitle.text(course.title);
+      $courseMeta.text(course.category + " | " + course.level + " | " + course.duration);
+      $courseOverview.html(
+        '<ul>' +
+          courseOverview.slice(0, overviewBreak).map(function (item) {
+            return "<li>" + escapeHtml(item) + "</li>";
+          }).join("") +
+        '</ul>' +
+        '<ul>' +
+          courseOverview.slice(overviewBreak).map(function (item) {
+            return "<li>" + escapeHtml(item) + "</li>";
+          }).join("") +
+        '</ul>'
+      );
+      $courseDescription.html(
+        '<p>' + escapeHtml(courseDescription) + '</p>' +
+        '<div class="course-tag-row">' +
+          course.skills.map(function (skill) {
+            return '<span class="course-tag">' + escapeHtml(skill) + '</span>';
+          }).join("") +
+        '</div>'
+      );
+      $targetLearners.html(targetLearners.map(function (item) {
+        return "<li>" + escapeHtml(item) + "</li>";
+      }).join(""));
+
+      renderSelectedLesson();
+      renderLessonList();
+    }).fail(function () {
+      showErrorToast("Course enrolment could not be loaded.");
+    });
+
+    $lessonList.on("click", ".enrolment-lesson-button", function () {
+      var index = Number($(this).data("lesson-index"));
+
+      if (!isLessonAvailable(index)) {
+        showInfoToast("Complete the previous lesson to unlock this lesson.");
+        return;
+      }
+
+      setSelectedLesson(index);
+    });
+
+    $completeButton.on("click", function () {
+      var index = lessonList.indexOf(selectedLesson);
+
+      if (index < 0 || completedLessons.indexOf(index) !== -1) {
+        return;
+      }
+
+      completedLessons.push(index);
+      completedLessons.sort(function (a, b) {
+        return a - b;
+      });
+      currentLessonIndex = getCurrentLessonIndex();
+      selectedLesson = lessonList[currentLessonIndex] || selectedLesson;
+      renderSelectedLesson();
+      renderLessonList();
+      showSuccessToast("Lesson completed. The next lesson is unlocked.");
+    });
+
+    $collapseButton.on("click", function () {
+      setLessonPanelCollapsed(true);
+    });
+
+    $expandButton.on("click", function () {
+      setLessonPanelCollapsed(false);
     });
   }
 
@@ -2630,6 +2848,7 @@
     initCoursesPage();
     initCourseDetailsPage();
     initMyLearningsPage();
+    initEnrolmentPage();
     initMyCertificatesPage();
     initProfilePage();
     initChangePasswordPage();
