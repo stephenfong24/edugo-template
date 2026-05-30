@@ -6893,28 +6893,30 @@ body[data-page="purchase"] {
   align-items: center;
   justify-content: center;
   gap: 0.42rem;
-  min-height: 36px;
-  padding: 0.45rem 0.72rem;
-  border: 1px solid rgba(5, 150, 105, 0.28);
-  border-radius: 10px;
-  background: linear-gradient(135deg, #059669, #047857);
-  color: #fff;
-  font-size: 0.78rem;
+  min-height: auto;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: #047857;
+  font-size: 0.84rem;
   font-weight: 800;
-  line-height: 1;
-  box-shadow: 0 10px 22px rgba(5, 150, 105, 0.18);
-  transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  line-height: 1.25;
+  letter-spacing: 0;
+  box-shadow: none;
+  text-decoration: none;
+  transition: color 0.2s ease, opacity 0.2s ease;
 }
 
 .commission-history-link:hover,
 .commission-history-link:focus {
-  color: #fff;
-  transform: translateY(-1px);
-  box-shadow: 0 14px 28px rgba(5, 150, 105, 0.22);
+  color: #065f46;
+  opacity: 0.88;
+  outline: 0;
 }
 
 .commission-history-link .fa {
-  font-size: 0.78rem;
+  font-size: 0.82rem;
 }
 
 .commission-stat-layout {
