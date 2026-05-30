@@ -7178,6 +7178,13 @@ body[data-page="purchase"] {
   gap: 0.65rem;
 }
 
+.commission-history-note {
+  margin: 0.18rem 0 0;
+  color: var(--muted);
+  font-size: 0.84rem;
+  line-height: 1.5;
+}
+
 .commission-date-filter {
   display: flex;
   align-items: center;
@@ -7265,7 +7272,7 @@ body[data-page="purchase"] {
   gap: 0.55rem;
 }
 
-.commission-payment-details span,
+.commission-payment-details > span,
 .commission-payment-remarks {
   display: grid;
   gap: 0.22rem;
@@ -7281,7 +7288,15 @@ body[data-page="purchase"] {
   font-style: normal;
   font-weight: 800;
   letter-spacing: 0.05em;
+  line-height: 1.45;
+  height: calc(1.45em * 2);
+  white-space: nowrap;
   text-transform: uppercase;
+}
+
+.commission-payment-details em span {
+  display: block;
+  white-space: nowrap;
 }
 
 .commission-payment-details strong {

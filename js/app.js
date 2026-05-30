@@ -3136,11 +3136,9 @@
   }
 
   function initCommissionHistoryPage() {
-    var $filters = $("[data-commission-filter]");
     var $monthFilter = $("#commissionMonthFilter");
-    var $items = $(".commission-payment-card[data-commission-status]");
+    var $items = $(".commission-payment-card[data-payment-month]");
     var $empty = $("#commissionPaymentEmpty");
-    var selectedStatus = "all";
 
     if (!$items.length) {
       return;
@@ -3152,9 +3150,8 @@
 
       $items.each(function () {
         var $item = $(this);
-        var matchesStatus = selectedStatus === "all" || $item.data("commission-status") === selectedStatus;
         var matchesMonth = selectedMonth === "all" || $item.data("payment-month") === selectedMonth;
-        var isVisible = matchesStatus && matchesMonth;
+        var isVisible = matchesMonth;
 
         $item.toggleClass("is-hidden", !isVisible);
         if (isVisible) {
@@ -3164,15 +3161,6 @@
 
       $empty.toggleClass("d-none", visibleCount > 0);
     }
-
-    $filters.on("click", function () {
-      var $button = $(this);
-      selectedStatus = $button.data("commission-filter");
-
-      $filters.removeClass("active").attr("aria-pressed", "false");
-      $button.addClass("active").attr("aria-pressed", "true");
-      applyCommissionFilters();
-    });
 
     $monthFilter.on("change", applyCommissionFilters);
     applyCommissionFilters();

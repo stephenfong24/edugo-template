@@ -23,8 +23,8 @@
               <p>Track introducer fee payouts from referrals who joined EduGo using your referrer code.</p>
             </div>
             <div class="dashboard-metric-strip" aria-label="Commission payment summary">
-              <span><strong>6</strong> Payment records</span>
-              <span><strong>RM 1,600</strong> Total earned</span>
+              <span><strong>3</strong> Paid records</span>
+              <span><strong>RM 1,180</strong> Paid commission</span>
               <span><strong>RM 420</strong> Awaiting payout</span>
             </div>
           </div>
@@ -38,20 +38,13 @@
               <div>
                 <span class="eyebrow text-brand">Payment records</span>
                 <h2>Introducer fee payouts</h2>
+                <p class="commission-history-note">Only completed commission payments are listed below.</p>
               </div>
               <div class="commission-history-controls">
-                <div class="purchase-status-filter commission-status-filter" aria-label="Filter commission payments by status">
-                  <button class="active" type="button" data-commission-filter="all" aria-pressed="true">All</button>
-                  <button type="button" data-commission-filter="pending" aria-pressed="false">Pending</button>
-                  <button type="button" data-commission-filter="processing" aria-pressed="false">Processing</button>
-                  <button type="button" data-commission-filter="paid" aria-pressed="false">Paid</button>
-                  <button type="button" data-commission-filter="failed" aria-pressed="false">Failed</button>
-                </div>
                 <div class="commission-date-filter" aria-label="Filter commission payments by month">
                   <label for="commissionMonthFilter">Month</label>
                   <select id="commissionMonthFilter" class="form-select">
                     <option value="all">All dates</option>
-                    <option value="2026-05">May 2026</option>
                     <option value="2026-04">Apr 2026</option>
                     <option value="2026-03">Mar 2026</option>
                     <option value="2026-02">Feb 2026</option>
@@ -61,50 +54,16 @@
             </div>
 
             <div class="commission-payment-list" id="commissionPaymentList">
-              <article class="commission-payment-card" data-commission-status="pending" data-payment-month="2026-05">
-                <div class="commission-payment-main">
-                  <span class="commission-status-badge pending">Pending</span>
-                  <h3>Payment Reference: COM-2026-0058</h3>
-                  <p>Introducer fees from 3 verified May referrals are awaiting payout approval.</p>
-                </div>
-                <div class="commission-payment-details">
-                  <span><em>Payment Date</em><strong>28 May 2026</strong></span>
-                  <span><em>Payment Amount</em><strong>RM 240.00</strong></span>
-                  <span><em>Payment Method</em><strong>Bank transfer</strong></span>
-                </div>
-                <div class="commission-payment-remarks">
-                  <em>Remarks</em>
-                  <p>Scheduled for the next company commission payout cycle.</p>
-                </div>
-              </article>
-
-              <article class="commission-payment-card" data-commission-status="processing" data-payment-month="2026-05">
-                <div class="commission-payment-main">
-                  <span class="commission-status-badge processing">Processing</span>
-                  <h3>Payment Reference: COM-2026-0051</h3>
-                  <p>Commission payout submitted to finance and waiting for bank confirmation.</p>
-                </div>
-                <div class="commission-payment-details">
-                  <span><em>Payment Date</em><strong>20 May 2026</strong></span>
-                  <span><em>Payment Amount</em><strong>RM 180.00</strong></span>
-                  <span><em>Payment Method</em><strong>DuitNow transfer</strong></span>
-                </div>
-                <div class="commission-payment-remarks">
-                  <em>Remarks</em>
-                  <p>Bank processing normally completes within 1-2 business days.</p>
-                </div>
-              </article>
-
-              <article class="commission-payment-card" data-commission-status="paid" data-payment-month="2026-04">
+              <article class="commission-payment-card" data-payment-month="2026-04">
                 <div class="commission-payment-main">
                   <span class="commission-status-badge paid">Paid</span>
                   <h3>Payment Reference: COM-2026-0044</h3>
                   <p>April referral commission has been successfully paid to your nominated account.</p>
                 </div>
                 <div class="commission-payment-details">
-                  <span><em>Payment Date</em><strong>30 Apr 2026</strong></span>
-                  <span><em>Payment Amount</em><strong>RM 360.00</strong></span>
-                  <span><em>Payment Method</em><strong>Bank transfer</strong></span>
+                  <span><em><span>Payment</span><span>Date</span></em><strong>30 Apr 2026</strong></span>
+                  <span><em><span>Payment</span><span>Amount</span></em><strong>RM 360.00</strong></span>
+                  <span><em><span>Payment</span><span>Method</span></em><strong>Bank transfer</strong></span>
                 </div>
                 <div class="commission-payment-remarks">
                   <em>Remarks</em>
@@ -112,33 +71,16 @@
                 </div>
               </article>
 
-              <article class="commission-payment-card" data-commission-status="failed" data-payment-month="2026-04">
-                <div class="commission-payment-main">
-                  <span class="commission-status-badge failed">Failed</span>
-                  <h3>Payment Reference: COM-2026-0039</h3>
-                  <p>Payout attempt failed due to unavailable recipient account details.</p>
-                </div>
-                <div class="commission-payment-details">
-                  <span><em>Payment Date</em><strong>16 Apr 2026</strong></span>
-                  <span><em>Payment Amount</em><strong>RM 120.00</strong></span>
-                  <span><em>Payment Method</em><strong>Bank transfer</strong></span>
-                </div>
-                <div class="commission-payment-remarks">
-                  <em>Remarks</em>
-                  <p>Please update your payout details before the commission is reprocessed.</p>
-                </div>
-              </article>
-
-              <article class="commission-payment-card" data-commission-status="paid" data-payment-month="2026-03">
+              <article class="commission-payment-card" data-payment-month="2026-03">
                 <div class="commission-payment-main">
                   <span class="commission-status-badge paid">Paid</span>
                   <h3>Payment Reference: COM-2026-0028</h3>
                   <p>March introducer fees were paid after referral purchase validation.</p>
                 </div>
                 <div class="commission-payment-details">
-                  <span><em>Payment Date</em><strong>29 Mar 2026</strong></span>
-                  <span><em>Payment Amount</em><strong>RM 520.00</strong></span>
-                  <span><em>Payment Method</em><strong>DuitNow transfer</strong></span>
+                  <span><em><span>Payment</span><span>Date</span></em><strong>29 Mar 2026</strong></span>
+                  <span><em><span>Payment</span><span>Amount</span></em><strong>RM 520.00</strong></span>
+                  <span><em><span>Payment</span><span>Method</span></em><strong>DuitNow transfer</strong></span>
                 </div>
                 <div class="commission-payment-remarks">
                   <em>Remarks</em>
@@ -146,16 +88,16 @@
                 </div>
               </article>
 
-              <article class="commission-payment-card" data-commission-status="paid" data-payment-month="2026-02">
+              <article class="commission-payment-card" data-payment-month="2026-02">
                 <div class="commission-payment-main">
                   <span class="commission-status-badge paid">Paid</span>
                   <h3>Payment Reference: COM-2026-0017</h3>
                   <p>February commission payout was completed for eligible new learner signups.</p>
                 </div>
                 <div class="commission-payment-details">
-                  <span><em>Payment Date</em><strong>27 Feb 2026</strong></span>
-                  <span><em>Payment Amount</em><strong>RM 300.00</strong></span>
-                  <span><em>Payment Method</em><strong>Bank transfer</strong></span>
+                  <span><em><span>Payment</span><span>Date</span></em><strong>27 Feb 2026</strong></span>
+                  <span><em><span>Payment</span><span>Amount</span></em><strong>RM 300.00</strong></span>
+                  <span><em><span>Payment</span><span>Method</span></em><strong>Bank transfer</strong></span>
                 </div>
                 <div class="commission-payment-remarks">
                   <em>Remarks</em>
@@ -166,7 +108,7 @@
 
             <div id="commissionPaymentEmpty" class="empty-state dashboard-empty d-none">
               <h3>No payment records found</h3>
-              <p>Try a different status or date filter to view more commission payouts.</p>
+              <p>Try a different date filter to view more paid commission payouts.</p>
             </div>
           </div>
         </div>
