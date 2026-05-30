@@ -2675,7 +2675,8 @@
       country: "Malaysia",
       address: "Level 8, Menara Learning, Kuala Lumpur",
       status: "Active",
-      joinedDate: "May 2026"
+      joinedDate: "May 2026",
+      referrerCode: "EDUGO-GUEST26"
     }, getDemoSession() || {});
   }
 
@@ -2702,6 +2703,7 @@
     $("#profileDisplayEmail").text(user.email);
     $("#profileStatus").text(user.status);
     $("#profileJoined").text(user.joinedDate);
+    $("#profileReferrerCode").text(user.referrerCode || "EDUGO-GUEST26");
     $("#profileCompanyDisplay").text(user.company);
     $("#profileOccupationDisplay").text(user.occupation);
     $("#profileInfoName").text(user.fullName);
@@ -2732,6 +2734,42 @@
         $("#profileAvatarInitials, #profileMiniAvatar").removeClass("avatar-refresh");
       }, 520);
       showInfoToast("Avatar change simulated for this demo.");
+    });
+
+    $("#copyReferrerCode").on("click", function () {
+      var targetId = $(this).data("copy-target");
+      var code = $.trim($("#" + targetId).text());
+      var $button = $(this);
+
+      function markCopied() {
+        $button.addClass("is-copied").html('<i class="fa fa-check" aria-hidden="true"></i><span>Copied</span>');
+        showInfoToast("Referrer code copied.");
+        window.setTimeout(function () {
+          $button.removeClass("is-copied").html('<i class="fa fa-copy" aria-hidden="true"></i><span>Copy</span>');
+        }, 1800);
+      }
+
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(code).then(markCopied).catch(function () {
+          showInfoToast("Copy unavailable. Code: " + code);
+        });
+        return;
+      }
+
+      var input = document.createElement("input");
+      input.value = code;
+      input.setAttribute("readonly", "readonly");
+      input.style.position = "fixed";
+      input.style.opacity = "0";
+      document.body.appendChild(input);
+      input.select();
+      try {
+        document.execCommand("copy");
+        markCopied();
+      } catch (error) {
+        showInfoToast("Copy unavailable. Code: " + code);
+      }
+      document.body.removeChild(input);
     });
 
     if (!$form.length) {
@@ -3079,6 +3117,49 @@
     });
   }
 
+  function initCommissionHistoryPage() {
+    var $filters = $("[data-commission-filter]");
+    var $monthFilter = $("#commissionMonthFilter");
+    var $items = $(".commission-payment-card[data-commission-status]");
+    var $empty = $("#commissionPaymentEmpty");
+    var selectedStatus = "all";
+
+    if (!$items.length) {
+      return;
+    }
+
+    function applyCommissionFilters() {
+      var selectedMonth = $monthFilter.length ? $monthFilter.val() : "all";
+      var visibleCount = 0;
+
+      $items.each(function () {
+        var $item = $(this);
+        var matchesStatus = selectedStatus === "all" || $item.data("commission-status") === selectedStatus;
+        var matchesMonth = selectedMonth === "all" || $item.data("payment-month") === selectedMonth;
+        var isVisible = matchesStatus && matchesMonth;
+
+        $item.toggleClass("is-hidden", !isVisible);
+        if (isVisible) {
+          visibleCount += 1;
+        }
+      });
+
+      $empty.toggleClass("d-none", visibleCount > 0);
+    }
+
+    $filters.on("click", function () {
+      var $button = $(this);
+      selectedStatus = $button.data("commission-filter");
+
+      $filters.removeClass("active").attr("aria-pressed", "false");
+      $button.addClass("active").attr("aria-pressed", "true");
+      applyCommissionFilters();
+    });
+
+    $monthFilter.on("change", applyCommissionFilters);
+    applyCommissionFilters();
+  }
+
   function initScrollToTop() {
     if (document.querySelector(".scroll-to-top")) {
       return;
@@ -3129,6 +3210,7 @@
     initForgotPasswordForm();
     initContactForm();
     initPurchaseHistoryPage();
+    initCommissionHistoryPage();
     initCourseActionToasts();
     initStatCounters();
     renderTestimonialStars();
