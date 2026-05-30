@@ -2704,6 +2704,7 @@
     $("#profileStatus").text(user.status);
     $("#profileJoined").text(user.joinedDate);
     $("#profileReferrerCode").text(user.referrerCode || "EDUGO-GUEST26");
+    updateReferrerQrCode(user.referrerCode || "EDUGO-GUEST26");
     $("#profileCompanyDisplay").text(user.company);
     $("#profileOccupationDisplay").text(user.occupation);
     $("#profileInfoName").text(user.fullName);
@@ -2818,6 +2819,23 @@
         window.location.href = "profile.html";
       }, 850);
     });
+  }
+
+  function updateReferrerQrCode(referrerCode) {
+    var $qr = $("#profileReferrerQr");
+    var code = $.trim(referrerCode || "EDUGO-GUEST26");
+
+    if (!$qr.length) {
+      return;
+    }
+
+    var signupUrl = new URL("signup", window.location.origin + window.location.pathname.replace(/[^/]*$/, ""));
+    signupUrl.searchParams.set("ref", code);
+    var qrSource = "https://api.qrserver.com/v1/create-qr-code/?size=180x180&margin=8&data=" + encodeURIComponent(signupUrl.pathname + signupUrl.search);
+
+    $qr
+      .attr("src", qrSource)
+      .attr("alt", "QR code for signup with referrer code " + code);
   }
 
   function getPasswordStrength(password) {
