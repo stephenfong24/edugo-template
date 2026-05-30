@@ -2265,13 +2265,17 @@
     var selectedYear = currentYear;
     var certificateList = [];
     var reviewModal = null;
+    var previewModal = null;
     var reviewModalElement = document.getElementById("certificateReviewModal");
+    var previewModalElement = document.getElementById("certificatePreviewModal");
+    var currentPreviewCertificate = null;
     var $yearFilter = $("#certificateYearFilter");
     var $reviewForm = $("#certificateReviewForm");
     var $reviewRating = $("#certificateReviewRating");
     var $reviewText = $("#certificateReviewText");
     var $reviewFeedback = $("#certificateReviewFeedback");
     var $reviewSubmit = $("#certificateReviewSubmit");
+    var $previewImage = $("#certificatePreviewImage");
 
     renderCertificateYearFilter();
     renderDashboardSkeleton($grid, 2);
@@ -2326,7 +2330,24 @@
     });
 
     $grid.on("click", "[data-certificate-download]", function () {
-      showSuccessToast("Certificate download prepared for this demo.");
+      var certificate = getCertificateById($(this).data("certificateDownload"));
+
+      if (!certificate || !certificate.hasReview) {
+        return;
+      }
+
+      downloadCertificate(certificate);
+    });
+
+    $grid.on("click", "[data-certificate-preview]", function () {
+      var certificate = getCertificateById($(this).data("certificatePreview"));
+
+      if (!certificate || !certificate.hasReview) {
+        showInfoToast("Submit your review to unlock certificate preview.");
+        return;
+      }
+
+      openCertificatePreviewModal(certificate);
     });
 
     $grid.on("click", "[data-certificate-review]", function () {
@@ -2344,6 +2365,20 @@
         resetCertificateReviewForm();
       });
     }
+
+    if (previewModalElement) {
+      previewModalElement.addEventListener("hidden.bs.modal", function () {
+        resetCertificatePreviewModal();
+      });
+    }
+
+    $("#certificatePreviewDownload").on("click", function () {
+      if (!currentPreviewCertificate || !currentPreviewCertificate.hasReview) {
+        return;
+      }
+
+      downloadCertificate(currentPreviewCertificate);
+    });
 
     $reviewForm.on("submit", function (event) {
       event.preventDefault();
@@ -2424,14 +2459,22 @@
       var certificateNoDisplay = certificate.hasReview ? certificate.certificateNo : "-";
       var issueDateDisplay = certificate.hasReview ? certificate.issueDate : "-";
       var actionButton = certificate.hasReview
-        ? '<button class="btn btn-outline-dark w-100 certificate-action-button" type="button" data-certificate-download>Download Certificate</button>'
+        ? '<button class="btn btn-outline-dark w-100 certificate-action-button" type="button" data-certificate-download="' + escapeHtml(certificate.id) + '">Download Certificate</button>'
         : '<button class="btn btn-brand w-100 certificate-action-button" type="button" data-certificate-review="' + escapeHtml(certificate.id) + '">Review</button>';
+      var previewControl = certificate.hasReview
+        ? '<button class="certificate-preview-trigger" type="button" data-certificate-preview="' + escapeHtml(certificate.id) + '" aria-label="Preview certificate for ' + escapeHtml(course.title) + '">' +
+            '<img class="certificate-thumbnail" src="' + thumbnailUrl + '" alt="' + escapeHtml(thumbnailAlt) + '">' +
+            '<span class="certificate-preview-overlay">Preview Certificate</span>' +
+          "</button>"
+        : '<div class="certificate-preview-trigger is-disabled" role="img" aria-label="' + escapeHtml(thumbnailAlt) + '" title="Submit your review to unlock certificate preview.">' +
+            '<img class="certificate-thumbnail" src="' + thumbnailUrl + '" alt="' + escapeHtml(thumbnailAlt) + '">' +
+          "</div>";
 
       return (
         '<article class="certificate-card ' + cardStateClass + '" data-certificate-id="' + escapeHtml(certificate.id) + '">' +
           '<div class="certificate-card-pattern" aria-hidden="true"></div>' +
           '<div class="certificate-preview">' +
-            '<img class="certificate-thumbnail" src="' + thumbnailUrl + '" alt="' + escapeHtml(thumbnailAlt) + '">' +
+            previewControl +
           "</div>" +
           '<div class="certificate-card-content">' +
             '<span class="certificate-label">Verified Certificate</span>' +
@@ -2507,6 +2550,45 @@
         reviewModal = reviewModal || new bootstrap.Modal(reviewModalElement);
         reviewModal.show();
       }
+    }
+
+    function openCertificatePreviewModal(certificate) {
+      if (!certificate || !certificate.hasReview) {
+        return;
+      }
+
+      currentPreviewCertificate = certificate;
+      $("#certificatePreviewCourseName").text(certificate.course.title);
+      $("#certificatePreviewNumber").text(certificate.certificateNo);
+      $("#certificatePreviewIssueDate").text(certificate.issueDate);
+      $previewImage
+        .attr("src", certificate.certificateThumbnailUrl)
+        .attr("alt", "Certificate for " + certificate.course.title);
+
+      if (previewModalElement && window.bootstrap) {
+        previewModal = previewModal || new bootstrap.Modal(previewModalElement);
+        previewModal.show();
+      }
+    }
+
+    function downloadCertificate(certificate) {
+      var link = document.createElement("a");
+      var fileName = (certificate.certificateNo + "-" + certificate.course.title)
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "");
+
+      link.href = certificate.certificateThumbnailUrl;
+      link.download = fileName + ".svg";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showSuccessToast("Certificate download started.");
+    }
+
+    function resetCertificatePreviewModal() {
+      currentPreviewCertificate = null;
+      $previewImage.attr("src", "").attr("alt", "");
     }
 
     function resetCertificateReviewForm() {
