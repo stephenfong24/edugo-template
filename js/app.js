@@ -1945,6 +1945,63 @@
             note: "Previous enrolment expired"
           }
         ]
+      },
+      {
+        course: courses[2],
+        status: "completed",
+        progress: 100,
+        nextLesson: "Campaign performance review completed",
+        subscriptionExpires: "2026-09-30",
+        enrolments: [
+          {
+            periodStart: "2026-02-01",
+            periodEnd: "2026-09-30",
+            status: "completed",
+            progress: 100,
+            detailLabel: "Final Result",
+            detail: "Campaign performance review completed",
+            action: "View Certificate",
+            actionUrl: "my-certificates.html"
+          }
+        ]
+      },
+      {
+        course: courses[3],
+        status: "completed",
+        progress: 100,
+        nextLesson: "Product roadmap presentation completed",
+        subscriptionExpires: "2026-11-20",
+        enrolments: [
+          {
+            periodStart: "2026-04-01",
+            periodEnd: "2026-11-20",
+            status: "completed",
+            progress: 100,
+            detailLabel: "Final Result",
+            detail: "Product roadmap presentation completed",
+            action: "View Certificate",
+            actionUrl: "my-certificates.html"
+          }
+        ]
+      },
+      {
+        course: courses[5],
+        status: "completed",
+        progress: 100,
+        nextLesson: "Executive dashboard story completed",
+        subscriptionExpires: "2026-08-15",
+        enrolments: [
+          {
+            periodStart: "2026-05-01",
+            periodEnd: "2026-08-15",
+            status: "completed",
+            progress: 100,
+            detailLabel: "Final Result",
+            detail: "Executive dashboard story completed",
+            action: "View Certificate",
+            actionUrl: "my-certificates.html"
+          }
+        ]
       }
     ].filter(function (item) {
       return item.course;
@@ -2054,17 +2111,22 @@
     var status = enrolment.status;
     var url = enrolment.actionUrl || ("enrolment.html?id=" + course.id);
     var label = enrolment.action || "Continue Learning";
+    var actionClass = "learning-enrolment-action" + (label === "View Certificate" ? " is-certificate" : "");
 
     if (status === "locked" || status === "upcoming" || status === "expired") {
-      return '<button class="learning-enrolment-action" type="button" disabled>' + label + "</button>";
+      return '<button class="' + actionClass + '" type="button" disabled>' + label + "</button>";
     }
 
-    return '<a class="learning-enrolment-action" href="' + url + '">' + label + "</a>";
+    return '<a class="' + actionClass + '" href="' + url + '">' + label + "</a>";
   }
 
   function getPrimaryEnrolmentActionMarkup(enrolment, course, nextLocked) {
     if (enrolment.status === "completed" && nextLocked) {
       return '<button class="learning-enrolment-action" type="button" disabled>Continue</button>';
+    }
+
+    if (enrolment.status === "expired" && !nextLocked) {
+      return '<a class="learning-enrolment-action is-renew" href="purchase.html?id=' + course.id + '">Renew</a>';
     }
 
     return getEnrolmentActionMarkup(enrolment, course);
