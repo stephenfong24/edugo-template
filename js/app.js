@@ -57,7 +57,7 @@
         currentPage = "my-certificates";
       } else if (path.indexOf("purchase-history") === 0) {
         currentPage = "purchase-history";
-      } else if (path.indexOf("profile") === 0 || path.indexOf("edit-profile") === 0) {
+      } else if (path.indexOf("profile") === 0 || path.indexOf("edit-profile") === 0 || path.indexOf("complete-profile") === 0) {
         currentPage = "profile";
       } else if (path.indexOf("change-password") === 0) {
         currentPage = "change-password";
@@ -117,6 +117,20 @@
 
   function setDemoSession(user) {
     window.localStorage.setItem("edugoDemoSession", JSON.stringify(user || demoUser));
+  }
+
+  function createSocialDemoUser(provider) {
+    var normalizedProvider = provider === "linkedin" ? "linkedin" : "google";
+    var providerName = normalizedProvider === "linkedin" ? "LinkedIn" : "Google";
+
+    return $.extend({}, demoUser, {
+      fullName: "",
+      email: normalizedProvider === "linkedin" ? "linkedin.learner@example.com" : "google.learner@example.com",
+      initials: "SL",
+      authProvider: providerName,
+      demoToken: "demo-" + normalizedProvider + "-" + Date.now(),
+      profileCompleted: false
+    });
   }
 
   function clearDemoSession() {
@@ -1802,6 +1816,28 @@
   }
 
   function initLoginForm() {
+    $('[data-social-login]').on("click", function () {
+      var provider = $(this).data("socialLogin");
+      var providerName = provider === "linkedin" ? "LinkedIn" : "Google";
+      var $button = $(this);
+      var $form = $("#loginForm");
+
+      $form.addClass("is-processing");
+      $form.find(":input").prop("disabled", true);
+      $button.addClass("is-loading");
+      renderToastFeedback("#loginFeedback", "info", "Simulating " + providerName + " sign in...");
+
+      simulateApi({ success: true }, 650).done(function () {
+        setDemoSession(createSocialDemoUser(provider));
+        initHeaderAuth();
+        $(".login-auth-card").addClass("login-success-state");
+        renderToastFeedback("#loginFeedback", "success", providerName + " login simulated. Complete your profile to continue.");
+        window.setTimeout(function () {
+          window.location.href = "complete-profile.html";
+        }, 650);
+      });
+    });
+
     $("#loginForm").on("submit", function (event) {
       event.preventDefault();
       var form = this;
@@ -2690,6 +2726,106 @@
       .join("") || demoUser.initials;
   }
 
+  function normalizeMobileDigits(value) {
+    return $.trim(value || "").replace(/\s+/g, "").replace(/\D/g, "");
+  }
+
+  function getStoredCountryCode(user) {
+    var supportedCodes = ["+60", "+65", "+66", "+62", "+63", "+84", "+86", "+91", "+61", "+44", "+1"];
+    var savedCode = $.trim(user.countryCode || "");
+    var phone = $.trim(user.fullMobile || user.mobile || user.phone || "");
+
+    if (supportedCodes.indexOf(savedCode) !== -1) {
+      return savedCode;
+    }
+
+    return supportedCodes.find(function (code) {
+      return phone.indexOf(code) === 0;
+    }) || "+60";
+  }
+
+  function getStoredMobileNumber(user, countryCode) {
+    var mobileNumber = normalizeMobileDigits(user.mobileNumber || "");
+    var fallback = normalizeMobileDigits(user.mobile || user.phone || "");
+    var countryDigits = normalizeMobileDigits(countryCode || "");
+
+    if (mobileNumber) {
+      return mobileNumber;
+    }
+
+    if (countryDigits && fallback.indexOf(countryDigits) === 0) {
+      return fallback.slice(countryDigits.length);
+    }
+
+    return fallback;
+  }
+
+  function isValidDemoPhone(countryCode, mobileNumber) {
+    var code = $.trim(countryCode || "");
+    var digits = normalizeMobileDigits(mobileNumber);
+
+    return Boolean(code) && /^[0-9]+$/.test(digits) && digits.length >= 7 && digits.length <= 15;
+  }
+
+  function setCountryCodeDropdownMode(select, mode) {
+    var showLabels = mode === "expanded";
+
+    $(select).find("option").each(function () {
+      var option = this;
+      option.textContent = showLabels ? option.getAttribute("data-country-label") : option.value;
+    });
+  }
+
+  function initCountryCodeDropdown(selectSelector, mobileSelector) {
+    var $select = $(selectSelector);
+    var $mobile = $(mobileSelector);
+
+    if (!$select.length) {
+      return;
+    }
+
+    setCountryCodeDropdownMode($select[0], "compact");
+
+    $select.on("mousedown touchstart", function () {
+      setCountryCodeDropdownMode(this, "expanded");
+    });
+
+    $select.on("keydown", function (event) {
+      if ([" ", "Enter", "ArrowDown", "ArrowUp"].indexOf(event.key) !== -1) {
+        setCountryCodeDropdownMode(this, "expanded");
+      }
+    });
+
+    $select.on("change", function () {
+      this.setCustomValidity(this.value ? "" : "Please select a country code.");
+      window.setTimeout(function (select) {
+        setCountryCodeDropdownMode(select, "compact");
+      }, 0, this);
+    });
+
+    $select.on("blur", function () {
+      setCountryCodeDropdownMode(this, "compact");
+    });
+
+    $mobile.on("input", function () {
+      var normalizedValue = normalizeMobileDigits(this.value);
+      if (this.value !== normalizedValue) {
+        this.value = normalizedValue;
+      }
+      this.setCustomValidity(isValidDemoPhone($select.val(), this.value) || !this.value ? "" : "Please enter digits only.");
+    });
+
+    $(document)
+      .off("mousedown.countryCodeDisplay touchstart.countryCodeDisplay")
+      .on("mousedown.countryCodeDisplay touchstart.countryCodeDisplay", function (event) {
+        $("[data-country-label]").closest("select").each(function () {
+          if (event.target !== this) {
+            setCountryCodeDropdownMode(this, "compact");
+          }
+        });
+      });
+  }
+
   function initProfilePage() {
     var $form = $("#profileForm");
     var hasProfileSurface = $("#profileDisplayName, #profileInfoName, #profileForm").length;
@@ -2715,15 +2851,18 @@
     $("#profileInfoCountry").text(user.country);
     $("#profileInfoAddress").text(user.address);
     if ($form.length) {
+      var profileCountryCode = getStoredCountryCode(user);
       $("#profileFullName").val(user.fullName);
       $("#profileEmail").val(user.email);
-      $("#profilePhone").val(user.phone);
+      $("#profileCountryCode").val(profileCountryCode);
+      $("#profilePhone").val(getStoredMobileNumber(user, profileCountryCode));
       $("#profileCompany").val(user.company);
       $("#profileOccupation").val(user.occupation);
       $("#profileGender").val(user.gender);
       $("#profileDob").val(user.dob);
       $("#profileCountry").val(user.country);
       $("#profileAddress").val(user.address);
+      initCountryCodeDropdown("#profileCountryCode", "#profilePhone");
     }
     window.setTimeout(function () {
       $(".profile-shell").removeClass("is-loading");
@@ -2780,6 +2919,17 @@
     $form.on("submit", function (event) {
       event.preventDefault();
       var form = this;
+      var countryCodeInput = $("#profileCountryCode")[0];
+      var phoneInput = $("#profilePhone")[0];
+      var countryCode = $.trim(countryCodeInput ? countryCodeInput.value : "");
+      var mobileNumber = normalizeMobileDigits(phoneInput ? phoneInput.value : "");
+      var fullMobile = countryCode + mobileNumber;
+
+      if (phoneInput && countryCodeInput) {
+        phoneInput.value = mobileNumber;
+        countryCodeInput.setCustomValidity(countryCode ? "" : "Please select a country code.");
+        phoneInput.setCustomValidity(isValidDemoPhone(countryCode, mobileNumber) ? "" : "Please enter digits only.");
+      }
 
       if (!form.checkValidity()) {
         $(form).addClass("was-validated");
@@ -2790,7 +2940,11 @@
       var updatedUser = $.extend({}, getProfileUser(), {
         fullName: $.trim($("#profileFullName").val()),
         email: $.trim($("#profileEmail").val()),
-        phone: $.trim($("#profilePhone").val()),
+        countryCode: countryCode,
+        mobileNumber: mobileNumber,
+        fullMobile: fullMobile,
+        mobile: fullMobile,
+        phone: fullMobile,
         company: $.trim($("#profileCompany").val()),
         occupation: $.trim($("#profileOccupation").val()),
         gender: $("#profileGender").val(),
@@ -2818,6 +2972,72 @@
       window.setTimeout(function () {
         window.location.href = "profile.html";
       }, 850);
+    });
+  }
+
+  function initCompleteProfilePage() {
+    var $form = $("#completeProfileForm");
+    if (!$form.length) {
+      return;
+    }
+
+    var sessionUser = getDemoSession();
+    if (!sessionUser) {
+      renderToastFeedback("#completeProfileFeedback", "danger", "Please sign in before completing your profile.");
+      window.setTimeout(function () {
+        window.location.href = "login.html";
+      }, 900);
+      return;
+    }
+
+    $("#completeProfileProvider").text((sessionUser.authProvider || "Social") + " account setup");
+    $("#completeFullName").val(sessionUser.fullName || "");
+    $("#completeCountryCode").val(getStoredCountryCode(sessionUser));
+    $("#completeMobile").val(getStoredMobileNumber(sessionUser, $("#completeCountryCode").val()));
+    $("#completeCompany").val(sessionUser.company || "");
+    $("#completeOccupation").val(sessionUser.occupation || "");
+    initCountryCodeDropdown("#completeCountryCode", "#completeMobile");
+
+    $form.on("submit", function (event) {
+      event.preventDefault();
+      var form = this;
+      var countryCodeInput = $("#completeCountryCode")[0];
+      var mobileInput = $("#completeMobile")[0];
+      var countryCode = $.trim(countryCodeInput.value || "");
+      var mobileNumber = normalizeMobileDigits(mobileInput.value);
+      var fullMobile = countryCode + mobileNumber;
+
+      mobileInput.value = mobileNumber;
+      countryCodeInput.setCustomValidity(countryCode ? "" : "Please select a country code.");
+      mobileInput.setCustomValidity(isValidDemoPhone(countryCode, mobileNumber) ? "" : "Please enter digits only.");
+
+      if (!form.checkValidity()) {
+        $(form).addClass("was-validated");
+        renderToastFeedback("#completeProfileFeedback", "danger", getInvalidFormMessage(form, "Please complete every profile field before accessing courses."));
+        return;
+      }
+
+      var completedUser = $.extend({}, getDemoSession() || demoUser, {
+        fullName: $.trim($("#completeFullName").val()),
+        countryCode: countryCode,
+        mobileNumber: mobileNumber,
+        fullMobile: fullMobile,
+        mobile: fullMobile,
+        phone: fullMobile,
+        company: $.trim($("#completeCompany").val()),
+        occupation: $.trim($("#completeOccupation").val()),
+        profileCompleted: true
+      });
+
+      completedUser.initials = getInitials(completedUser.fullName);
+      completedUser.avatarUrl = completedUser.avatarUrl || demoUser.avatarUrl;
+      setDemoSession(completedUser);
+      initHeaderAuth();
+      $(form).addClass("was-validated is-processing");
+      renderToastFeedback("#completeProfileFeedback", "success", "Profile completed. Taking you to courses...");
+      window.setTimeout(function () {
+        window.location.href = "courses.html";
+      }, 750);
     });
   }
 
@@ -3208,6 +3428,7 @@
     initEnrolmentPage();
     initMyCertificatesPage();
     initProfilePage();
+    initCompleteProfilePage();
     initChangePasswordPage();
     initPurchasePage();
     initLoginForm();
