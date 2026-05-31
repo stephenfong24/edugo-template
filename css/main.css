@@ -8298,7 +8298,7 @@ body[data-page="complete-profile"] .complete-profile-section .container {
 .complete-mobile-group .form-select {
   padding-left: 1rem;
   color: var(--ink);
-  font-weight: 650;
+  font-weight: 400;
 }
 
 .complete-mobile-group .form-control {
