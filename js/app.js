@@ -1884,25 +1884,100 @@
         status: "active",
         progress: 72,
         nextLesson: "Dashboard design and KPI monitoring",
-        subscriptionExpires: "2026-12-31"
+        subscriptionExpires: "2026-12-31",
+        enrolments: [
+          {
+            periodStart: "2026-01-01",
+            periodEnd: "2026-12-31",
+            status: "active",
+            progress: 72,
+            detailLabel: "Current Lesson",
+            detail: "Dashboard design and KPI monitoring",
+            action: "Continue",
+            actionUrl: "enrolment.html?id=data-analytics-pro"
+          }
+        ]
       },
       {
         course: courses[0],
         status: "completed",
         progress: 100,
         nextLesson: "Final assessment completed",
-        subscriptionExpires: "2026-10-18"
+        subscriptionExpires: "2027-03-10",
+        enrolments: [
+          {
+            periodStart: "2026-03-10",
+            periodEnd: "2027-03-10",
+            status: "completed",
+            progress: 100,
+            detailLabel: "Final Result",
+            detail: "Final assessment completed",
+            action: "View Certificate",
+            actionUrl: "my-certificates.html"
+          },
+          {
+            periodStart: "2027-03-11",
+            periodEnd: "2028-03-11",
+            status: "locked",
+            progress: 0,
+            detailLabel: "Access Note",
+            detail: "Complete this enrolment before continuing",
+            action: "Locked",
+            note: "Next enrolment starts on 11 Mar 2027"
+          }
+        ]
       },
       {
         course: courses[4],
         status: "expired",
         progress: 28,
         nextLesson: "Feature scoping and validation",
-        subscriptionExpires: "2026-05-15"
+        subscriptionExpires: "2026-05-15",
+        enrolments: [
+          {
+            periodStart: "2025-05-15",
+            periodEnd: "2026-05-15",
+            status: "expired",
+            progress: 28,
+            detailLabel: "Current Lesson",
+            detail: "Feature scoping and validation",
+            action: "Expired",
+            note: "Previous enrolment expired"
+          }
+        ]
       }
     ].filter(function (item) {
       return item.course;
     });
+  }
+
+  function formatLearningDate(dateString) {
+    var date = new Date(dateString + "T00:00:00");
+    if (Number.isNaN(date.getTime())) {
+      return "Date unavailable";
+    }
+
+    return date.toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric"
+    }).replace(/ /g, " ");
+  }
+
+  function getPrimaryEnrolment(item) {
+    var enrolments = item.enrolments || [];
+    return enrolments.find(function (enrolment) {
+      return enrolment.status === "active";
+    }) || enrolments.find(function (enrolment) {
+      return enrolment.status === item.status;
+    }) || enrolments[0] || {
+      periodEnd: item.subscriptionExpires,
+      status: item.status,
+      progress: item.progress,
+      detailLabel: "Current Lesson",
+      detail: item.nextLesson,
+      action: "Continue Learning"
+    };
   }
 
   function getSubscriptionExpiryState(expiryDate) {
@@ -1961,10 +2036,38 @@
       expired: {
         label: "Expired",
         className: " is-expired"
+      },
+      upcoming: {
+        label: "Upcoming",
+        className: " is-upcoming"
+      },
+      locked: {
+        label: "Locked",
+        className: " is-locked"
       }
     };
 
     return statuses[status] || statuses.active;
+  }
+
+  function getEnrolmentActionMarkup(enrolment, course) {
+    var status = enrolment.status;
+    var url = enrolment.actionUrl || ("enrolment.html?id=" + course.id);
+    var label = enrolment.action || "Continue Learning";
+
+    if (status === "locked" || status === "upcoming" || status === "expired") {
+      return '<button class="learning-enrolment-action" type="button" disabled>' + label + "</button>";
+    }
+
+    return '<a class="learning-enrolment-action" href="' + url + '">' + label + "</a>";
+  }
+
+  function getPrimaryEnrolmentActionMarkup(enrolment, course, nextLocked) {
+    if (enrolment.status === "completed" && nextLocked) {
+      return '<button class="learning-enrolment-action" type="button" disabled>Continue</button>';
+    }
+
+    return getEnrolmentActionMarkup(enrolment, course);
   }
 
   function renderDashboardSkeleton(target, count) {
@@ -1991,8 +2094,11 @@
 
     var learningItems = [];
     var selectedStatus = "all";
+    var masonryFrame = null;
+    var masonryResizeTimer = null;
 
     renderDashboardSkeleton($grid, 3);
+    scheduleLearningMasonry();
 
     getCourses().done(function (courses) {
       learningItems = getLearningItems(courses);
@@ -2013,6 +2119,58 @@
       renderLearningCards();
     });
 
+    $grid.on("click", ".learning-enrolment-details summary", function () {
+      window.setTimeout(scheduleLearningMasonry, 80);
+      window.setTimeout(scheduleLearningMasonry, 320);
+    });
+
+    $(window).on("resize.learningMasonry", function () {
+      window.clearTimeout(masonryResizeTimer);
+      masonryResizeTimer = window.setTimeout(scheduleLearningMasonry, 120);
+    });
+
+    function scheduleLearningMasonry() {
+      if (masonryFrame) {
+        window.clearTimeout(masonryFrame);
+      }
+
+      masonryFrame = window.setTimeout(function () {
+        masonryFrame = null;
+        layoutLearningMasonry();
+      }, 0);
+    }
+
+    function layoutLearningMasonry() {
+      var grid = $grid.get(0);
+      if (!grid) {
+        return;
+      }
+
+      var gridStyles = window.getComputedStyle(grid);
+      var rowHeight = parseFloat(gridStyles.getPropertyValue("grid-auto-rows")) || 8;
+      var rowGap = parseFloat(gridStyles.getPropertyValue("row-gap")) || 16;
+
+      $grid.find(".learning-card, .learning-skeleton-card").each(function () {
+        this.style.gridRowEnd = "auto";
+        var height = this.getBoundingClientRect().height;
+        var span = Math.max(1, Math.ceil((height + rowGap) / (rowHeight + rowGap)));
+        this.style.gridRowEnd = "span " + span;
+      });
+    }
+
+    function refreshMasonryAfterMedia() {
+      scheduleLearningMasonry();
+      window.setTimeout(scheduleLearningMasonry, 160);
+      window.setTimeout(scheduleLearningMasonry, 420);
+      $grid.find("img").each(function () {
+        if (this.complete) {
+          return;
+        }
+
+        $(this).one("load error", scheduleLearningMasonry);
+      });
+    }
+
     function renderLearningCards() {
       var filteredItems = selectedStatus === "all"
         ? learningItems
@@ -2022,6 +2180,7 @@
 
       if (!filteredItems.length) {
         $grid.empty();
+        scheduleLearningMasonry();
         $empty.removeClass("d-none");
         if (learningItems.length) {
           $empty.find("h3").text("No " + selectedStatus + " courses");
@@ -2037,12 +2196,58 @@
 
       $empty.addClass("d-none");
       $grid.html(filteredItems.map(createLearningCard).join(""));
+      refreshMasonryAfterMedia();
     }
 
     function createLearningCard(item) {
       var course = item.course;
-      var expiryState = getSubscriptionExpiryState(item.subscriptionExpires);
-      var statusMeta = getLearningStatusMeta(item.status);
+      var primaryEnrolment = getPrimaryEnrolment(item);
+      var primaryStatusMeta = getLearningStatusMeta(primaryEnrolment.status);
+      var enrolments = item.enrolments || [primaryEnrolment];
+      var primaryPeriod = primaryEnrolment.periodStart && primaryEnrolment.periodEnd
+        ? formatLearningDate(primaryEnrolment.periodStart) + " to " + formatLearningDate(primaryEnrolment.periodEnd)
+        : formatLearningDate(item.subscriptionExpires);
+      var nextLocked = enrolments.find(function (enrolment) {
+        return enrolment.status === "locked" || enrolment.status === "upcoming";
+      });
+      var timelineRows = enrolments.map(function (enrolment, index) {
+        var enrolmentStatusMeta = getLearningStatusMeta(enrolment.status);
+        var enrolmentPeriod = formatLearningDate(enrolment.periodStart) + " to " + formatLearningDate(enrolment.periodEnd);
+        var visibleClass = index > 2 ? " is-extra" : "";
+        var note = enrolment.note ? '<p class="learning-enrolment-note">' + enrolment.note + "</p>" : "";
+
+        return (
+          '<li class="learning-enrolment-row' + visibleClass + ' is-' + enrolment.status + '">' +
+            '<span class="learning-enrolment-marker" aria-hidden="true"></span>' +
+            '<div class="learning-enrolment-main">' +
+              '<div class="learning-enrolment-head">' +
+                '<strong>' + enrolmentPeriod + "</strong>" +
+                '<span class="learning-status-badge' + enrolmentStatusMeta.className + '">' + enrolmentStatusMeta.label + "</span>" +
+              "</div>" +
+              '<div class="learning-enrolment-progress">' +
+                '<div class="learning-progress" aria-label="' + enrolment.progress + '% complete"><span style="width: ' + enrolment.progress + '%"></span></div>' +
+                '<strong>' + enrolment.progress + '%</strong>' +
+              "</div>" +
+              '<p class="learning-enrolment-detail"><span>' + enrolment.detailLabel + ':</span> ' + enrolment.detail + "</p>" +
+              note +
+            "</div>" +
+          "</li>"
+        );
+      }).join("");
+      var nextCopy = nextLocked
+        ? '<p class="learning-enrolment-next">Next enrolment starts on ' + formatLearningDate(nextLocked.periodStart) + "</p>"
+        : "";
+      var showMoreCopy = enrolments.length > 3
+        ? '<span class="learning-enrolment-more">Scroll to view older enrolments</span>'
+        : "";
+      var detailsId = "enrolments-" + course.id;
+      var enrolmentDetailsMarkup = enrolments.length > 1
+        ? '<details class="learning-enrolment-details" id="' + detailsId + '">' +
+            '<summary>View all enrolments <span>' + enrolments.length + "</span></summary>" +
+            '<ol class="learning-enrolment-timeline">' + timelineRows + "</ol>" +
+            showMoreCopy +
+          "</details>"
+        : "";
 
       return (
         '<article class="learning-card" data-enrolment-status="' + item.status + '">' +
@@ -2050,7 +2255,6 @@
           '<div class="learning-card-body">' +
             '<div class="learning-card-topline">' +
               '<span>' + course.category + '</span>' +
-              '<span class="learning-status-badge' + statusMeta.className + '">' + statusMeta.label + '</span>' +
             "</div>" +
             '<h2>' + course.title + "</h2>" +
             '<div class="learning-progress-row">' +
@@ -2059,14 +2263,17 @@
               "</div>" +
               '<strong>' + item.progress + '%</strong>' +
             "</div>" +
-            '<div class="learning-card-lesson">' +
-              '<span>Current Lesson:</span>' +
-              '<strong>' + item.nextLesson + "</strong>" +
+            '<div class="learning-card-lesson learning-enrolment-summary">' +
+              '<div class="learning-enrolment-summary-head">' +
+                '<span>' + (primaryEnrolment.status === "active" ? "Current active enrolment" : "Current enrolment summary") + "</span>" +
+                '<em class="learning-status-badge' + primaryStatusMeta.className + '">' + primaryStatusMeta.label + "</em>" +
+              "</div>" +
+              '<strong>' + primaryPeriod + "</strong>" +
+              '<p><span>' + primaryEnrolment.detailLabel + ':</span> ' + primaryEnrolment.detail + "</p>" +
+              nextCopy +
             "</div>" +
-            '<p class="learning-card-expiry' + expiryState.className + '">' +
-              '<span>' + expiryState.label + ':</span> ' + expiryState.value +
-            "</p>" +
-            '<a class="btn btn-brand w-100" href="enrolment.html?id=' + course.id + '">Continue Learning</a>' +
+            enrolmentDetailsMarkup +
+            getPrimaryEnrolmentActionMarkup(primaryEnrolment, course, nextLocked).replace("learning-enrolment-action", "btn btn-brand w-100 learning-primary-action") +
           "</div>" +
         "</article>"
       );

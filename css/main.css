@@ -4734,7 +4734,14 @@ body[data-page="purchase"] {
   box-shadow: inset 0 0 0 1px rgba(5, 150, 105, 0.16), 0 8px 18px rgba(5, 150, 105, 0.08);
 }
 
-.learning-grid,
+.learning-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-auto-rows: 8px;
+  align-items: start;
+  gap: 1rem;
+}
+
 .certificate-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -4756,6 +4763,18 @@ body[data-page="purchase"] {
 .learning-card {
   display: flex;
   flex-direction: column;
+  width: auto;
+  margin-bottom: 0;
+  min-height: auto;
+  height: auto;
+  align-self: start;
+}
+
+.learning-grid > .learning-skeleton-card {
+  display: block;
+  width: auto;
+  margin-bottom: 0;
+  min-height: 24rem;
 }
 
 .learning-card:hover,
@@ -4816,23 +4835,55 @@ body[data-page="purchase"] {
 }
 
 .learning-status-badge {
-  border: 1px solid rgba(5, 150, 105, 0.14);
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  width: auto !important;
+  min-height: 1.75rem;
+  padding: 0.34rem 0.68rem !important;
+  border: 1px solid rgba(5, 150, 105, 0.16);
+  border-radius: 999px !important;
+  font-size: 0.72rem !important;
+  font-weight: 850 !important;
+  line-height: 1 !important;
+  letter-spacing: 0;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.78), 0 8px 18px rgba(15, 23, 42, 0.05);
+}
+
+.learning-status-badge::before {
+  content: "";
+  flex: 0 0 auto;
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 999px;
+  background: currentColor;
+  box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 13%, transparent);
 }
 
 .learning-status-badge.is-active {
-  background: rgba(236, 253, 245, 0.94);
+  border-color: rgba(5, 150, 105, 0.2);
+  background: linear-gradient(180deg, rgba(236, 253, 245, 0.96), rgba(209, 250, 229, 0.82));
   color: #047857;
 }
 
 .learning-status-badge.is-completed {
-  background: rgba(220, 252, 231, 0.94);
+  border-color: rgba(22, 163, 74, 0.22);
+  background: linear-gradient(180deg, rgba(240, 253, 244, 0.98), rgba(187, 247, 208, 0.76));
   color: #15803d;
 }
 
 .learning-status-badge.is-expired {
-  border-color: rgba(220, 38, 38, 0.14);
-  background: rgba(254, 242, 242, 0.94);
+  border-color: rgba(220, 38, 38, 0.2);
+  background: linear-gradient(180deg, rgba(254, 242, 242, 0.98), rgba(254, 226, 226, 0.82));
   color: #b42318;
+}
+
+.learning-status-badge.is-upcoming,
+.learning-status-badge.is-locked {
+  border-color: rgba(148, 163, 184, 0.22);
+  background: linear-gradient(180deg, rgba(248, 250, 252, 0.98), rgba(226, 232, 240, 0.7));
+  color: #475569;
 }
 
 .learning-card h2,
@@ -4961,6 +5012,271 @@ body[data-page="purchase"] {
 .learning-card-expiry.is-expired::before {
   background: #ef4444;
   box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.12);
+}
+
+.learning-enrolment-summary {
+  height: auto;
+  min-height: 8.9rem;
+}
+
+.learning-enrolment-summary-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.65rem;
+  margin-bottom: 0.35rem;
+}
+
+.learning-enrolment-summary-head span {
+  margin: 0;
+}
+
+.learning-enrolment-summary-head em {
+  flex: 0 0 auto;
+  font-size: 0.68rem;
+  font-style: normal;
+}
+
+.learning-enrolment-summary > strong {
+  display: block;
+  margin-bottom: 0.35rem;
+  color: var(--ink);
+  font-size: 0.88rem;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.learning-enrolment-summary p {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  margin: 0;
+  overflow: hidden;
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-weight: 650;
+  line-height: 1.45;
+}
+
+.learning-enrolment-summary p span {
+  display: inline;
+  margin: 0;
+  color: var(--brand-dark);
+  font-size: inherit;
+}
+
+.learning-enrolment-next {
+  margin-top: 0.45rem !important;
+  color: #047857 !important;
+  font-weight: 800 !important;
+}
+
+.learning-enrolment-details {
+  border: 1px solid rgba(5, 150, 105, 0.12);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  overflow: hidden;
+  transition: border-color 0.24s ease, box-shadow 0.24s ease, background-color 0.24s ease;
+}
+
+.learning-enrolment-details[open] {
+  border-color: rgba(5, 150, 105, 0.18);
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 18px 42px rgba(15, 23, 42, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.84);
+}
+
+.learning-enrolment-details summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.74rem 0.85rem;
+  color: var(--brand-dark);
+  cursor: pointer;
+  font-size: 0.78rem;
+  font-weight: 850;
+  list-style: none;
+}
+
+.learning-enrolment-details summary::-webkit-details-marker {
+  display: none;
+}
+
+.learning-enrolment-details summary::after {
+  content: "\f107";
+  flex: 0 0 auto;
+  font-family: "FontAwesome";
+  font-weight: 900;
+  transition: transform 0.2s ease;
+}
+
+.learning-enrolment-details[open] summary::after {
+  transform: rotate(180deg);
+}
+
+.learning-enrolment-details summary span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.55rem;
+  height: 1.55rem;
+  margin-left: auto;
+  border-radius: 999px;
+  background: rgba(5, 150, 105, 0.1);
+  color: var(--brand-dark);
+  font-size: 0.72rem;
+}
+
+.learning-enrolment-timeline {
+  display: grid;
+  gap: 0.62rem;
+  max-height: 20rem;
+  margin: 0;
+  padding: 0 0.75rem 0.8rem;
+  overflow: auto;
+  list-style: none;
+  opacity: 0;
+  transform: translateY(-0.4rem);
+  transition: opacity 0.24s ease, transform 0.24s ease;
+}
+
+.learning-enrolment-details[open] .learning-enrolment-timeline {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.learning-enrolment-row {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1rem minmax(0, 1fr);
+  gap: 0.55rem;
+  padding: 0.72rem;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 14px;
+  background: rgba(248, 250, 252, 0.72);
+}
+
+.learning-enrolment-row.is-active {
+  border-color: rgba(5, 150, 105, 0.26);
+  background: linear-gradient(180deg, rgba(236, 253, 245, 0.9), rgba(255, 255, 255, 0.92));
+  box-shadow: 0 12px 24px rgba(5, 150, 105, 0.08);
+}
+
+.learning-enrolment-marker {
+  position: relative;
+  display: block;
+  width: 0.65rem;
+  height: 0.65rem;
+  margin-top: 0.38rem;
+  border-radius: 999px;
+  background: #94a3b8;
+  box-shadow: 0 0 0 4px rgba(148, 163, 184, 0.12);
+}
+
+.learning-enrolment-row.is-active .learning-enrolment-marker,
+.learning-enrolment-row.is-completed .learning-enrolment-marker {
+  background: #059669;
+  box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.13);
+}
+
+.learning-enrolment-row.is-expired .learning-enrolment-marker {
+  background: #ef4444;
+  box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.12);
+}
+
+.learning-enrolment-main {
+  min-width: 0;
+}
+
+.learning-enrolment-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.55rem;
+}
+
+.learning-enrolment-head strong {
+  color: var(--ink);
+  font-size: 0.76rem;
+  font-weight: 850;
+  line-height: 1.35;
+}
+
+.learning-enrolment-progress {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  margin-bottom: 0.52rem;
+}
+
+.learning-enrolment-progress .learning-progress {
+  flex: 1 1 auto;
+  height: 8px;
+}
+
+.learning-enrolment-progress > strong {
+  flex: 0 0 2.25rem;
+  color: var(--brand-dark);
+  font-size: 0.74rem;
+  text-align: right;
+}
+
+.learning-enrolment-detail,
+.learning-enrolment-note {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.74rem;
+  font-weight: 650;
+  line-height: 1.42;
+}
+
+.learning-enrolment-detail span,
+.learning-enrolment-note {
+  color: var(--brand-dark);
+  font-weight: 850;
+}
+
+.learning-enrolment-note {
+  margin-top: 0.32rem;
+}
+
+.learning-enrolment-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 2.15rem;
+  padding: 0.42rem 0.65rem;
+  border: 1px solid rgba(5, 150, 105, 0.18);
+  border-radius: 10px;
+  background: rgba(236, 253, 245, 0.88);
+  color: var(--brand-dark);
+  font-size: 0.74rem;
+  font-weight: 850;
+  text-decoration: none;
+}
+
+.learning-enrolment-action:disabled,
+.learning-primary-action:disabled {
+  border-color: rgba(148, 163, 184, 0.2);
+  background: rgba(241, 245, 249, 0.9);
+  color: #64748b;
+  cursor: not-allowed;
+}
+
+.learning-primary-action:disabled {
+  opacity: 1;
+}
+
+.learning-enrolment-more {
+  display: block;
+  padding: 0 0.85rem 0.8rem;
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 700;
 }
 
 .learning-card .btn {
@@ -10350,7 +10666,10 @@ body[data-page="forgot-password"] .forgot-auth-form-wrap .btn-brand {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .learning-grid,
+  .learning-grid {
+    grid-template-columns: 1fr;
+  }
+
   .certificate-grid {
     grid-template-columns: 1fr;
   }
